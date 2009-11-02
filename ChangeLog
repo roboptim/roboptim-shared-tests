@@ -1,3 +1,8 @@
+2009-11-02  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Add common.hh.
+	* common.hh: New.
+
 2009-07-01  Thomas Moulard  <thomas.moulard@gmail.com>
 
 	Create separate shared-tests branch.
