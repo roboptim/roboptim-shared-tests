@@ -32,13 +32,24 @@ static const int TEST_SUCCEED = 0;
 
 int run_test ();
 void init ();
+void pauseAtExit ();
 
+void pauseAtExit ()
+{
+#if defined _WIN32 && ROBOPTIM_INTERACTIVE_TESTSUITE
+system("PAUSE");
+#endif //! _WIN32 && ROBOPTIM_INTERACTIVE_TESTSUITE
+}
 
 void init ()
 {
 #ifdef CWDEBUG
   roboptim::debug::init();
 #endif //! CWDEBUG
+
+#if defined _WIN32 && ROBOPTIM_INTERACTIVE_TESTSUITE
+atexit (pauseAtExit);
+#endif //! _WIN32 && ROBOPTIM_INTERACTIVE_TESTSUITE
 }
 
 

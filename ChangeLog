@@ -1,5 +1,12 @@
 2009-11-02  Thomas Moulard  <thomas.moulard@gmail.com>
 
+	Add Windows specific interactive mode for test cases.
+	* common.hh: Add a pause at program end
+	if ROBOPTIM_INTERACTIVE_TESTSUITE CPP symbol
+	is defined.
+
+2009-11-02  Thomas Moulard  <thomas.moulard@gmail.com>
+
 	Add common.hh.
 	* common.hh: New.
 
