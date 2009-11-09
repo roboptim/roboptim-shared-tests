@@ -19,6 +19,7 @@
 #ifndef OPTIMIZATION_TESTS_COMMON_HH
 # define OPTIMIZATION_TESTS_COMMON_HH
 # include <roboptim/core/sys.hh>
+# include <roboptim/core/debug.hh>
 
 # include <fstream>
 # include <iostream>
