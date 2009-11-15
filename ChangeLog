@@ -1,3 +1,8 @@
+2009-11-15  Thomas Moulard  <thomas.moulard@gmail.com>
+
+	Force std::cout floating point numbers output.
+	* common.hh: Set precision and display format to fixed.
+
 2009-11-09  Thomas Moulard  <thomas.moulard@gmail.com>
 
 	Include ``debug.hh'' to get libcwd initialized properly.

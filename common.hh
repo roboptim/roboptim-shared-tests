@@ -22,6 +22,8 @@
 # include <roboptim/core/debug.hh>
 
 # include <fstream>
+# include <iomanip>
+# include <iostream>
 # include <iostream>
 # include <stdexcept>
 
@@ -47,6 +49,8 @@ void init ()
 #ifdef CWDEBUG
   roboptim::debug::init();
 #endif //! CWDEBUG
+
+  std::cout << std::setprecision (2) << std::fixed;
 
 #if defined _WIN32 && ROBOPTIM_INTERACTIVE_TESTSUITE
 atexit (pauseAtExit);
