@@ -26,9 +26,10 @@
 # include <iostream>
 # include <iostream>
 # include <stdexcept>
+# include <ltdl.h>
 
 # include "config.h"
-# include "debug.hh"
+# include "shared-tests/local-libdir.hh"
 
 static const int TEST_FAILED = 10;
 static const int TEST_SUCCEED = 0;
@@ -39,6 +40,8 @@ void pauseAtExit ();
 
 void pauseAtExit ()
 {
+  lt_dlexit();
+  lt_dlexit();
 #if defined _WIN32 && ROBOPTIM_INTERACTIVE_TESTSUITE
 system("PAUSE");
 #endif //! _WIN32 && ROBOPTIM_INTERACTIVE_TESTSUITE
@@ -52,9 +55,11 @@ void init ()
 
   std::cout << std::setprecision (2) << std::fixed;
 
-#if defined _WIN32 && ROBOPTIM_INTERACTIVE_TESTSUITE
-atexit (pauseAtExit);
-#endif //! _WIN32 && ROBOPTIM_INTERACTIVE_TESTSUITE
+  lt_dlinit();
+  if (lt_dlsetsearchpath (LOCAL_LIBDIR))
+    std::cerr << "Failed to set search path." << std::endl;
+
+  atexit (pauseAtExit);
 }
 
 
