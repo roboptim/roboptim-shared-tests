@@ -147,7 +147,7 @@ struct G1 : public TwiceDerivableFunction
   }
 
   void
-  impl_hessian (hessian_t& h, const argument_t& x, size_type) const throw ()
+  impl_hessian (hessian_t& h, const argument_t&, size_type) const throw ()
   {
     h.clear ();
     h (0, 0) = 2.;
