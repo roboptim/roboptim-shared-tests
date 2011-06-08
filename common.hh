@@ -20,7 +20,7 @@
 # define OPTIMIZATION_TESTS_COMMON_HH
 # include <roboptim/core/sys.hh>
 # include <roboptim/core/debug.hh>
-
+# include <cstdlib>
 # include <fstream>
 # include <iomanip>
 # include <iostream>
