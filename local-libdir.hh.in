@@ -1,4 +1,4 @@
 #ifndef LOCAL_LIBDIR_HH
 # define LOCAL_LIBDIR_HH
-# define LOCAL_LIBDIR "@CMAKE_BINARY_DIR@/src"
+# define LOCAL_LIBDIR "@CMAKE_BINARY_DIR@/lib"
 #endif //! LOCAL_LIBDIR_HH
