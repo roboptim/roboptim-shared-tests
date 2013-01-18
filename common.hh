@@ -28,6 +28,8 @@
 # include <stdexcept>
 # include <ltdl.h>
 
+# include <log4cxx/basicconfigurator.h>
+
 # include "config.h"
 # include "shared-tests/local-libdir.hh"
 
@@ -49,9 +51,7 @@ system("PAUSE");
 
 void init ()
 {
-#ifdef CWDEBUG
-  roboptim::debug::init();
-#endif //! CWDEBUG
+  log4cxx::BasicConfigurator::configure ();
 
   std::cout << std::setprecision (2) << std::fixed;
 
