@@ -17,7 +17,7 @@
 
 
 #ifndef OPTIMIZATION_TESTS_HS071_NONSCALAR_CONSTRAINTS_HH
-# define OPTIMIZATION_TESTS_HS071_NONSCALAR_CONSTRAINST_HH
+# define OPTIMIZATION_TESTS_HS071_NONSCALAR_CONSTRAINTS_HH
 # include <utility>
 # include <roboptim/core/twice-derivable-function.hh>
 
@@ -32,14 +32,15 @@ struct F : public TwiceDerivableFunction
   void
   impl_compute (result_t& result, const argument_t& x) const throw ()
   {
-    result.clear ();
+    result.setZero ();
     result (0) = x[0] * x[3] * (x[0] + x[1] + x[2]) + x[3];
   }
 
   void
-  impl_gradient (gradient_t& grad, const argument_t& x, size_type) const throw ()
+  impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+    const throw ()
   {
-    grad.clear ();
+    grad.setZero ();
     grad[0] = x[0] * x[3] + x[3] * (x[0] + x[1] + x[2]);
     grad[1] = x[0] * x[3];
     grad[2] = x[0] * x[3] + 1;
@@ -49,7 +50,7 @@ struct F : public TwiceDerivableFunction
   void
   impl_hessian (hessian_t& h, const argument_t& x, size_type) const throw ()
   {
-    h.clear ();
+    h.setZero ();
     h (0, 0) = 2 * x[3];
     h (0, 1) = x[3];
     h (0, 2) = x[3];
@@ -76,22 +77,24 @@ struct F : public TwiceDerivableFunction
 struct NonScalarG : public TwiceDerivableFunction
 {
   NonScalarG ()
-    : TwiceDerivableFunction (4, 2, "a * b * c * d\na * a + b * b + c * c + d * d")
+    : TwiceDerivableFunction
+      (4, 2, "a * b * c * d\na * a + b * b + c * c + d * d")
   {
   }
 
   void
   impl_compute (result_t& res, const argument_t& x) const throw ()
   {
-    res.clear ();
+    res.setZero ();
     res (0) = x[0] * x[1] * x[2] * x[3];
     res (1) = x[0]*x[0] + x[1]*x[1] + x[2]*x[2] + x[3]*x[3];
   }
 
   void
-  impl_gradient (gradient_t& grad, const argument_t& x, size_type s) const throw ()
+  impl_gradient (gradient_t& grad, const argument_t& x, size_type s)
+    const throw ()
   {
-    grad.clear ();
+    grad.setZero ();
     if (s == 0)
     {
       grad[0] = x[1] * x[2] * x[3];
@@ -111,7 +114,7 @@ struct NonScalarG : public TwiceDerivableFunction
   void
   impl_hessian (hessian_t& h, const argument_t& x, size_type s) const throw ()
   {
-    h.clear ();
+    h.setZero ();
     if (s == 0)
     {
       h (0, 0) = 0.;
