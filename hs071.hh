@@ -32,14 +32,14 @@ struct F : public TwiceDerivableFunction
   void
   impl_compute (result_t& result, const argument_t& x) const throw ()
   {
-    result.clear ();
+    result.setZero ();
     result (0) = x[0] * x[3] * (x[0] + x[1] + x[2]) + x[3];
   }
 
   void
   impl_gradient (gradient_t& grad, const argument_t& x, size_type) const throw ()
   {
-    grad.clear ();
+    grad.setZero ();
     grad[0] = x[0] * x[3] + x[3] * (x[0] + x[1] + x[2]);
     grad[1] = x[0] * x[3];
     grad[2] = x[0] * x[3] + 1;
@@ -49,7 +49,7 @@ struct F : public TwiceDerivableFunction
   void
   impl_hessian (hessian_t& h, const argument_t& x, size_type) const throw ()
   {
-    h.clear ();
+    h.setZero ();
     h (0, 0) = 2 * x[3];
     h (0, 1) = x[3];
     h (0, 2) = x[3];
@@ -82,14 +82,14 @@ struct G0 : public TwiceDerivableFunction
   void
   impl_compute (result_t& res, const argument_t& x) const throw ()
   {
-    res.clear ();
+    res.setZero ();
     res (0) = x[0] * x[1] * x[2] * x[3];
   }
 
   void
   impl_gradient (gradient_t& grad, const argument_t& x, size_type) const throw ()
   {
-    grad.clear ();
+    grad.setZero ();
     grad[0] = x[1] * x[2] * x[3];
     grad[1] = x[0] * x[2] * x[3];
     grad[2] = x[0] * x[1] * x[3];
@@ -99,7 +99,7 @@ struct G0 : public TwiceDerivableFunction
   void
   impl_hessian (hessian_t& h, const argument_t& x, size_type) const throw ()
   {
-    h.clear ();
+    h.setZero ();
     h (0, 0) = 0.;
     h (0, 1) = x[2] * x[3];
     h (0, 2) = x[1] * x[3];
@@ -132,14 +132,14 @@ struct G1 : public TwiceDerivableFunction
   void
   impl_compute (result_t& res, const argument_t& x) const throw ()
   {
-    res.clear ();
+    res.setZero ();
     res (0) = x[0]*x[0] + x[1]*x[1] + x[2]*x[2] + x[3]*x[3];
   }
 
   void
   impl_gradient (gradient_t& grad, const argument_t& x, size_type) const throw ()
   {
-    grad.clear ();
+    grad.setZero ();
     grad[0] = 2 * x[0];
     grad[1] = 2 * x[1];
     grad[2] = 2 * x[2];
@@ -149,7 +149,7 @@ struct G1 : public TwiceDerivableFunction
   void
   impl_hessian (hessian_t& h, const argument_t&, size_type) const throw ()
   {
-    h.clear ();
+    h.setZero ();
     h (0, 0) = 2.;
     h (0, 1) = 0.;
     h (0, 2) = 0.;

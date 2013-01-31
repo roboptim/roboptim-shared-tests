@@ -38,7 +38,7 @@ namespace roboptim {
       
       void impl_compute (result_t& result, const argument_t& x) const throw ()
       {
-	result.clear ();
+	result.setZero ();
 	double theta = x[0];
 	double phi = x[1];
 	sphericalCoordinates (result, theta, phi);
