@@ -1,4 +1,4 @@
-// Copyright (C) 2009 by Thomas Moulard, AIST, CNRS, INRIA.
+// Copyright (C) 2009-2012 by Thomas Moulard, AIST, CNRS, INRIA.
 //
 // This file is part of the roboptim.
 //
@@ -18,27 +18,30 @@
 
 #ifndef OPTIMIZATION_TESTS_COMMON_HH
 # define OPTIMIZATION_TESTS_COMMON_HH
-# include <roboptim/core/sys.hh>
-# include <roboptim/core/debug.hh>
 # include <cstdlib>
 # include <fstream>
 # include <iomanip>
 # include <iostream>
 # include <iostream>
 # include <stdexcept>
+# include <string>
 # include <ltdl.h>
+
+# include <boost/make_shared.hpp>
+# include <boost/shared_ptr.hpp>
+# include <boost/test/unit_test.hpp>
+# include <boost/test/output_test_stream.hpp> 
 
 # include <log4cxx/basicconfigurator.h>
 
 # include "config.h"
 # include "shared-tests/local-libdir.hh"
 
-static const int TEST_FAILED = 10;
-static const int TEST_SUCCEED = 0;
-
-int run_test ();
-void init ();
 void pauseAtExit ();
+boost::shared_ptr<boost::test_tools::output_test_stream>
+retrievePattern (const std::string& testName);
+boost::unit_test::test_suite*
+init_unit_test_suite (int argc, char* argv[]);
 
 void pauseAtExit ()
 {
@@ -49,7 +52,24 @@ system("PAUSE");
 #endif //! _WIN32 && ROBOPTIM_INTERACTIVE_TESTSUITE
 }
 
-void init ()
+boost::shared_ptr<boost::test_tools::output_test_stream>
+retrievePattern (const std::string& testName)
+{
+  std::string patternFilename = LOCAL_TESTDIR;
+  patternFilename += "/";
+  patternFilename += testName;
+  patternFilename += ".stdout";
+
+  std::cout << patternFilename << std::endl;
+
+  boost::shared_ptr<boost::test_tools::output_test_stream>
+    output = boost::make_shared<boost::test_tools::output_test_stream>
+    (patternFilename, true);
+  return output;
+}
+
+boost::unit_test::test_suite*
+init_unit_test_suite (int, char*[])
 {
   log4cxx::BasicConfigurator::configure ();
 
@@ -60,55 +80,7 @@ void init ()
     std::cerr << "Failed to set search path." << std::endl;
 
   atexit (pauseAtExit);
+  return 0;
 }
-
-
-# define GENERATE_TEST()                                \
-  int                                                   \
-  main (int argc, char** argv)                          \
-  {                                                     \
-    init ();						\
-							\
-    if (argc == 2                                       \
-        && std::string (argv[1]) == "--version")        \
-      {                                                 \
-        std::cout << PACKAGE_STRING << std::endl;       \
-        return 0;                                       \
-      }                                                 \
-                                                        \
-    int status = 0;                                     \
-    try                                                 \
-      {                                                 \
-        status = run_test ();                           \
-      }                                                 \
-    catch (std::runtime_error& e)                       \
-      {                                                 \
-        std::cerr << e.what () << std::endl;            \
-        return 1;                                       \
-      }                                                 \
-    catch (...)                                         \
-      {                                                 \
-        std::cerr << "Unexpected error" << std::endl;   \
-        return 2;                                       \
-      }                                                 \
-    return status;                                      \
-  }
-
-#define CHECK_FAILURE(EXCEPTION, CMD)           \
-  {                                             \
-    bool failed = true;                         \
-    try                                         \
-      {                                         \
-        CMD;                                    \
-      }                                         \
-    catch (EXCEPTION&)                          \
-      {                                         \
-        failed = false;                         \
-      }                                         \
-    catch (...)                                 \
-      {}                                        \
-    if (failed)                                 \
-      return TEST_FAILED;                       \
-  }
 
 #endif //! OPTIMIZATION_TESTS_COMMON_HH
