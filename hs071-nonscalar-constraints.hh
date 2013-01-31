@@ -1,4 +1,4 @@
-// Copyright (C) 2009 by Thomas Moulard, AIST, CNRS, INRIA.
+// Copyright (C) 2012 by Francois Keith, AIST, CNRS, INRIA.
 //
 // This file is part of the roboptim.
 //
@@ -16,8 +16,8 @@
 // along with roboptim.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifndef OPTIMIZATION_TESTS_HS071_BIS_HH
-# define OPTIMIZATION_TESTS_HS071_BIS_HH
+#ifndef OPTIMIZATION_TESTS_HS071_NONSCALAR_CONSTRAINTS_HH
+# define OPTIMIZATION_TESTS_HS071_NONSCALAR_CONSTRAINST_HH
 # include <utility>
 # include <roboptim/core/twice-derivable-function.hh>
 
@@ -72,9 +72,10 @@ struct F : public TwiceDerivableFunction
   }
 };
 
-struct G2 : public TwiceDerivableFunction
+// The difference with previous test case is that G output size is now 2.
+struct NonScalarG : public TwiceDerivableFunction
 {
-  G2 ()
+  NonScalarG ()
     : TwiceDerivableFunction (4, 2, "a * b * c * d\na * a + b * b + c * c + d * d")
   {
   }
@@ -167,7 +168,7 @@ void initialize_problem (T& pb)
     pb.argumentBounds ()[i] = Function::makeInterval (1., 5.);
 
   // Add constraints.
-  boost::shared_ptr<G2> g2 (new G2 ());
+  boost::shared_ptr<NonScalarG> g2 (new NonScalarG ());
 
   Function::intervals_t bounds;
   bounds.push_back(Function::makeLowerInterval (25.));
@@ -181,5 +182,4 @@ void initialize_problem (T& pb)
   pb.startingPoint () = start;
 }
 
-#endif //! OPTIMIZATION_TESTS_HS071_BIS_HH
-
+#endif //! OPTIMIZATION_TESTS_HS071_NONSCALAR_CONSTRAINTS_HH
