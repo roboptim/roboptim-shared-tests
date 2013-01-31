@@ -177,7 +177,13 @@ void initialize_problem (T& pb)
   bounds.push_back(Function::makeLowerInterval (25.));
   bounds.push_back(Function::makeInterval (40., 40.));
 
-  pb.addConstraint (boost::static_pointer_cast<NLF> (g2), bounds);
+  typename T::scales_t scales;
+  scales.push_back (1.);
+  scales.push_back (1.);
+
+  pb.addConstraint (boost::static_pointer_cast<NLF> (g2),
+		    bounds,
+		    scales);
 
   // Set the starting point.
   Function::vector_t start (pb.function ().inputSize ());
