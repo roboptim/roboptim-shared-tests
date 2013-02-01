@@ -34,6 +34,8 @@
 
 # include <log4cxx/basicconfigurator.h>
 
+# include <roboptim/core/util.hh>
+
 # include "config.h"
 # include "shared-tests/local-libdir.hh"
 
