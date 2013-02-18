@@ -62,8 +62,6 @@ retrievePattern (const std::string& testName)
   patternFilename += testName;
   patternFilename += ".stdout";
 
-  std::cout << patternFilename << std::endl;
-
   boost::shared_ptr<boost::test_tools::output_test_stream>
     output = boost::make_shared<boost::test_tools::output_test_stream>
     (patternFilename, true);
