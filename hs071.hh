@@ -178,7 +178,8 @@ void initialize_problem (T& pb)
 {
   // Set bound for all variables.
   // 1. < x_i < 5. (x_i in [1.;5.])
-  for (Function::size_type i = 0; i < pb.function ().inputSize (); ++i)
+  for (std::size_t i = 0;
+       i < static_cast<std::size_t> (pb.function ().inputSize ()); ++i)
     pb.argumentBounds ()[i] = Function::makeInterval (1., 5.);
 
   // Add constraints.
