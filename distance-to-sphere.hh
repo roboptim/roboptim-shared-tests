@@ -21,21 +21,22 @@
 
 namespace roboptim {
   namespace cminpack {
-    using roboptim::DerivableFunction;
+    using roboptim::DifferentiableFunction;
     /// Distance between a point on unit sphere and another point in R^3
-    struct F : public DerivableFunction
+    struct F : public DifferentiableFunction
     {
-      F () : DerivableFunction (2, 3,
-				"vector between unit sphere and point (x,y,z)"),
+      F () : DifferentiableFunction
+	     (2, 3,
+	      "vector between unit sphere and point (x,y,z)"),
 	     point_(3)
       {
 	sphericalCoordinates (point_, -1.5, -1.2);
 	point_*=2.;
 	std::cout << "point_ = " << point_ << std::endl;
       }
-      
+
       ~F () throw () {}
-      
+
       void impl_compute (result_t& result, const argument_t& x) const throw ()
       {
 	result.setZero ();
@@ -44,7 +45,7 @@ namespace roboptim {
 	sphericalCoordinates (result, theta, phi);
 	result -= point_;
       }
-      
+
       void impl_gradient(gradient_t& gradient, const argument_t& x,
 			 size_type functionId=0) const throw ()
       {
@@ -67,7 +68,7 @@ namespace roboptim {
 	  abort();
 	}
       }
-      
+
       static void sphericalCoordinates (result_t& res, double theta, double phi)
       {
 	res (0) = cos(theta) * cos(phi);
@@ -79,7 +80,7 @@ namespace roboptim {
     template <typename T> void initialize_problem (T& pb)
     {
       // Set initial guess (theta, phi)
-      DerivableFunction::argument_t initialGuess(2);
+      DifferentiableFunction::argument_t initialGuess(2);
       initialGuess(0) = 0.;
       initialGuess(1) = 0.;
       pb.startingPoint () = initialGuess;
