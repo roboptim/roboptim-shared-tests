@@ -19,13 +19,27 @@
 #ifndef OPTIMIZATION_TESTS_HS071_HH
 # define OPTIMIZATION_TESTS_HS071_HH
 # include <utility>
-# include <roboptim/core/twice-derivable-function.hh>
+# include <roboptim/core/twice-differentiable-function.hh>
 
 using namespace roboptim;
 
-struct F : public TwiceDerivableFunction
+# define FORWARD_TYPEDEFS()				  \
+  typedef GenericTwiceDifferentiableFunction<T> parent_t; \
+  typedef typename parent_t::result_t result_t;		  \
+  typedef typename parent_t::size_type size_type;	  \
+  typedef typename parent_t::argument_t argument_t;	  \
+  typedef typename parent_t::gradient_t gradient_t;	  \
+  typedef typename parent_t::jacobian_t jacobian_t;	  \
+  typedef typename parent_t::hessian_t hessian_t
+
+
+template <typename T>
+struct F : public GenericTwiceDifferentiableFunction<T>
 {
-  F () : TwiceDerivableFunction (4, 1, "a * d * (a + b + c) + d")
+  FORWARD_TYPEDEFS ();
+
+  F ()
+    : GenericTwiceDifferentiableFunction<T> (4, 1, "a * d * (a + b + c) + d")
   {
   }
 
@@ -37,7 +51,8 @@ struct F : public TwiceDerivableFunction
   }
 
   void
-  impl_gradient (gradient_t& grad, const argument_t& x, size_type) const throw ()
+  impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+    const throw ()
   {
     grad.setZero ();
     grad[0] = x[0] * x[3] + x[3] * (x[0] + x[1] + x[2]);
@@ -72,10 +87,13 @@ struct F : public TwiceDerivableFunction
   }
 };
 
-struct G0 : public TwiceDerivableFunction
+template <typename T>
+struct G0 : public GenericTwiceDifferentiableFunction<T>
 {
+  FORWARD_TYPEDEFS ();
+
   G0 ()
-    : TwiceDerivableFunction (4, 1, "a * b * c * d")
+    : GenericTwiceDifferentiableFunction<T> (4, 1, "a * b * c * d")
   {
   }
 
@@ -87,7 +105,8 @@ struct G0 : public TwiceDerivableFunction
   }
 
   void
-  impl_gradient (gradient_t& grad, const argument_t& x, size_type) const throw ()
+  impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+    const throw ()
   {
     grad.setZero ();
     grad[0] = x[1] * x[2] * x[3];
@@ -122,10 +141,13 @@ struct G0 : public TwiceDerivableFunction
   }
 };
 
-struct G1 : public TwiceDerivableFunction
+template <typename T>
+struct G1 : public GenericTwiceDifferentiableFunction<T>
 {
+  FORWARD_TYPEDEFS ();
+
   G1 ()
-    : TwiceDerivableFunction (4, 1, "a * a + b * b + c * c + d * d")
+    : TwiceDifferentiableFunction (4, 1, "a * a + b * b + c * c + d * d")
   {
   }
 
@@ -137,7 +159,8 @@ struct G1 : public TwiceDerivableFunction
   }
 
   void
-  impl_gradient (gradient_t& grad, const argument_t& x, size_type) const throw ()
+  impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+    const throw ()
   {
     grad.setZero ();
     grad[0] = 2 * x[0];
@@ -173,7 +196,7 @@ struct G1 : public TwiceDerivableFunction
 };
 
 
-template <typename T, typename NLF>
+template <typename T, typename NLF, typename FT>
 void initialize_problem (T& pb)
 {
   // Set bound for all variables.
@@ -183,8 +206,8 @@ void initialize_problem (T& pb)
     pb.argumentBounds ()[i] = Function::makeInterval (1., 5.);
 
   // Add constraints.
-  boost::shared_ptr<G0> g0 (new G0 ());
-  boost::shared_ptr<G1> g1 (new G1 ());
+  boost::shared_ptr<G0<FT> > g0 (new G0<FT> ());
+  boost::shared_ptr<G1<FT> > g1 (new G1<FT> ());
 
   pb.addConstraint (boost::static_pointer_cast<NLF> (g0),
 		    Function::makeLowerInterval (25.));
