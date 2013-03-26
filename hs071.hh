@@ -52,39 +52,10 @@ struct F : public GenericTwiceDifferentiableFunction<T>
 
   void
   impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-    const throw ()
-  {
-    grad.setZero ();
-    grad[0] = x[0] * x[3] + x[3] * (x[0] + x[1] + x[2]);
-    grad[1] = x[0] * x[3];
-    grad[2] = x[0] * x[3] + 1;
-    grad[3] = x[0] * (x[0] + x[1] + x[2]);
-  }
+    const throw ();
 
   void
-  impl_hessian (hessian_t& h, const argument_t& x, size_type) const throw ()
-  {
-    h.setZero ();
-    h (0, 0) = 2 * x[3];
-    h (0, 1) = x[3];
-    h (0, 2) = x[3];
-    h (0, 3) = 2 * x[0] + x[1] + x[2];
-
-    h (1, 0) = x[3];
-    h (1, 1) = 0.;
-    h (1, 2) = 0.;
-    h (1, 3) = x[0];
-
-    h (2, 0) = x[3];
-    h (2, 1) = 0.;
-    h (2, 2) = 0.;
-    h (2, 3) = x[1];
-
-    h (3, 0) = 2 * x[0] + x[1] + x[2];
-    h (3, 1) = x[0];
-    h (3, 2) = x[0];
-    h (3, 3) = 0.;
-  }
+  impl_hessian (hessian_t& h, const argument_t& x, size_type) const throw ();
 };
 
 template <typename T>
@@ -106,39 +77,10 @@ struct G0 : public GenericTwiceDifferentiableFunction<T>
 
   void
   impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-    const throw ()
-  {
-    grad.setZero ();
-    grad[0] = x[1] * x[2] * x[3];
-    grad[1] = x[0] * x[2] * x[3];
-    grad[2] = x[0] * x[1] * x[3];
-    grad[3] = x[0] * x[1] * x[2];
-  }
+    const throw ();
 
   void
-  impl_hessian (hessian_t& h, const argument_t& x, size_type) const throw ()
-  {
-    h.setZero ();
-    h (0, 0) = 0.;
-    h (0, 1) = x[2] * x[3];
-    h (0, 2) = x[1] * x[3];
-    h (0, 3) = x[1] * x[2];
-
-    h (1, 0) = x[2] * x[3];
-    h (1, 1) = 0.;
-    h (1, 2) = x[0] * x[3];
-    h (1, 3) = x[0] * x[2];
-
-    h (2, 0) = x[1] * x[3];
-    h (2, 1) = x[0] * x[3];
-    h (2, 2) = 0.;
-    h (2, 3) = x[0] * x[1];
-
-    h (3, 0) = x[1] * x[2];
-    h (3, 1) = x[0] * x[2];
-    h (3, 2) = x[0] * x[1];
-    h (3, 3) = 0.;
-  }
+  impl_hessian (hessian_t& h, const argument_t& x, size_type) const throw ();
 };
 
 template <typename T>
@@ -147,7 +89,8 @@ struct G1 : public GenericTwiceDifferentiableFunction<T>
   FORWARD_TYPEDEFS ();
 
   G1 ()
-    : TwiceDifferentiableFunction (4, 1, "a * a + b * b + c * c + d * d")
+    : GenericTwiceDifferentiableFunction<T>
+      (4, 1, "a * a + b * b + c * c + d * d")
   {
   }
 
@@ -160,41 +103,226 @@ struct G1 : public GenericTwiceDifferentiableFunction<T>
 
   void
   impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-    const throw ()
-  {
-    grad.setZero ();
-    grad[0] = 2 * x[0];
-    grad[1] = 2 * x[1];
-    grad[2] = 2 * x[2];
-    grad[3] = 2 * x[3];
-  }
+    const throw ();
 
   void
-  impl_hessian (hessian_t& h, const argument_t&, size_type) const throw ()
-  {
-    h.setZero ();
-    h (0, 0) = 2.;
-    h (0, 1) = 0.;
-    h (0, 2) = 0.;
-    h (0, 3) = 0.;
-
-    h (1, 0) = 0.;
-    h (1, 1) = 2.;
-    h (1, 2) = 0.;
-    h (1, 3) = 0.;
-
-    h (2, 0) = 0.;
-    h (2, 1) = 0.;
-    h (2, 2) = 2.;
-    h (2, 3) = 0.;
-
-    h (3, 0) = 0.;
-    h (3, 1) = 0.;
-    h (3, 2) = 0.;
-    h (3, 3) = 2.;
-  }
+  impl_hessian (hessian_t& h, const argument_t&, size_type) const throw ();
 };
 
+template <>
+void
+F<EigenMatrixSparse>::impl_gradient
+(gradient_t& grad, const argument_t& x, size_type)
+  const throw ()
+{
+  grad.setZero ();
+  grad.insert (0) = x[0] * x[3] + x[3] * (x[0] + x[1] + x[2]);
+  grad.insert (1) = x[0] * x[3];
+  grad.insert (2) = x[0] * x[3] + 1;
+  grad.insert (3) = x[0] * (x[0] + x[1] + x[2]);
+}
+
+template <typename T>
+void
+F<T>::impl_gradient
+(gradient_t& grad, const argument_t& x, size_type)
+  const throw ()
+{
+  grad.setZero ();
+  grad[0] = x[0] * x[3] + x[3] * (x[0] + x[1] + x[2]);
+  grad[1] = x[0] * x[3];
+  grad[2] = x[0] * x[3] + 1;
+  grad[3] = x[0] * (x[0] + x[1] + x[2]);
+}
+
+
+template <>
+void
+G0<EigenMatrixSparse>::impl_gradient
+(gradient_t& grad, const argument_t& x, size_type)
+  const throw ()
+{
+  grad.setZero ();
+  grad.insert (0) = x[1] * x[2] * x[3];
+  grad.insert (1) = x[0] * x[2] * x[3];
+  grad.insert (2) = x[0] * x[1] * x[3];
+  grad.insert (3) = x[0] * x[1] * x[2];
+}
+
+template <typename T>
+void
+G0<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+  const throw ()
+{
+  grad.setZero ();
+  grad[0] = x[1] * x[2] * x[3];
+  grad[1] = x[0] * x[2] * x[3];
+  grad[2] = x[0] * x[1] * x[3];
+  grad[3] = x[0] * x[1] * x[2];
+}
+
+
+template <>
+void
+G1<EigenMatrixSparse>::impl_gradient
+(gradient_t& grad, const argument_t& x, size_type)
+  const throw ()
+{
+  grad.setZero ();
+  grad.insert (0) = 2 * x[0];
+  grad.insert (1) = 2 * x[1];
+  grad.insert (2) = 2 * x[2];
+  grad.insert (3) = 2 * x[3];
+}
+
+template <typename T>
+void
+G1<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+  const throw ()
+{
+  grad.setZero ();
+  grad[0] = 2 * x[0];
+  grad[1] = 2 * x[1];
+  grad[2] = 2 * x[2];
+  grad[3] = 2 * x[3];
+}
+
+template <>
+void
+F<EigenMatrixSparse>::impl_hessian
+(hessian_t& h, const argument_t& x, size_type) const throw ()
+{
+  h.setZero ();
+  h.insert (0, 0) = 2 * x[3];
+  h.insert (0, 1) = x[3];
+  h.insert (0, 2) = x[3];
+  h.insert (0, 3) = 2 * x[0] + x[1] + x[2];
+
+  h.insert (1, 0) = x[3];
+  h.insert (1, 3) = x[0];
+
+  h.insert (2, 0) = x[3];
+  h.insert (2, 3) = x[1];
+
+  h.insert (3, 0) = 2 * x[0] + x[1] + x[2];
+  h.insert (3, 1) = x[0];
+  h.insert (3, 2) = x[0];
+}
+
+template <typename T>
+void
+F<T>::impl_hessian (hessian_t& h, const argument_t& x, size_type) const throw ()
+{
+  h.setZero ();
+  h (0, 0) = 2 * x[3];
+  h (0, 1) = x[3];
+  h (0, 2) = x[3];
+  h (0, 3) = 2 * x[0] + x[1] + x[2];
+
+  h (1, 0) = x[3];
+  h (1, 1) = 0.;
+  h (1, 2) = 0.;
+  h (1, 3) = x[0];
+
+  h (2, 0) = x[3];
+  h (2, 1) = 0.;
+  h (2, 2) = 0.;
+  h (2, 3) = x[1];
+
+  h (3, 0) = 2 * x[0] + x[1] + x[2];
+  h (3, 1) = x[0];
+  h (3, 2) = x[0];
+  h (3, 3) = 0.;
+}
+
+template <>
+void
+G0<EigenMatrixSparse>::impl_hessian
+(hessian_t& h, const argument_t& x, size_type) const throw ()
+{
+  h.setZero ();
+  h.insert (0, 1) = x[2] * x[3];
+  h.insert (0, 2) = x[1] * x[3];
+  h.insert (0, 3) = x[1] * x[2];
+
+  h.insert (1, 0) = x[2] * x[3];
+  h.insert (1, 2) = x[0] * x[3];
+  h.insert (1, 3) = x[0] * x[2];
+
+  h.insert (2, 0) = x[1] * x[3];
+  h.insert (2, 1) = x[0] * x[3];
+  h.insert (2, 3) = x[0] * x[1];
+
+  h.insert (3, 0) = x[1] * x[2];
+  h.insert (3, 1) = x[0] * x[2];
+  h.insert (3, 2) = x[0] * x[1];
+}
+
+
+template <typename T>
+void
+G0<T>::impl_hessian (hessian_t& h, const argument_t& x, size_type) const throw ()
+{
+  h.setZero ();
+  h (0, 0) = 0.;
+  h (0, 1) = x[2] * x[3];
+  h (0, 2) = x[1] * x[3];
+  h (0, 3) = x[1] * x[2];
+
+  h (1, 0) = x[2] * x[3];
+  h (1, 1) = 0.;
+  h (1, 2) = x[0] * x[3];
+  h (1, 3) = x[0] * x[2];
+
+  h (2, 0) = x[1] * x[3];
+  h (2, 1) = x[0] * x[3];
+  h (2, 2) = 0.;
+  h (2, 3) = x[0] * x[1];
+
+  h (3, 0) = x[1] * x[2];
+  h (3, 1) = x[0] * x[2];
+  h (3, 2) = x[0] * x[1];
+  h (3, 3) = 0.;
+}
+
+
+template <>
+void
+G1<EigenMatrixSparse>::impl_hessian
+(hessian_t& h, const argument_t&, size_type) const throw ()
+{
+  h.setZero ();
+  h.insert (0, 0) = 2.;
+  h.insert (1, 1) = 2.;
+  h.insert (2, 2) = 2.;
+  h.insert (3, 3) = 2.;
+}
+
+template <typename T>
+void
+G1<T>::impl_hessian (hessian_t& h, const argument_t&, size_type) const throw ()
+{
+  h.setZero ();
+  h (0, 0) = 2.;
+  h (0, 1) = 0.;
+  h (0, 2) = 0.;
+  h (0, 3) = 0.;
+
+  h (1, 0) = 0.;
+  h (1, 1) = 2.;
+  h (1, 2) = 0.;
+  h (1, 3) = 0.;
+
+  h (2, 0) = 0.;
+  h (2, 1) = 0.;
+  h (2, 2) = 2.;
+  h (2, 3) = 0.;
+
+  h (3, 0) = 0.;
+  h (3, 1) = 0.;
+  h (3, 2) = 0.;
+  h (3, 3) = 2.;
+}
 
 template <typename T, typename NLF, typename FT>
 void initialize_problem (T& pb)
