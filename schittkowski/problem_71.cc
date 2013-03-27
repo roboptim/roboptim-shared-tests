@@ -45,7 +45,8 @@
   typedef typename parent_t::jacobian_t jacobian_t;		  \
   typedef typename parent_t::hessian_t hessian_t
 
-typedef boost::mpl::list< ::roboptim::EigenMatrixDense> functionTypes_t;
+typedef boost::mpl::list< ::roboptim::EigenMatrixDense,
+			  ::roboptim::EigenMatrixSparse> functionTypes_t;
 
 struct TestSuiteConfiguration
 {

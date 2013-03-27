@@ -44,7 +44,8 @@
   typedef typename parent_t::gradient_t gradient_t;	  \
   typedef typename parent_t::jacobian_t jacobian_t
 
-typedef boost::mpl::list< ::roboptim::EigenMatrixDense> functionTypes_t;
+typedef boost::mpl::list< ::roboptim::EigenMatrixDense,
+			  ::roboptim::EigenMatrixSparse> functionTypes_t;
 
 struct TestSuiteConfiguration
 {
@@ -105,6 +106,17 @@ namespace roboptim
       {
 	result[0] = 100 * std::pow (x[1] - std::pow (x[0], 2), 2)
 	  + std::pow (1 - x[0], 2);
+      }
+
+      template <>
+      void
+      F<EigenMatrixSparse>::impl_gradient
+      (gradient_t& grad, const argument_t& x, size_type)
+	const throw ()
+      {
+	grad.insert (0) =
+	  -400 * x[0] * (x[1] - std::pow (x[0], 2)) - 2 * (1 - x[0]);
+	grad.insert (1) = 200 * (x[1] - std::pow (x[0], 2));
       }
 
       template <typename T>
