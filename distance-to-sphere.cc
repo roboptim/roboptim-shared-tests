@@ -1,4 +1,4 @@
-// Copyright (C) 2013 by Thomas Moulard, AIST, CNRS.
+// Copyright (C) 2011-2013 by Florent Lamiraux, Thomas Moulard, AIST, CNRS.
 //
 // This file is part of the roboptim.
 //
@@ -27,6 +27,7 @@
 #include <roboptim/core/io.hh>
 #include <roboptim/core/solver.hh>
 #include <roboptim/core/solver-factory.hh>
+#include <roboptim/core/sum-of-c1-squares.hh>
 
 #ifndef SOLVER_NAME
 # error "please define solver name"
@@ -64,84 +65,101 @@ struct TestSuiteConfiguration
 
 namespace roboptim
 {
-  namespace schittkowski
+  namespace distanceToSphere
   {
-    namespace problem1
+    struct ExpectedResult
     {
-      struct ExpectedResult
+      static const double f0;
+      static const double x[];
+      static const double fx;
+    };
+    const double ExpectedResult::f0 = 0.;
+    const double ExpectedResult::x[] = {0., 0.};
+    const double ExpectedResult::fx = 0.;
+
+    /// Distance between a point on unit sphere and another point in R^3
+    template <typename T>
+    struct F : public GenericDifferentiableFunction<T>
+    {
+      FORWARD_TYPEDEFS ();
+
+      explicit F () : DifferentiableFunction
+		      (2, 3,
+		       "vector between unit sphere and point (x,y,z)"),
+		      point_ (3)
       {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 909.;
-      const double ExpectedResult::x[] = {1., 1.};
-      const double ExpectedResult::fx = 0.;
+	sphericalCoordinates (point_, -1.5, -1.2);
+	point_*=2.;
+      }
 
-      template <typename T>
-      class F : public GenericDifferentiableFunction<T>
-      {
-      public:
-	FORWARD_TYPEDEFS ();
-
-	explicit F () throw ();
-	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
-	void
-	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	  const throw ();
-      };
-
-      template <typename T>
-      F<T>::F () throw ()
-	: GenericDifferentiableFunction<T>
-	  (2, 1, "100 * (x[1] - x[0]^2)^2 + (1 - x[0])^2")
+      ~F () throw ()
       {}
 
-      template <typename T>
-      void
-      F<T>::impl_compute (result_t& result, const argument_t& x)
-	const throw ()
+      void impl_compute (result_t& result, const argument_t& x) const throw ()
       {
-	result[0] = 100 * std::pow (x[1] - std::pow (x[0], 2), 2)
-	  + std::pow (1 - x[0], 2);
+	result.setZero ();
+	double theta = x[0];
+	double phi = x[1];
+	sphericalCoordinates (result, theta, phi);
+	result -= point_;
       }
 
-      template <typename T>
-      void
-      F<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	const throw ()
+      void impl_gradient (gradient_t& gradient, const argument_t& x,
+			  size_type functionId=0) const throw ()
       {
-	grad[0] = -400 * x[0] * (x[1] - std::pow (x[0], 2)) - 2 * (1 - x[0]);
-	grad[1] = 200 * (x[1] - std::pow (x[0], 2));
+	double theta = x[0];
+	double phi = x[1];
+	switch (functionId)
+	  {
+	  case 0:
+	    gradient[0] = -sin(theta) * cos(phi);
+	    gradient[1] = -cos(theta) * sin(phi);
+	    break;
+	  case 1:
+	    gradient[0] = cos(theta) * cos(phi);
+	    gradient[1] = -sin(theta) * sin(phi);
+	    break;
+	  case 2:
+	    gradient[0] = 0.;
+	    gradient[1] = cos(phi);
+	    break;
+	  default:
+	    abort();
+	  }
       }
-    } // end of namespace problem1.
-  } // end of namespace schittkowski.
-} // end of namespace roboptim.
 
-BOOST_FIXTURE_TEST_SUITE (schittkowski, TestSuiteConfiguration)
+      static void sphericalCoordinates (result_t& res, double theta, double phi)
+      {
+	res (0) = cos(theta) * cos(phi);
+	res (1) = sin(theta) * cos(phi);
+	res (2) = sin(phi);
+      }
+      result_t point_;
+    };
+  } // namespace distanceToSphere
+} // namespace roboptim
 
-BOOST_AUTO_TEST_CASE_TEMPLATE (schittkowski_problem1, T, functionTypes_t)
+
+BOOST_FIXTURE_TEST_SUITE (distanceToSphere, TestSuiteConfiguration)
+
+BOOST_AUTO_TEST_CASE_TEMPLATE (distanceToSphere_problem1, T, functionTypes_t)
 {
   using namespace roboptim;
-  using namespace roboptim::schittkowski::problem1;
+  using namespace roboptim::distanceToSphere;
 
-  typedef Solver<GenericDifferentiableFunction<T>,
-		 boost::mpl::vector<GenericLinearFunction<T>,
-				    GenericDifferentiableFunction<T> > >
-  solver_t;
+  typedef Solver<SumOfC1Squares, boost::mpl::vector<> > solver_t;
 
   // Build problem.
-  F<T> f;
-  typename solver_t::problem_t problem (f);
+  boost::shared_ptr <F<T> > f (new F<T> ());
+  SumOfC1Squares soq (f, "");
 
-  problem.argumentBounds ()[1] = F<T>::makeLowerInterval (-1.5);
+  typename solver_t::problem_t problem (soq);
 
   typename F<T>::argument_t x (2);
-  x << -2., 1.;
+  x << 0., 0.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_CLOSE (f (x)[0], ExpectedResult::f0, 1e-6);
+  BOOST_CHECK_CLOSE (soq (x)[0], ExpectedResult::f0, 1e-6);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
