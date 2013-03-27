@@ -86,7 +86,7 @@ namespace roboptim
       F<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
 	const throw ()
       {
-	grad[0] = 400 * x[0] * (x[1] - std::pow (x[0], 2)) - 2 * (1 - x[0]);
+	grad[0] = -400 * x[0] * (x[1] - std::pow (x[0], 2)) - 2 * (1 - x[0]);
 	grad[1] = 200 * (x[1] - std::pow (x[0], 2));
       }
     } // end of namespace problem1.
