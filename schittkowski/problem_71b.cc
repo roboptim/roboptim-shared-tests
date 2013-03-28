@@ -36,6 +36,12 @@
 # error "please define plug-in path"
 #endif //! PROBLEM_TYPE
 
+#ifndef FUNCTION_TYPE
+# error "please define function type"
+#endif //! PROBLEM_TYPE
+
+typedef FUNCTION_TYPE functionType_t;
+
 #define FORWARD_TYPEDEFS()					  \
   typedef GenericTwiceDifferentiableFunction<T> parent_t;	  \
   typedef typename parent_t::result_t result_t;			  \
@@ -330,18 +336,19 @@ namespace roboptim
 
 BOOST_FIXTURE_TEST_SUITE (schittkowski, TestSuiteConfiguration)
 
-BOOST_AUTO_TEST_CASE_TEMPLATE (problem_71b, T, functionTypes_t)
+BOOST_AUTO_TEST_CASE (problem_71b)
 {
   using namespace roboptim;
   using namespace roboptim::schittkowski::problem71b;
 
-  typedef Solver<GenericDifferentiableFunction<T>,
-		 boost::mpl::vector<GenericLinearFunction<T>,
-				    GenericDifferentiableFunction<T> > >
+  typedef Solver<
+    GenericDifferentiableFunction<functionType_t>,
+    boost::mpl::vector<GenericLinearFunction<functionType_t>,
+		       GenericDifferentiableFunction<functionType_t> > >
     solver_t;
 
   // Build problem.
-  F<T> f;
+  F<functionType_t> f;
   typename solver_t::problem_t problem (f);
 
   // Set bound for all variables.
@@ -351,9 +358,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (problem_71b, T, functionTypes_t)
     problem.argumentBounds ()[i] = Function::makeInterval (1., 5.);
 
   // Add constraints.
-  boost::shared_ptr<G<T> > g (new G<T> ());
+  boost::shared_ptr<G<functionType_t> > g (new G<functionType_t> ());
 
-  typename F<T>::intervals_t bounds;
+  typename F<functionType_t>::intervals_t bounds;
   bounds.push_back(Function::makeLowerInterval (25.));
   bounds.push_back(Function::makeInterval (40., 40.));
 
@@ -362,11 +369,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (problem_71b, T, functionTypes_t)
   scales.push_back (1.);
 
   problem.addConstraint
-    (boost::static_pointer_cast<GenericDifferentiableFunction<T>  > (g),
+    (boost::static_pointer_cast<
+      GenericDifferentiableFunction<functionType_t>  > (g),
      bounds, scales);
 
   // Set the starting point.
-  typename F<T>::argument_t x (4);
+  typename F<functionType_t>::argument_t x (4);
   x << 1., 5., 5., 1.;
   problem.startingPoint () = x;
 

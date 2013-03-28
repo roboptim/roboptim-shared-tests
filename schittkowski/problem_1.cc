@@ -36,6 +36,12 @@
 # error "please define plug-in path"
 #endif //! PROBLEM_TYPE
 
+#ifndef FUNCTION_TYPE
+# error "please define function type"
+#endif //! PROBLEM_TYPE
+
+typedef FUNCTION_TYPE functionType_t;
+
 #define FORWARD_TYPEDEFS()				  \
   typedef GenericDifferentiableFunction<T> parent_t;	  \
   typedef typename parent_t::result_t result_t;		  \
@@ -43,9 +49,6 @@
   typedef typename parent_t::argument_t argument_t;	  \
   typedef typename parent_t::gradient_t gradient_t;	  \
   typedef typename parent_t::jacobian_t jacobian_t
-
-typedef boost::mpl::list< ::roboptim::EigenMatrixDense,
-			  ::roboptim::EigenMatrixSparse> functionTypes_t;
 
 struct TestSuiteConfiguration
 {
@@ -133,34 +136,45 @@ namespace roboptim
 
 BOOST_FIXTURE_TEST_SUITE (schittkowski, TestSuiteConfiguration)
 
-BOOST_AUTO_TEST_CASE_TEMPLATE (schittkowski_problem1, T, functionTypes_t)
+BOOST_AUTO_TEST_CASE (schittkowski_problem1)
 {
   using namespace roboptim;
   using namespace roboptim::schittkowski::problem1;
 
-  typedef Solver<GenericDifferentiableFunction<T>,
-		 boost::mpl::vector<GenericLinearFunction<T>,
-				    GenericDifferentiableFunction<T> > >
-  solver_t;
+  typedef Solver<
+    GenericDifferentiableFunction<functionType_t>,
+    boost::mpl::vector<GenericLinearFunction<functionType_t>,
+		       GenericDifferentiableFunction<functionType_t> > >
+    solver_t;
 
   // Build problem.
-  F<T> f;
+  F<functionType_t> f;
   typename solver_t::problem_t problem (f);
 
-  problem.argumentBounds ()[1] = F<T>::makeLowerInterval (-1.5);
+  problem.argumentBounds ()[1] = F<functionType_t>::makeLowerInterval (-1.5);
 
-  typename F<T>::argument_t x (2);
+  typename F<functionType_t>::argument_t x (2);
   x << -2., 1.;
   problem.startingPoint () = x;
 
   BOOST_CHECK_CLOSE (f (x)[0], ExpectedResult::f0, 1e-6);
 
+  std::cout << f.inputSize () << std::endl;
+  std::cout << problem.function ().inputSize () << std::endl;
+
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
   solver_t& solver = factory ();
 
+  std::cout << f.inputSize () << std::endl;
+  std::cout << problem.function ().inputSize () << std::endl;
+
   // Compute the minimum and retrieve the result.
   typename solver_t::result_t res = solver.minimum ();
+
+  std::cout << f.inputSize () << std::endl;
+  std::cout << problem.function ().inputSize () << std::endl;
+
 
   // Display solver information.
   std::cout << solver << std::endl;

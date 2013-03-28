@@ -36,6 +36,12 @@
 # error "please define plug-in path"
 #endif //! PROBLEM_TYPE
 
+#ifndef FUNCTION_TYPE
+# error "please define function type"
+#endif //! PROBLEM_TYPE
+
+typedef FUNCTION_TYPE functionType_t;
+
 #define FORWARD_TYPEDEFS()					  \
   typedef GenericTwiceDifferentiableFunction<T> parent_t;	  \
   typedef typename parent_t::result_t result_t;			  \
@@ -45,8 +51,7 @@
   typedef typename parent_t::jacobian_t jacobian_t;		  \
   typedef typename parent_t::hessian_t hessian_t
 
-typedef boost::mpl::list< ::roboptim::EigenMatrixDense,
-			  ::roboptim::EigenMatrixSparse> functionTypes_t;
+typedef boost::mpl::list< ::roboptim::EigenMatrixDense> functionTypes_t;
 
 struct TestSuiteConfiguration
 {
@@ -382,18 +387,19 @@ namespace roboptim
 
 BOOST_FIXTURE_TEST_SUITE (schittkowski, TestSuiteConfiguration)
 
-BOOST_AUTO_TEST_CASE_TEMPLATE (problem_71, T, functionTypes_t)
+BOOST_AUTO_TEST_CASE (problem_71)
 {
   using namespace roboptim;
   using namespace roboptim::schittkowski::problem71;
 
-  typedef Solver<GenericDifferentiableFunction<T>,
-		 boost::mpl::vector<GenericLinearFunction<T>,
-				    GenericDifferentiableFunction<T> > >
+  typedef Solver<
+    GenericDifferentiableFunction<functionType_t>,
+    boost::mpl::vector<GenericLinearFunction<functionType_t>,
+		       GenericDifferentiableFunction<functionType_t> > >
     solver_t;
 
   // Build problem.
-  F<T> f;
+  F<functionType_t> f;
   typename solver_t::problem_t problem (f);
 
   // Set bound for all variables.
@@ -403,18 +409,20 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (problem_71, T, functionTypes_t)
     problem.argumentBounds ()[i] = Function::makeInterval (1., 5.);
 
   // Add constraints.
-  boost::shared_ptr<G0<T> > g0 (new G0<T> ());
-  boost::shared_ptr<G1<T> > g1 (new G1<T> ());
+  boost::shared_ptr<G0<functionType_t> > g0 (new G0<functionType_t> ());
+  boost::shared_ptr<G1<functionType_t> > g1 (new G1<functionType_t> ());
 
   problem.addConstraint
-    (boost::static_pointer_cast<GenericDifferentiableFunction<T>  > (g0),
+    (boost::static_pointer_cast<
+      GenericDifferentiableFunction<functionType_t>  > (g0),
      Function::makeLowerInterval (25.));
   problem.addConstraint
-    (boost::static_pointer_cast<GenericDifferentiableFunction<T> > (g1),
+    (boost::static_pointer_cast<
+      GenericDifferentiableFunction<functionType_t> > (g1),
      Function::makeInterval (40., 40.));
 
   // Set the starting point.
-  typename F<T>::argument_t x (4);
+  typename F<functionType_t>::argument_t x (4);
   x << 1., 5., 5., 1.;
   problem.startingPoint () = x;
 
