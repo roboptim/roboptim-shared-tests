@@ -13,8 +13,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with roboptim-core.  If not, see <http://www.gnu.org/licenses/>.
 
-BUILD_TEST(problem_1)
-BUILD_TEST(problem_2)
-BUILD_TEST(problem_3)
-BUILD_TEST(problem_71)
-BUILD_TEST(problem_71b)
+IF(NOT DEFINED SCHITTKOWSKI_PROBLEMS)
+  SET(SCHITTKOWSKI_PROBLEMS 1 2 3 71 71b)
+ENDIF()
+
+FOREACH(PROBLEM ${SCHITTKOWSKI_PROBLEMS})
+  BUILD_TEST(problem_${PROBLEM})
+ENDFOREACH()

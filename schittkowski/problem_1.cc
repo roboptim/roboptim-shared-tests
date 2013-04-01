@@ -93,12 +93,6 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem1)
   using namespace roboptim;
   using namespace roboptim::schittkowski::problem1;
 
-  typedef Solver<
-    GenericDifferentiableFunction<functionType_t>,
-    boost::mpl::vector<GenericLinearFunction<functionType_t>,
-		       GenericDifferentiableFunction<functionType_t> > >
-    solver_t;
-
   // Build problem.
   F<functionType_t> f;
   typename solver_t::problem_t problem (f);

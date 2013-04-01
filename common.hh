@@ -46,7 +46,34 @@
 #  error "please define TESTS_DATA_DIR"
 # endif //! PROBLEM_TYPE
 
+# ifndef COST_FUNCTION_TYPE
+#  error "please define COST_FUNCTION_TYPE"
+# endif //! PROBLEM_TYPE
+
 typedef FUNCTION_TYPE functionType_t;
+
+// Build extensible constraint type.
+typedef boost::mpl::vector< > constraints0_t;
+
+# ifdef CONSTRAINT_TYPE_1
+typedef boost::mpl::push_back<CONSTRAINT_TYPE_1<functionType_t> > constraint1_t;
+# else
+typedef constraints0_t constraints1_t;
+# endif // CONSTRAINT_TYPE_1
+
+# ifdef CONSTRAINT_TYPE_2
+typedef boost::mpl::push_back<CONSTRAINT_TYPE_2<functionType_t> > constraint2_t;
+# else
+typedef constraints1_t constraints2_t;
+# endif // CONSTRAINT_TYPE_2
+
+typedef constraints2_t constraints_t;
+
+
+// Define solver type.
+typedef ::roboptim::Solver<COST_FUNCTION_TYPE<functionType_t>, constraints_t >
+solver_t;
+
 
 struct TestSuiteConfiguration
 {
