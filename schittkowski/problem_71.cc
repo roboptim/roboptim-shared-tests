@@ -190,14 +190,13 @@ namespace roboptim
 	grad[3] = x[0] * (x[0] + x[1] + x[2]);
       }
 
-
       template <>
       void
       G0<EigenMatrixSparse>::impl_gradient
       (gradient_t& grad, const argument_t& x, size_type)
 	const throw ()
       {
-	grad.setZero ();
+	grad.reserve (4);
 	grad.insert (0) = x[1] * x[2] * x[3];
 	grad.insert (1) = x[0] * x[2] * x[3];
 	grad.insert (2) = x[0] * x[1] * x[3];
@@ -223,7 +222,7 @@ namespace roboptim
       (gradient_t& grad, const argument_t& x, size_type)
 	const throw ()
       {
-	grad.setZero ();
+	grad.reserve (4);
 	grad.insert (0) = 2 * x[0];
 	grad.insert (1) = 2 * x[1];
 	grad.insert (2) = 2 * x[2];
