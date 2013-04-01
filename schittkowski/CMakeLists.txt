@@ -14,5 +14,6 @@
 # along with roboptim-core.  If not, see <http://www.gnu.org/licenses/>.
 
 BUILD_TEST(problem_1)
+BUILD_TEST(problem_2)
 BUILD_TEST(problem_71)
 BUILD_TEST(problem_71b)
