@@ -125,17 +125,17 @@ namespace roboptim
 	grad.setZero ();
 	if (functionId == 0)
 	  {
-	    grad.insert (0) = 2 * x[0];
-	    grad.insert (1) = 2 * x[1];
-	    grad.insert (2) = 2 * x[2];
-	    grad.insert (3) = 2 * x[3];
-	  }
-	else
-	  {
 	    grad.insert (0) = x[1] * x[2] * x[3];
 	    grad.insert (1) = x[0] * x[2] * x[3];
 	    grad.insert (2) = x[0] * x[1] * x[3];
 	    grad.insert (3) = x[0] * x[1] * x[2];
+	  }
+	else
+	  {
+	    grad.insert (0) = 2 * x[0];
+	    grad.insert (1) = 2 * x[1];
+	    grad.insert (2) = 2 * x[2];
+	    grad.insert (3) = 2 * x[3];
 	  }
       }
 
