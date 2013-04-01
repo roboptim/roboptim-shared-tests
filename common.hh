@@ -1,0 +1,69 @@
+// Copyright (C) 2013 by Thomas Moulard, AIST, CNRS.
+//
+// This file is part of the roboptim.
+//
+// roboptim is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// roboptim is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with roboptim.  If not, see <http://www.gnu.org/licenses/>.
+
+#ifndef ROBOPTIM_SHARED_TESTS_COMMON_HH
+# define ROBOPTIM_SHARED_TESTS_COMMON_HH
+# include <iostream>
+
+# include <boost/mpl/list.hpp>
+# include <boost/test/test_case_template.hpp>
+# include <boost/test/unit_test.hpp>
+
+# include <log4cxx/xml/domconfigurator.h>
+
+# include <roboptim/core/twice-differentiable-function.hh>
+# include <roboptim/core/io.hh>
+# include <roboptim/core/solver.hh>
+# include <roboptim/core/solver-factory.hh>
+
+# ifndef SOLVER_NAME
+#  error "please define solver name"
+# endif //! PROBLEM_TYPE
+
+# ifndef PLUGIN_PATH
+#  error "please define plug-in path"
+# endif //! PROBLEM_TYPE
+
+# ifndef FUNCTION_TYPE
+#  error "please define function type"
+# endif //! PROBLEM_TYPE
+
+# ifndef TESTS_DATA_DIR
+#  error "please define TESTS_DATA_DIR"
+# endif //! PROBLEM_TYPE
+
+typedef FUNCTION_TYPE functionType_t;
+
+struct TestSuiteConfiguration
+{
+  TestSuiteConfiguration ()
+  {
+    std::string log4cxxConfigurationFile = TESTS_DATA_DIR;
+    log4cxxConfigurationFile += "/log4cxx.xml";
+    log4cxx::xml::DOMConfigurator::configure (log4cxxConfigurationFile);
+
+    lt_dlinit();
+    BOOST_REQUIRE_EQUAL (lt_dlsetsearchpath (PLUGIN_PATH), 0);
+  }
+
+  ~TestSuiteConfiguration ()
+  {
+    lt_dlexit ();
+  }
+};
+
+#endif //! ROBOPTIM_SHARED_TESTS_COMMON_HH
