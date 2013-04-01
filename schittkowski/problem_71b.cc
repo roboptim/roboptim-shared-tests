@@ -15,59 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with roboptim.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
-
-#include <boost/mpl/list.hpp>
-#include <boost/test/test_case_template.hpp>
-#include <boost/test/unit_test.hpp>
-
-#include <log4cxx/basicconfigurator.h>
-
-#include <roboptim/core/differentiable-function.hh>
-#include <roboptim/core/io.hh>
-#include <roboptim/core/solver.hh>
-#include <roboptim/core/solver-factory.hh>
-
-#ifndef SOLVER_NAME
-# error "please define solver name"
-#endif //! PROBLEM_TYPE
-
-#ifndef PLUGIN_PATH
-# error "please define plug-in path"
-#endif //! PROBLEM_TYPE
-
-#ifndef FUNCTION_TYPE
-# error "please define function type"
-#endif //! PROBLEM_TYPE
-
-typedef FUNCTION_TYPE functionType_t;
-
-#define FORWARD_TYPEDEFS()					  \
-  typedef GenericTwiceDifferentiableFunction<T> parent_t;	  \
-  typedef typename parent_t::result_t result_t;			  \
-  typedef typename parent_t::size_type size_type;		  \
-  typedef typename parent_t::argument_t argument_t;		  \
-  typedef typename parent_t::gradient_t gradient_t;		  \
-  typedef typename parent_t::jacobian_t jacobian_t;		  \
-  typedef typename parent_t::hessian_t hessian_t
-
-typedef boost::mpl::list< ::roboptim::EigenMatrixDense> functionTypes_t;
-
-struct TestSuiteConfiguration
-{
-  TestSuiteConfiguration ()
-  {
-    log4cxx::BasicConfigurator::configure ();
-
-    lt_dlinit();
-    BOOST_REQUIRE_EQUAL (lt_dlsetsearchpath (PLUGIN_PATH), 0);
-  }
-
-  ~TestSuiteConfiguration ()
-  {
-    lt_dlexit ();
-  }
-};
+#include "common.hh"
 
 namespace roboptim
 {
@@ -89,11 +37,12 @@ namespace roboptim
       template <typename T>
       struct F : public GenericTwiceDifferentiableFunction<T>
       {
-	FORWARD_TYPEDEFS ();
+	ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS
+	(GenericTwiceDifferentiableFunction<T>);
 
 	F ()
 	  : GenericTwiceDifferentiableFunction<T>
-	    (4, 1, "x1 * x4 * (x1 + x2 + x3) + x3")
+	    (4, 1, "x₀ x₃ (x₀ + x₁ + x₂) + x₂")
 	{}
 
 	void
@@ -114,11 +63,12 @@ namespace roboptim
       template <typename T>
       struct G : public GenericTwiceDifferentiableFunction<T>
       {
-	FORWARD_TYPEDEFS ();
+	ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS
+	(GenericTwiceDifferentiableFunction<T>);
 
 	G ()
 	  : GenericTwiceDifferentiableFunction<T>
-	    (4, 2, "a * b * c * d\na * a + b * b + c * c + d * d")
+	    (4, 2, "x₀ x₁ x₂ x₃\nx₀² + x₁² + x₂² + x₃²")
 	{
 	}
 
