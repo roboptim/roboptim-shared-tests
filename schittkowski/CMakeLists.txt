@@ -16,5 +16,6 @@
 BUILD_TEST(problem_1)
 BUILD_TEST(problem_2)
 BUILD_TEST(problem_3)
+BUILD_TEST(problem_4)
 BUILD_TEST(problem_71)
 BUILD_TEST(problem_71b)
