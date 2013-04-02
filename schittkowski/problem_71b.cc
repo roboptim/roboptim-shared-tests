@@ -37,7 +37,7 @@ namespace roboptim
       template <typename T>
       struct F : public GenericTwiceDifferentiableFunction<T>
       {
-	ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS
+	ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericTwiceDifferentiableFunction<T>);
 
 	F ()
@@ -63,7 +63,7 @@ namespace roboptim
       template <typename T>
       struct G : public GenericTwiceDifferentiableFunction<T>
       {
-	ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS
+	ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericTwiceDifferentiableFunction<T>);
 
 	G ()

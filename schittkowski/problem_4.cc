@@ -37,7 +37,7 @@ namespace roboptim
       class F : public GenericDifferentiableFunction<T>
       {
       public:
-	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS
+	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
 	explicit F () throw ();
