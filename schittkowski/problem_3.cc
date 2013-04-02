@@ -93,11 +93,11 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem3)
 
   // Build problem.
   F<functionType_t> f;
-  typename solver_t::problem_t problem (f);
+  solver_t::problem_t problem (f);
 
   problem.argumentBounds ()[1] = F<functionType_t>::makeLowerInterval (0);
 
-  typename F<functionType_t>::argument_t x (2);
+  F<functionType_t>::argument_t x (2);
   x << 10., 1.;
   problem.startingPoint () = x;
 
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem3)
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Compute the minimum and retrieve the result.
-  typename solver_t::result_t res = solver.minimum ();
+  solver_t::result_t res = solver.minimum ();
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

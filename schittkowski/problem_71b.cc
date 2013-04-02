@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE (problem_71b)
 
   // Build problem.
   F<functionType_t> f;
-  typename solver_t::problem_t problem (f);
+  solver_t::problem_t problem (f);
 
   // Set bound for all variables.
   // 1. < x_i < 5. (x_i in [1.;5.])
@@ -304,11 +304,11 @@ BOOST_AUTO_TEST_CASE (problem_71b)
   // Add constraints.
   boost::shared_ptr<G<functionType_t> > g (new G<functionType_t> ());
 
-  typename F<functionType_t>::intervals_t bounds;
+  F<functionType_t>::intervals_t bounds;
   bounds.push_back(Function::makeLowerInterval (25.));
   bounds.push_back(Function::makeInterval (40., 40.));
 
-  typename solver_t::problem_t::scales_t scales;
+  solver_t::problem_t::scales_t scales;
   scales.push_back (1.);
   scales.push_back (1.);
 
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE (problem_71b)
      bounds, scales);
 
   // Set the starting point.
-  typename F<functionType_t>::argument_t x (4);
+  F<functionType_t>::argument_t x (4);
   x << 1., 5., 5., 1.;
   problem.startingPoint () = x;
 
@@ -329,7 +329,7 @@ BOOST_AUTO_TEST_CASE (problem_71b)
   solver_t& solver = factory ();
 
   // Compute the minimum and retrieve the result.
-  typename solver_t::result_t res = solver.minimum ();
+  solver_t::result_t res = solver.minimum ();
 
   // Display solver information.
   std::cout << solver << std::endl;

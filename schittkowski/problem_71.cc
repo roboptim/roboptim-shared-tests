@@ -344,7 +344,7 @@ BOOST_AUTO_TEST_CASE (problem_71)
 
   // Build problem.
   F<functionType_t> f;
-  typename solver_t::problem_t problem (f);
+  solver_t::problem_t problem (f);
 
   // Set bound for all variables.
   // 1. < x_i < 5. (x_i in [1.;5.])
@@ -366,7 +366,7 @@ BOOST_AUTO_TEST_CASE (problem_71)
      Function::makeInterval (40., 40.));
 
   // Set the starting point.
-  typename F<functionType_t>::argument_t x (4);
+  F<functionType_t>::argument_t x (4);
   x << 1., 5., 5., 1.;
   problem.startingPoint () = x;
 
@@ -377,7 +377,7 @@ BOOST_AUTO_TEST_CASE (problem_71)
   solver_t& solver = factory ();
 
   // Compute the minimum and retrieve the result.
-  typename solver_t::result_t res = solver.minimum ();
+  solver_t::result_t res = solver.minimum ();
 
   // Display solver information.
   std::cout << solver << std::endl;
