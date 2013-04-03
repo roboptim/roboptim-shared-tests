@@ -141,10 +141,10 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem1)
 
   // Check final x.
   for (unsigned i = 0; i < result.x.size (); ++i)
-    BOOST_CHECK_CLOSE (result.x[i], ExpectedResult::x[i], 1e-6);
+    BOOST_CHECK_CLOSE (result.x[i], ExpectedResult::x[i], 1e-5);
 
   // Check final value.
-  BOOST_CHECK_CLOSE (1. + result.value[0], 1. + ExpectedResult::fx, 1e-6);
+  BOOST_CHECK_CLOSE (1. + result.value[0], 1. + ExpectedResult::fx, 1e-5);
 
 
   // Display the result.
