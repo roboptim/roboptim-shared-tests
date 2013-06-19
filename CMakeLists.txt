@@ -67,10 +67,11 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests)
 # BUILD_TEST(NAME)
 # ----------------
 #
-# Define a test named `NAME'.
+# Define a test named `${NAME}${PROGRAM_SUFFIX}' where `${PROGRAM_SUFFIX}' is
+# an environment variable (e.g. `-sparse').
 #
-# This macro will create a binary from `NAME.cc', link it against
-# Boost and add it to the test suite.
+# This macro will create a binary from `${NAME}.cc', link it
+# against Boost and add it to the test suite as `${NAME}${PROGRAM_SUFFIX}'.
 #
 MACRO(BUILD_TEST NAME)
   ADD_EXECUTABLE(${NAME}${PROGRAM_SUFFIX}
@@ -78,7 +79,7 @@ MACRO(BUILD_TEST NAME)
 
   SET_TARGET_PROPERTIES(${NAME}${PROGRAM_SUFFIX}
     PROPERTIES COMPILE_FLAGS
-    "-DSOLVER_NAME='\"${SOLVER_NAME}\"' -DPLUGIN_PATH='\"${PLUGIN_PATH}\"' -DFUNCTION_TYPE=${FUNCTION_TYPE} -DCOST_FUNCTION_TYPE=${COST_FUNCTION_TYPE} ${CONSTRAINT_TYPE_1_STR} ${CONSTRAINT_TYPE_2_STR} -DTESTS_DATA_DIR='\"${CMAKE_CURRENT_SOURCE_DIR}\"' -DLOG_FILENAME='\"${NAME}.log\"' ")
+    "-DSOLVER_NAME='\"${SOLVER_NAME}\"' -DPLUGIN_PATH='\"${PLUGIN_PATH}\"' -DFUNCTION_TYPE=${FUNCTION_TYPE} -DCOST_FUNCTION_TYPE=${COST_FUNCTION_TYPE} ${CONSTRAINT_TYPE_1_STR} ${CONSTRAINT_TYPE_2_STR} -DTESTS_DATA_DIR='\"${CMAKE_CURRENT_SOURCE_DIR}\"' -DLOG_FILENAME='\"${NAME}${PROGRAM_SUFFIX}.log\"' ")
 
   ADD_TEST(${NAME}${PROGRAM_SUFFIX}
     ${RUNTIME_OUTPUT_DIRECTORY}/${NAME}${PROGRAM_SUFFIX})
