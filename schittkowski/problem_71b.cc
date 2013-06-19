@@ -328,6 +328,9 @@ BOOST_AUTO_TEST_CASE (problem_71b)
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
   solver_t& solver = factory ();
 
+  // Set optional log file for debugging
+  SET_LOG_FILE(solver);
+
   // Compute the minimum and retrieve the result.
   solver_t::result_t res = solver.minimum ();
 

@@ -117,6 +117,9 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem2)
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
   solver_t& solver = factory ();
 
+  // Set optional log file for debugging
+  SET_LOG_FILE(solver);
+
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
