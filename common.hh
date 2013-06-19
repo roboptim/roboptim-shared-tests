@@ -50,6 +50,12 @@
 #  error "please define COST_FUNCTION_TYPE"
 # endif //! PROBLEM_TYPE
 
+# ifdef LOG_FILENAME
+#  define SET_LOG_FILE(solver) solver.parameters()["ipopt.output_file"].value = std::string(LOG_FILENAME)
+# else //! LOG_FILENAME
+#  define SET_LOG_FILE(solver)
+# endif //! LOG_FILENAME
+
 typedef FUNCTION_TYPE functionType_t;
 
 // Build extensible constraint type.
