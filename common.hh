@@ -19,7 +19,8 @@
 # define ROBOPTIM_SHARED_TESTS_COMMON_HH
 # include <iostream>
 
-# include <boost/mpl/list.hpp>
+# include <boost/mpl/vector.hpp>
+# include <boost/mpl/push_back.hpp>
 # include <boost/test/test_case_template.hpp>
 # include <boost/test/unit_test.hpp>
 
