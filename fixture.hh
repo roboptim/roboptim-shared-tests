@@ -28,6 +28,7 @@
 
 # include <log4cxx/xml/domconfigurator.h>
 
+# include <roboptim/core/numeric-linear-function.hh>
 # include <roboptim/core/twice-differentiable-function.hh>
 # include <roboptim/core/io.hh>
 # include <roboptim/core/solver.hh>
