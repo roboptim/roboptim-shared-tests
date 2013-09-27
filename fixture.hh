@@ -48,7 +48,8 @@ struct TestSuiteConfiguration
 
   ~TestSuiteConfiguration ()
   {
-    lt_dlexit ();
+    if (lt_dlexit ())
+      std::cerr << "lt_dlexit failed" << std::endl;
   }
 };
 
