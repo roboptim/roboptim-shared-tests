@@ -28,6 +28,7 @@
 
 # include <roboptim/core/twice-differentiable-function.hh>
 # include <roboptim/core/io.hh>
+# include <roboptim/core/numeric-linear-function.hh>
 # include <roboptim/core/linear-function.hh>
 # include <roboptim/core/optimization-logger.hh>
 # include <roboptim/core/solver.hh>
