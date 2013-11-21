@@ -37,12 +37,12 @@
 # error "please define plug-in path"
 #endif //! PROBLEM_TYPE
 
-#define FORWARD_TYPEDEFS()				  \
-  typedef GenericDifferentiableFunction<T> parent_t;	  \
-  typedef typename parent_t::result_t result_t;		  \
-  typedef typename parent_t::size_type size_type;	  \
-  typedef typename parent_t::argument_t argument_t;	  \
-  typedef typename parent_t::gradient_t gradient_t;	  \
+#define FORWARD_TYPEDEFS()                              \
+  typedef GenericDifferentiableFunction<T> parent_t;    \
+  typedef typename parent_t::result_t result_t;         \
+  typedef typename parent_t::size_type size_type;       \
+  typedef typename parent_t::argument_t argument_t;     \
+  typedef typename parent_t::gradient_t gradient_t;     \
   typedef typename parent_t::jacobian_t jacobian_t
 
 typedef boost::mpl::list< ::roboptim::EigenMatrixDense> functionTypes_t;
@@ -69,13 +69,15 @@ namespace roboptim
   {
     struct ExpectedResult
     {
-      static const double f0;
+      static const double x0[];
+      static const double fx0;
       static const double x[];
       static const double fx;
     };
-    const double ExpectedResult::f0 = 0.;
-    const double ExpectedResult::x[] = {0., 0.};
-    const double ExpectedResult::fx = 0.;
+    const double ExpectedResult::x0[] = {0., 0.};
+    const double ExpectedResult::fx0  = 4.8974713057829096;
+    const double ExpectedResult::x[]  = {-1.5, -1.2};
+    const double ExpectedResult::fx   = 1.0;
 
     /// Distance between a point on unit sphere and another point in R^3
     template <typename T>
@@ -88,8 +90,9 @@ namespace roboptim
 		       "vector between unit sphere and point (x,y,z)"),
 		      point_ (3)
       {
-	sphericalCoordinates (point_, -1.5, -1.2);
-	point_*=2.;
+	sphericalCoordinates (point_, ExpectedResult::x[0],
+				      ExpectedResult::x[1]);
+	point_ *= 2.;
       }
 
       ~F () throw ()
@@ -105,7 +108,7 @@ namespace roboptim
       }
 
       void impl_gradient (gradient_t& gradient, const argument_t& x,
-			  size_type functionId=0) const throw ()
+			  size_type functionId = 0) const throw ()
       {
 	double theta = x[0];
 	double phi = x[1];
@@ -149,6 +152,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (distanceToSphere_problem1, T, functionTypes_t)
 
   typedef Solver<SumOfC1Squares, boost::mpl::vector<> > solver_t;
 
+  // Check tolerance
+  double check_tol = 1e-2;
+
   // Build problem.
   boost::shared_ptr <F<T> > f (new F<T> ());
   SumOfC1Squares soq (f, "");
@@ -156,10 +162,10 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (distanceToSphere_problem1, T, functionTypes_t)
   typename solver_t::problem_t problem (soq);
 
   typename F<T>::argument_t x (2);
-  x << 0., 0.;
+  x << ExpectedResult::x0[0], ExpectedResult::x0[1];
   problem.startingPoint () = x;
 
-  BOOST_CHECK_CLOSE (soq (x)[0], ExpectedResult::f0, 1e-6);
+  BOOST_CHECK_CLOSE (soq (x)[0], ExpectedResult::fx0, 1e-6);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
@@ -171,31 +177,60 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (distanceToSphere_problem1, T, functionTypes_t)
   // Display solver information.
   std::cout << solver << std::endl;
 
-  // Check if the minimization has succeed.
-  if (res.which () != solver_t::SOLVER_VALUE)
+  // Process the result
+  switch (res.which ())
     {
-      std::cout << "A solution should have been found. Failing..."
-                << std::endl
-                << boost::get<SolverError> (res).what ()
-                << std::endl;
-      BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);
-      return;
+    case solver_t::SOLVER_VALUE:
+      {
+	// Get the result.
+	Result& result = boost::get<Result> (res);
+
+	// Check final x.
+	for (unsigned i = 0; i < result.x.size (); ++i)
+	  BOOST_CHECK_CLOSE (result.x[i], ExpectedResult::x[i], check_tol);
+
+	// Check final value.
+	BOOST_CHECK_CLOSE (result.value[0], ExpectedResult::fx, check_tol);
+
+	// Display the result.
+	std::cout << "A solution has been found: " << std::endl
+		  << result << std::endl;
+
+	break;
+      }
+
+    case solver_t::SOLVER_VALUE_WARNINGS:
+      {
+	// Get the result.
+	ResultWithWarnings& result = boost::get<ResultWithWarnings> (res);
+
+	// Check final x.
+	for (unsigned i = 0; i < result.x.size (); ++i)
+	  BOOST_CHECK_CLOSE (result.x[i], ExpectedResult::x[i], check_tol);
+
+	// Check final value.
+	BOOST_CHECK_CLOSE (result.value[0], ExpectedResult::fx, check_tol);
+
+
+	// Display the result.
+	std::cout << "A solution has been found: " << std::endl
+		  << result << std::endl;
+
+	break;
+      }
+
+    case solver_t::SOLVER_NO_SOLUTION:
+    case solver_t::SOLVER_ERROR:
+      {
+	std::cout << "A solution should have been found. Failing..."
+		  << std::endl
+		  << boost::get<SolverError> (res).what ()
+		  << std::endl;
+	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);
+
+	return;
+      }
     }
-
-  // Get the result.
-  Result& result = boost::get<Result> (res);
-
-  // Check final x.
-  for (unsigned i = 0; i < result.x.size (); ++i)
-    BOOST_CHECK_CLOSE (result.x[i], ExpectedResult::x[i], 1e-6);
-
-  // Check final value.
-  BOOST_CHECK_CLOSE (1. + result.value[0], 1. + ExpectedResult::fx, 1e-6);
-
-
-  // Display the result.
-  std::cout << "A solution has been found: " << std::endl
-	    << result << std::endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END ()
