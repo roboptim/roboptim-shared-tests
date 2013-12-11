@@ -25,6 +25,7 @@
 
 #include <roboptim/core/differentiable-function.hh>
 #include <roboptim/core/io.hh>
+#include <roboptim/core/optimization-logger.hh>
 #include <roboptim/core/solver.hh>
 #include <roboptim/core/solver-factory.hh>
 #include <roboptim/core/sum-of-c1-squares.hh>
@@ -170,6 +171,10 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (distanceToSphere_problem1, T, functionTypes_t)
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
   solver_t& solver = factory ();
+
+  // Add an optimization logger
+  OptimizationLogger<solver_t> logger
+    (solver, "/tmp/roboptim-shared-tests/" SOLVER_NAME "/distance-to-sphere");
 
   // Compute the minimum and retrieve the result.
   typename solver_t::result_t res = solver.minimum ();
