@@ -376,7 +376,8 @@ BOOST_AUTO_TEST_CASE (problem_71)
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
   solver_t& solver = factory ();
   OptimizationLogger<solver_t> logger
-    (solver, "/tmp/roboptim-shared-tests/" SOLVER_NAME "/schittkowski/problem-71");
+    (solver,
+     "/tmp/roboptim-shared-tests/" SOLVER_NAME "/schittkowski/problem-71");
 
 
   // Set optional log file for debugging
@@ -403,7 +404,7 @@ BOOST_AUTO_TEST_CASE (problem_71)
   Result& result = boost::get<Result> (res);
 
   // Check final x.
-  for (unsigned i = 0; i < result.x.size (); ++i)
+  for (F<functionType_t>::vector_t::Index i = 0; i < result.x.size (); ++i)
     BOOST_CHECK_CLOSE (result.x[i], ExpectedResult::x[i], 1e-3);
 
   // Check final value.
