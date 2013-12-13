@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (distanceToSphere_problem1, T, functionTypes_t)
 	Result& result = boost::get<Result> (res);
 
 	// Check final x.
-	for (unsigned i = 0; i < result.x.size (); ++i)
+	for (typename F<T>::size_type i = 0; i < result.x.size (); ++i)
 	  BOOST_CHECK_CLOSE (result.x[i], ExpectedResult::x[i], check_tol);
 
 	// Check final value.
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (distanceToSphere_problem1, T, functionTypes_t)
 	ResultWithWarnings& result = boost::get<ResultWithWarnings> (res);
 
 	// Check final x.
-	for (unsigned i = 0; i < result.x.size (); ++i)
+	for (typename F<T>::size_type i = 0; i < result.x.size (); ++i)
 	  BOOST_CHECK_CLOSE (result.x[i], ExpectedResult::x[i], check_tol);
 
 	// Check final value.
