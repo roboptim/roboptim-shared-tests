@@ -99,6 +99,4 @@ MACRO(BUILD_TEST FILE_NAME)
     "LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/src:$ENV{LD_LIBRARY_PATH}")
 ENDMACRO()
 
-#BUILD_TEST (distance-to-sphere)
-
 INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/schittkowski/CMakeLists.txt)
