@@ -13,48 +13,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with roboptim-core.  If not, see <http://www.gnu.org/licenses/>.
 
-IF(SOLVER_NAME)
-ELSE()
-  MESSAGE(FATAL_ERROR "require SOLVER_NAME to be set")
-ENDIF()
-
-IF(PLUGIN_PATH)
-ELSE()
-  MESSAGE(FATAL_ERROR "require PLUGIN_PATH to be set")
-ENDIF()
-
-IF(FUNCTION_TYPE)
-ELSE()
-  MESSAGE(FATAL_ERROR "require FUNCTION_TYPE to be set")
-ENDIF()
-
-IF(COST_FUNCTION_TYPE)
-ELSE()
-  MESSAGE(FATAL_ERROR "require COST_FUNCTION_TYPE to be set")
-ENDIF()
-
-IF(DEFINED CONSTRAINT_TYPE_1)
-ELSE()
-  MESSAGE(FATAL_ERROR "require CONSTRAINT_TYPE_1 to be set")
-ENDIF()
-
-IF(DEFINED CONSTRAINT_TYPE_2)
-ELSE()
-  MESSAGE(FATAL_ERROR "require CONSTRAINT_TYPE_2 to be set")
-ENDIF()
-
-IF(CONSTRAINT_TYPE_1)
-  SET(CONSTRAINT_TYPE_1_STR "-DCONSTRAINT_TYPE_1=${CONSTRAINT_TYPE_1}")
-ELSE()
-  SET(CONSTRAINT_TYPE_1_STR "")
-ENDIF()
-
-IF(CONSTRAINT_TYPE_2)
-  SET(CONSTRAINT_TYPE_2_STR "-DCONSTRAINT_TYPE_2=${CONSTRAINT_TYPE_2}")
-ELSE()
-  SET(CONSTRAINT_TYPE_2_STR "")
-ENDIF()
-
 # Add Boost path to include directories.
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
@@ -64,8 +22,57 @@ ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN)
 # Add current directory to include directories.
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests)
 
-# BUILD_TEST(NAME)
-# ----------------
+# CHECK_TEST_PARAMETERS()
+# -----------------------
+#
+# Verify that test problem parameters were properly set.
+#
+MACRO(CHECK_TEST_PARAMETERS)
+  IF(SOLVER_NAME)
+  ELSE()
+    MESSAGE(FATAL_ERROR "require SOLVER_NAME to be set")
+  ENDIF()
+
+  IF(PLUGIN_PATH)
+  ELSE()
+    MESSAGE(FATAL_ERROR "require PLUGIN_PATH to be set")
+  ENDIF()
+
+  IF(FUNCTION_TYPE)
+  ELSE()
+    MESSAGE(FATAL_ERROR "require FUNCTION_TYPE to be set")
+  ENDIF()
+
+  IF(COST_FUNCTION_TYPE)
+  ELSE()
+    MESSAGE(FATAL_ERROR "require COST_FUNCTION_TYPE to be set")
+  ENDIF()
+
+  IF(DEFINED CONSTRAINT_TYPE_1)
+  ELSE()
+    MESSAGE(FATAL_ERROR "require CONSTRAINT_TYPE_1 to be set")
+  ENDIF()
+
+  IF(DEFINED CONSTRAINT_TYPE_2)
+  ELSE()
+    MESSAGE(FATAL_ERROR "require CONSTRAINT_TYPE_2 to be set")
+  ENDIF()
+
+  IF(CONSTRAINT_TYPE_1)
+    SET(CONSTRAINT_TYPE_1_STR "-DCONSTRAINT_TYPE_1=${CONSTRAINT_TYPE_1}")
+  ELSE()
+    SET(CONSTRAINT_TYPE_1_STR "")
+  ENDIF()
+
+  IF(CONSTRAINT_TYPE_2)
+    SET(CONSTRAINT_TYPE_2_STR "-DCONSTRAINT_TYPE_2=${CONSTRAINT_TYPE_2}")
+  ELSE()
+    SET(CONSTRAINT_TYPE_2_STR "")
+  ENDIF()
+ENDMACRO()
+
+# BUILD_TEST(FILE_NAME)
+# ---------------------
 #
 # Define a test named `${NAME}${PROGRAM_SUFFIX}' where `${PROGRAM_SUFFIX}' is
 # an environment variable (e.g. `-sparse').
@@ -74,6 +81,8 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests)
 # against Boost and add it to the test suite as `${NAME}${PROGRAM_SUFFIX}'.
 #
 MACRO(BUILD_TEST FILE_NAME)
+  CHECK_TEST_PARAMETERS()
+
   GET_FILENAME_COMPONENT(EXE_NAME ${FILE_NAME} NAME)
   ADD_EXECUTABLE(${EXE_NAME}${PROGRAM_SUFFIX}
     shared-tests/${FILE_NAME}.cc)
@@ -99,4 +108,21 @@ MACRO(BUILD_TEST FILE_NAME)
     "LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/src:$ENV{LD_LIBRARY_PATH}")
 ENDMACRO()
 
-INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/schittkowski/CMakeLists.txt)
+# BUILD_SCHITTKOWSKI_PROBLEMS()
+# -----------------------------
+#
+# Build Schittkowski problems. ${SCHITTKOWSKI_PROBLEMS} can be set to
+# specify Schittkowski problems to build (default = all).
+#
+MACRO(BUILD_SCHITTKOWSKI_PROBLEMS)
+  INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/schittkowski/CMakeLists.txt)
+ENDMACRO()
+
+# BUILD_ROBOPTIM_PROBLEMS()
+# -------------------------
+#
+# Build homemade RobOptim problems.
+#
+MACRO(BUILD_ROBOPTIM_PROBLEMS)
+  INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/roboptim/CMakeLists.txt)
+ENDMACRO()
