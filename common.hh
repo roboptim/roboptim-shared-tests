@@ -55,7 +55,9 @@
 # endif //! PROBLEM_TYPE
 
 # ifdef LOG_FILENAME
-#  define SET_LOG_FILE(solver) solver.parameters()["ipopt.output_file"].value = std::string(LOG_FILENAME)
+#  define SET_LOG_FILE(solver)						\
+  solver.parameters()["ipopt.output_file"].value = std::string(LOG_FILENAME); \
+  solver.parameters()["cmaes.output_file"].value = std::string(LOG_FILENAME)
 # else //! LOG_FILENAME
 #  define SET_LOG_FILE(solver)
 # endif //! LOG_FILENAME

@@ -161,14 +161,16 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
 
   solver_t::problem_t problem (soq);
 
+  // Load starting point
   F<functionType_t>::argument_t x (2);
   x << ExpectedResult::x0[0], ExpectedResult::x0[1];
   problem.startingPoint () = x;
 
-  for (std::size_t i = 0;
-       i < static_cast<std::size_t> (problem.function ().inputSize ()); ++i)
-    problem.argumentBounds ()[i] = Function::makeInterval (-M_PI, M_PI);
+  // Bounds on theta \in [-Pi/2, Pi/2]
+  problem.argumentBounds ()[0] = Function::makeInterval (-M_PI_2, M_PI_2);
 
+  // Bounds on phi \in [-Pi, Pi]
+  problem.argumentBounds ()[1] = Function::makeInterval (-M_PI, M_PI);
 
   BOOST_CHECK_CLOSE (soq (x)[0], ExpectedResult::fx0, 1e-6);
 
