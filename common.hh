@@ -17,10 +17,13 @@
 
 #ifndef ROBOPTIM_SHARED_TESTS_COMMON_HH
 # define ROBOPTIM_SHARED_TESTS_COMMON_HH
+# include <cmath>
 # include <iostream>
 
 # include <boost/mpl/vector.hpp>
 # include <boost/mpl/push_back.hpp>
+# include <boost/make_shared.hpp>
+# include <boost/shared_ptr.hpp>
 # include <boost/test/test_case_template.hpp>
 # include <boost/test/unit_test.hpp>
 
