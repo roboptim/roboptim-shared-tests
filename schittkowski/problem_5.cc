@@ -81,13 +81,13 @@ namespace roboptim
 	grad[0] = 2 * x[0] - 2 * x[1] + std::cos (x[0] + x[1]) - 1.5;
 	grad[1] = -2 * x[0] + 2 * x[1] + std::cos (x[0] + x[1]) + 2.5;
       }
-    } // end of namespace problem4.
+    } // end of namespace problem5.
   } // end of namespace schittkowski.
 } // end of namespace roboptim.
 
 BOOST_FIXTURE_TEST_SUITE (schittkowski, TestSuiteConfiguration)
 
-BOOST_AUTO_TEST_CASE (schittkowski_problem4)
+BOOST_AUTO_TEST_CASE (schittkowski_problem5)
 {
   using namespace roboptim;
   using namespace roboptim::schittkowski::problem5;
