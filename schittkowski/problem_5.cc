@@ -92,6 +92,11 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem5)
   using namespace roboptim;
   using namespace roboptim::schittkowski::problem5;
 
+  // Tolerances for Boost checks.
+  double f0_tol = 1e-4;
+  double x_tol = 1e-4;
+  double f_tol = 1e-4;
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -103,7 +108,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem5)
   x << 0., 0.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_CLOSE (f (x)[0], ExpectedResult::f0, 1e-4);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
@@ -127,35 +132,11 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem5)
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
-
   // Display solver information.
   std::cout << solver << std::endl;
 
-  // Check if the minimization has succeed.
-  if (res.which () != solver_t::SOLVER_VALUE)
-    {
-      std::cout << "A solution should have been found. Failing..."
-                << std::endl
-                << boost::get<SolverError> (res).what ()
-                << std::endl;
-      BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);
-      return;
-    }
-
-  // Get the result.
-  Result& result = boost::get<Result> (res);
-
-  // Check final x.
-  for (F<functionType_t>::vector_t::Index i = 0; i < result.x.size (); ++i)
-    BOOST_CHECK_CLOSE (1. + result.x[i], 1. + ExpectedResult::x[i], 1e-4);
-
-  // Check final value.
-  BOOST_CHECK_CLOSE (1. + result.value[0], 1. + ExpectedResult::fx, 1e-4);
-
-
-  // Display the result.
-  std::cout << "A solution has been found: " << std::endl
-	    << result << std::endl;
+  // Process the result
+  PROCESS_RESULT();
 }
 
 BOOST_AUTO_TEST_SUITE_END ()
