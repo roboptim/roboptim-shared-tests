@@ -134,7 +134,7 @@ namespace roboptim
 
 BOOST_FIXTURE_TEST_SUITE (schittkowski, TestSuiteConfiguration)
 
-BOOST_AUTO_TEST_CASE (schittkowski_problem4)
+BOOST_AUTO_TEST_CASE (schittkowski_problem6)
 {
   using namespace roboptim;
   using namespace roboptim::schittkowski::problem6;
