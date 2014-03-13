@@ -95,6 +95,59 @@ typedef constraints2_t constraints_t;
 typedef ::roboptim::Solver<COST_FUNCTION_TYPE<functionType_t>, constraints_t >
 solver_t;
 
+// See: http://stackoverflow.com/a/20050381/1043187
+#define BOOST_CHECK_SMALL_OR_CLOSE(expected, observed, tol)	\
+  if (std::fabs (expected) < 1e-6) {				\
+    BOOST_CHECK_SMALL(observed, 1e-6);				\
+  } else {							\
+    BOOST_CHECK_CLOSE(expected, observed, tol);			\
+  }
+
+#define CHECK_RESULT(RESULT_TYPE)					\
+  /* Get the result. */							\
+  RESULT_TYPE& result = boost::get<RESULT_TYPE> (res);			\
+  /* Check final x. */							\
+  for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
+    BOOST_CHECK_SMALL_OR_CLOSE (result.x[i], ExpectedResult::x[i], x_tol); \
+  /* Check final value. */						\
+  BOOST_CHECK_SMALL_OR_CLOSE (result.value[0], ExpectedResult::fx, f_tol); \
+  /* Display the result. */						\
+  std::cout << "A solution has been found: " << std::endl		\
+  << result << std::endl;
+
+#define PROCESS_RESULT()						\
+  /* Process the result */						\
+  switch (res.which ())							\
+    {									\
+    case solver_t::SOLVER_VALUE:					\
+      {									\
+	CHECK_RESULT (Result);						\
+	break;								\
+      }									\
+    case solver_t::SOLVER_VALUE_WARNINGS:				\
+      {									\
+	CHECK_RESULT (ResultWithWarnings);				\
+	break;								\
+      }									\
+    case solver_t::SOLVER_NO_SOLUTION:					\
+      {									\
+	std::cout << "A solution should have been found. Failing..."	\
+		  << std::endl						\
+		  << "No solution was found."				\
+		  << std::endl;						\
+	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
+	return;								\
+      }									\
+    case solver_t::SOLVER_ERROR:					\
+      {									\
+	std::cout << "A solution should have been found. Failing..."	\
+		  << std::endl						\
+		  << boost::get<SolverError> (res).what ()		\
+		  << std::endl;						\
+	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
+	return;								\
+      }									\
+    }
 
 struct TestSuiteConfiguration
 {

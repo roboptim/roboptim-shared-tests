@@ -152,8 +152,10 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   using namespace roboptim;
   using namespace roboptim::distanceToSphere;
 
-  // Check tolerance
-  double check_tol = 1e-2;
+  // Tolerances for Boost checks.
+  double f0_tol = 1e-6;
+  double x_tol = 1e-5;
+  double f_tol = 1e-4;
 
   // Build problem.
   boost::shared_ptr <F<functionType_t> > f (new F<functionType_t> ());
@@ -172,7 +174,7 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   // Bounds on phi \in [-Pi, Pi]
   problem.argumentBounds ()[1] = Function::makeInterval (-M_PI, M_PI);
 
-  BOOST_CHECK_CLOSE (soq (x)[0], ExpectedResult::fx0, 1e-6);
+  BOOST_CHECK_SMALL_OR_CLOSE (soq (x)[0], ExpectedResult::fx0, f0_tol);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
@@ -192,59 +194,7 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   std::cout << solver << std::endl;
 
   // Process the result
-  switch (res.which ())
-    {
-    case solver_t::SOLVER_VALUE:
-      {
-	// Get the result.
-	Result& result = boost::get<Result> (res);
-
-	// Check final x.
-        for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i)
-	  BOOST_CHECK_CLOSE (result.x[i], ExpectedResult::x[i], check_tol);
-
-	// Check final value.
-	BOOST_CHECK_CLOSE (result.value[0], ExpectedResult::fx, check_tol);
-
-	// Display the result.
-	std::cout << "A solution has been found: " << std::endl
-		  << result << std::endl;
-
-	break;
-      }
-
-    case solver_t::SOLVER_VALUE_WARNINGS:
-      {
-	// Get the result.
-	ResultWithWarnings& result = boost::get<ResultWithWarnings> (res);
-
-	// Check final x.
-        for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i)
-	  BOOST_CHECK_CLOSE (result.x[i], ExpectedResult::x[i], check_tol);
-
-	// Check final value.
-	BOOST_CHECK_CLOSE (result.value[0], ExpectedResult::fx, check_tol);
-
-
-	// Display the result.
-	std::cout << "A solution has been found: " << std::endl
-		  << result << std::endl;
-
-	break;
-      }
-
-    case solver_t::SOLVER_NO_SOLUTION:
-    case solver_t::SOLVER_ERROR:
-      {
-	std::cout << "A solution should have been found. Failing..."
-		  << std::endl
-		  << boost::get<SolverError> (res).what ()
-		  << std::endl;
-	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);
-
-	return;
-      }
-    }
+  PROCESS_RESULT();
 }
 
 BOOST_AUTO_TEST_SUITE_END ()
