@@ -29,9 +29,12 @@ namespace roboptim
 	static const double x[];
 	static const double fx;
       };
-      const double ExpectedResult::f0 = 20.;
-      const double ExpectedResult::x[] = {1., 0.};
-      const double ExpectedResult::fx = 1.;
+      const double ExpectedResult::f0 = 1.;
+      const double ExpectedResult::x[] = {
+	5. * (std::sqrt (7) - 1.),
+	.25 * (std::sqrt (7) + 1)
+      };
+      const double ExpectedResult::fx = 9. - 2.875 * std::sqrt (7);
 
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
@@ -59,7 +62,7 @@ namespace roboptim
       F<T>::impl_compute (result_t& result, const argument_t& x)
 	const throw ()
       {
-	result[0] = (x[0] - 2) * (x[0] - 2) + (x[1] - 1) * (x[1] - 1);
+	result[0] = std::pow (x[0] - 2, 2) + std::pow (x[1] - 1, 2);
       }
 
       template <>
@@ -116,7 +119,7 @@ namespace roboptim
       (gradient_t& grad, const argument_t& x, size_type)
 	const throw ()
       {
-	grad.insert (0) = .5 * x[0];
+	grad.insert (0) = -.25 * 2. * x[0];
 	grad.insert (1) = -2 * x[1];
       }
 
@@ -125,7 +128,7 @@ namespace roboptim
       G<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
 	const throw ()
       {
-	grad[0] = .5 * x[0];
+	grad[0] = -.25 * 2. * x[0];
 	grad[1] = -2 * x[1];
       }
 
