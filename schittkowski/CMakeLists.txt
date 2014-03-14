@@ -14,6 +14,7 @@
 # along with roboptim-core.  If not, see <http://www.gnu.org/licenses/>.
 
 IF(NOT DEFINED SCHITTKOWSKI_PROBLEMS)
+  # Draft: 11, 14, 15
   SET(SCHITTKOWSKI_PROBLEMS 1 2 3 4 5 6 7 8 9 10 12 13 71 71b)
 ENDIF()
 
