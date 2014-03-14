@@ -51,7 +51,7 @@ namespace roboptim
       template <typename T>
       F<T>::F () throw ()
 	: GenericDifferentiableFunction<T>
-	  (2, 1, "100 (x₁ - x₀²) + (1 - x₁)²")
+	  (2, 1, "100 (x₁ - x₀²)² + (1 - x₀)²")
       {}
 
       template <typename T>
@@ -60,7 +60,7 @@ namespace roboptim
 	const throw ()
       {
 	result[0] = 100 * (x[1] - x[0] * x[0]) * (x[1] - x[0] * x[0])
-	  + (1 - x[0] * x[0]) * (1 - x[0] * x[0]);
+	  + (1 - x[0]) * (1 - x[0]);
       }
 
       template <>
@@ -69,8 +69,10 @@ namespace roboptim
       (gradient_t& grad, const argument_t& x, size_type)
 	const throw ()
       {
-	grad.insert (0) = -400 * x[0] * (-x[0] * x[0] + x[1]) + 2 * x[0] - 2;
-	grad.insert (1) = -200 * x[0] * x[0] + 200*x[1];
+	grad.insert (0) =
+	  400. * x[0] * x[0] * x[0]
+	  - 400. * x[0] + x[1] + 2 * x[0] - 2;
+	grad.insert (1) = -200 * x[0] * x[0] + 200 * x[1];
       }
 
       template <typename T>
@@ -78,8 +80,10 @@ namespace roboptim
       F<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
 	const throw ()
       {
-	grad[0] = -400 * x[0] * (-x[0] * x[0] + x[1]) + 2 * x[0] - 2;
-	grad[1] = -200 * x[0] * x[0] + 200*x[1];
+	grad[0] =
+	  400. * x[0] * x[0] * x[0]
+	  - 400. * x[0] + x[1] + 2 * x[0] - 2;
+	grad[1] = -200. * x[0] * x[0] + 200. * x[1];
       }
 
       template <typename T>
