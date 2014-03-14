@@ -97,8 +97,8 @@ solver_t;
 
 // See: http://stackoverflow.com/a/20050381/1043187
 #define BOOST_CHECK_SMALL_OR_CLOSE(expected, observed, tol)	\
-  if (std::fabs (expected) < 1e-6) {				\
-    BOOST_CHECK_SMALL(observed, 1e-6);				\
+  if (std::fabs (expected) < tol) {				\
+    BOOST_CHECK_SMALL(observed, tol);				\
   } else {							\
     BOOST_CHECK_CLOSE(expected, observed, tol);			\
   }
