@@ -26,6 +26,7 @@
 # include <boost/shared_ptr.hpp>
 # include <boost/test/test_case_template.hpp>
 # include <boost/test/unit_test.hpp>
+# include <boost/test/floating_point_comparison.hpp>
 
 # include <log4cxx/xml/domconfigurator.h>
 
@@ -96,21 +97,78 @@ typedef ::roboptim::Solver<COST_FUNCTION_TYPE<functionType_t>, constraints_t >
 solver_t;
 
 // See: http://stackoverflow.com/a/20050381/1043187
-#define BOOST_CHECK_SMALL_OR_CLOSE(expected, observed, tol)	\
-  if (std::fabs (expected) < tol) {				\
-    BOOST_CHECK_SMALL(observed, tol);				\
-  } else {							\
-    BOOST_CHECK_CLOSE(expected, observed, tol);			\
+#define BOOST_CHECK_SMALL_OR_CLOSE(EXP, OBS, TOL)	\
+  if (std::fabs (EXP) < TOL) {				\
+    BOOST_CHECK_SMALL(OBS, TOL);			\
+  } else {						\
+    BOOST_CHECK_CLOSE(EXP, OBS, TOL);			\
   }
 
+// Run BOOST_SMALL_OR_CLOSE and get result
+#define BOOST_SMALL_OR_CLOSE_RES(EXP, OBS, TOL, RES)		\
+  if (std::fabs (EXP) < TOL) {					\
+    BOOST_CHECK_SMALL (OBS, TOL);				\
+    RES = boost::test_tools::check_is_small (OBS, TOL);		\
+  } else {							\
+    BOOST_CHECK_CLOSE(EXP, OBS, TOL);				\
+    RES = boost::test_tools::check_is_close			\
+      (EXP, OBS, boost::test_tools::percent_tolerance (TOL));	\
+  }
+
+// Run BOOST_CHECK and get result
+#define BOOST_CHECK_RES(COND, RES)		\
+  BOOST_CHECK(COND);				\
+  RES = (COND);
+
+// Check the result of the optimization process
 #define CHECK_RESULT(RESULT_TYPE)					\
   /* Get the result. */							\
   RESULT_TYPE& result = boost::get<RESULT_TYPE> (res);			\
-  /* Check final x. */							\
-  for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
-    BOOST_CHECK_SMALL_OR_CLOSE (result.x[i], ExpectedResult::x[i], x_tol); \
   /* Check final value. */						\
-  BOOST_CHECK_SMALL_OR_CLOSE (result.value[0], ExpectedResult::fx, f_tol); \
+  bool correct_fx = true;						\
+  BOOST_SMALL_OR_CLOSE_RES (result.value[0], ExpectedResult::fx, f_tol, correct_fx); \
+  /* Check final bounds on x. */					\
+  bool correct_bounds = true;						\
+  for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i) {	\
+    bool res = true;							\
+    /* Check lower bound. */						\
+    BOOST_CHECK_RES (result.x[i] - problem.argumentBounds ()[i].first > -x_tol, res); \
+    correct_bounds &= res;						\
+    /* Check upper bound. */						\
+    BOOST_CHECK_RES (result.x[i] - problem.argumentBounds ()[i].second < x_tol, res); \
+    correct_bounds &= res;						\
+  }									\
+  /* Check final constraints. */					\
+  bool correct_g = true;						\
+  /* Check that final constraint values have been copied to Result. */	\
+  size_t n_cstr = 0;							\
+  for (size_t i = 0; i < problem.boundsVector ().size (); ++i) {	\
+    for (size_t j = 0; j < problem.boundsVector ()[i].size (); ++j) {	\
+      ++n_cstr;								\
+    }									\
+  }									\
+  BOOST_CHECK(n_cstr == static_cast<size_t> (result.constraints.size ())); \
+  /* For each multidimensional constraint. */				\
+  size_t cstr_i = 0;							\
+  for (size_t i = 0; i < problem.boundsVector ().size (); ++i) {	\
+    /* For each dimension of the constraint. */				\
+    for (size_t j = 0; j < problem.boundsVector ()[i].size (); ++j) {	\
+      bool res = true;							\
+      /* Check lower bound. */						\
+      BOOST_CHECK_RES (result.constraints[cstr_i] - problem.boundsVector ()[i][j].first > -f_tol, res); \
+      correct_g &= res;							\
+      /* Check upper bound. */						\
+      BOOST_CHECK_RES (result.constraints[cstr_i] - problem.boundsVector ()[i][j].second < f_tol, res); \
+      correct_g &= res;							\
+      ++cstr_i;								\
+    }									\
+  }									\
+  /* Only check x is we have not found an optimal result. */		\
+  if (!(correct_fx && correct_g && correct_bounds)) {			\
+    /* Check final x. */						\
+    for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
+      BOOST_CHECK_SMALL_OR_CLOSE (result.x[i], ExpectedResult::x[i], x_tol); \
+  }									\
   /* Display the result. */						\
   std::cout << "A solution has been found: " << std::endl		\
   << result << std::endl;
