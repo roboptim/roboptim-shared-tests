@@ -131,34 +131,40 @@ solver_t;
   bool correct_bounds = true;						\
   for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i) {	\
     bool res = true;							\
+    std::size_t ii = static_cast<std::size_t> (i);			\
     /* Check lower bound. */						\
-    BOOST_CHECK_RES (result.x[i] - problem.argumentBounds ()[i].first > -x_tol, res); \
+    BOOST_CHECK_RES (result.x[i]					\
+                     - problem.argumentBounds ()[ii].first > -x_tol, res); \
     correct_bounds &= res;						\
     /* Check upper bound. */						\
-    BOOST_CHECK_RES (result.x[i] - problem.argumentBounds ()[i].second < x_tol, res); \
+    BOOST_CHECK_RES (result.x[i]					\
+                     - problem.argumentBounds ()[ii].second < x_tol, res); \
     correct_bounds &= res;						\
   }									\
   /* Check final constraints. */					\
   bool correct_g = true;						\
   /* Check that final constraint values have been copied to Result. */	\
-  size_t n_cstr = 0;							\
+  F<functionType_t>::size_type n_cstr = 0;				\
   for (size_t i = 0; i < problem.boundsVector ().size (); ++i) {	\
     for (size_t j = 0; j < problem.boundsVector ()[i].size (); ++j) {	\
       ++n_cstr;								\
     }									\
   }									\
-  BOOST_CHECK(n_cstr == static_cast<size_t> (result.constraints.size ())); \
+  BOOST_CHECK(n_cstr == static_cast<F<functionType_t>::size_type>	\
+              (result.constraints.size ()));				\
   /* For each multidimensional constraint. */				\
-  size_t cstr_i = 0;							\
+  Function::vector_t::Index cstr_i = 0;					\
   for (size_t i = 0; i < problem.boundsVector ().size (); ++i) {	\
     /* For each dimension of the constraint. */				\
     for (size_t j = 0; j < problem.boundsVector ()[i].size (); ++j) {	\
       bool res = true;							\
       /* Check lower bound. */						\
-      BOOST_CHECK_RES (result.constraints[cstr_i] - problem.boundsVector ()[i][j].first > -f_tol, res); \
+      BOOST_CHECK_RES (result.constraints[cstr_i]			\
+                       - problem.boundsVector ()[i][j].first > -f_tol, res); \
       correct_g &= res;							\
       /* Check upper bound. */						\
-      BOOST_CHECK_RES (result.constraints[cstr_i] - problem.boundsVector ()[i][j].second < f_tol, res); \
+      BOOST_CHECK_RES (result.constraints[cstr_i]			\
+                       - problem.boundsVector ()[i][j].second < f_tol, res); \
       correct_g &= res;							\
       ++cstr_i;								\
     }									\
