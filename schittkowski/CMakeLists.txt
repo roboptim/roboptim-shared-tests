@@ -24,7 +24,7 @@ IF(NOT DEFINED SCHITTKOWSKI_PROBLEMS)
     50 51 52 53    55 56          # 58
     60 61    63    65 66          #
        71             76    78 79 #
-    80                            #
+    80 81                         #
 
     # Particular variants of some problems.
     71b)
