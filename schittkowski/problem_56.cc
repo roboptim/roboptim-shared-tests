@@ -135,7 +135,7 @@ namespace roboptim
       (jacobian_t& jac, const argument_t& x) const throw ()
       {
 	jac.insert (0,0) = 1;
-	jac.insert (0,1) = -8.4 * std::sin (x[3]) * std::cos (x[3]);
+	jac.insert (0,3) = -8.4 * std::sin (x[3]) * std::cos (x[3]);
 
 	jac.insert (1,1) = 1;
 	jac.insert (1,4) = -8.4 * std::sin (x[4]) * std::cos (x[4]);
@@ -157,7 +157,7 @@ namespace roboptim
 	jac.setZero ();
 
 	jac (0,0) = 1;
-	jac (0,1) = -8.4 * std::sin (x[3]) * std::cos (x[3]);
+	jac (0,3) = -8.4 * std::sin (x[3]) * std::cos (x[3]);
 
 	jac (1,1) = 1;
 	jac (1,4) = -8.4 * std::sin (x[4]) * std::cos (x[4]);
