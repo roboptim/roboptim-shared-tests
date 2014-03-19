@@ -153,7 +153,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem21)
 
   boost::shared_ptr<G<functionType_t> > g =
     boost::make_shared<G<functionType_t> > ();
-  problem.addConstraint (g, G<functionType_t>::makeInterval (0., 0.));
+  problem.addConstraint (g, G<functionType_t>::makeLowerInterval (0.));
 
   F<functionType_t>::argument_t x (2);
   x << -1, -1;
