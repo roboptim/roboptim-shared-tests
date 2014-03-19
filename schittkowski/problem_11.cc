@@ -107,7 +107,7 @@ namespace roboptim
       template <typename T>
       G<T>::G () throw ()
 	: GenericDifferentiableFunction<T>
-	  (2, 1, "-x₀² + x₁²")
+	  (2, 1, "-x₀² + x₁")
       {}
 
       template <typename T>
@@ -115,7 +115,7 @@ namespace roboptim
       G<T>::impl_compute (result_t& result, const argument_t& x)
 	const throw ()
       {
-	result[0] = -x[0] * x[0] + x[1] * x[1];
+	result[0] = -x[0] * x[0] + x[1];
       }
 
       template <>
@@ -125,7 +125,7 @@ namespace roboptim
 	const throw ()
       {
 	grad.insert (0) = -2 * x[0];
-	grad.insert (1) = 2 * x[1];
+	grad.insert (1) = 1;
       }
 
       template <typename T>
@@ -134,7 +134,7 @@ namespace roboptim
 	const throw ()
       {
 	grad[0] = -2 * x[0];
-	grad[1] = 2 * x[1];
+	grad[1] = 1;
       }
     } // end of namespace problem11.
   } // end of namespace schittkowski.
