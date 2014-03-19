@@ -13,6 +13,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with roboptim-core.  If not, see <http://www.gnu.org/licenses/>.
 
+# Schittkowski problems to compile.
 IF(NOT DEFINED SCHITTKOWSKI_PROBLEMS)
   SET(SCHITTKOWSKI_PROBLEMS
         1  2  3  4  5  6  7  8  9 # Missing problems in PDF:
@@ -28,6 +29,24 @@ IF(NOT DEFINED SCHITTKOWSKI_PROBLEMS)
     71b)
 ENDIF()
 
+# Schittkowski problems that are expected to fail with a given solver.
+IF(NOT DEFINED SCHITTKOWSKI_PROBLEMS_FAIL)
+  SET(SCHITTKOWSKI_PROBLEMS_FAIL)
+ENDIF()
+
+# Build Schittkowski problems.
 FOREACH(PROBLEM ${SCHITTKOWSKI_PROBLEMS})
   BUILD_TEST("schittkowski/problem_${PROBLEM}")
+ENDFOREACH()
+
+MESSAGE("-- WARNING: expecting failure for the following Schittkowski tests:")
+MESSAGE("            ${SCHITTKOWSKI_PROBLEMS_FAIL}")
+
+# Set WILL_FAIL property for problems that are known to fail.
+FOREACH(PROBLEM ${SCHITTKOWSKI_PROBLEMS_FAIL})
+  # Check that the test is in the list of problems to be compiled.
+  LIST(FIND SCHITTKOWSKI_PROBLEMS ${PROBLEM} ValidTest)
+  IF(NOT ${ValidTest} EQUAL -1)
+    EXPECT_TEST_FAIL("schittkowski/problem_${PROBLEM}")
+  ENDIF()
 ENDFOREACH()

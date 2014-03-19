@@ -108,6 +108,16 @@ MACRO(BUILD_TEST FILE_NAME)
     "LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/src:$ENV{LD_LIBRARY_PATH}")
 ENDMACRO()
 
+# EXPECT_TEST_FAIL(FILE_NAME)
+# -----------------------------
+#
+# Set WILL_FAIL property for the given test. This can be used to
+# validate a test suite even though all tests do not normally succeed.
+MACRO(EXPECT_TEST_FAIL FILE_NAME)
+  GET_FILENAME_COMPONENT(EXE_NAME ${FILE_NAME} NAME)
+  SET_TESTS_PROPERTIES(${EXE_NAME}${PROGRAM_SUFFIX} PROPERTIES WILL_FAIL TRUE)
+ENDMACRO()
+
 # BUILD_SCHITTKOWSKI_PROBLEMS()
 # -----------------------------
 #
