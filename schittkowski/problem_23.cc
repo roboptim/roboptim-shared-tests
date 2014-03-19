@@ -99,7 +99,7 @@ namespace roboptim
       template <typename T>
       G<T>::G () throw ()
 	: GenericDifferentiableFunction<T>
-	  (2, 1, "x₀ + x₁² - 1")
+	  (2, 1, "x₀ + x₁ - 1")
       {}
 
       template <typename T>
@@ -311,7 +311,7 @@ namespace roboptim
 	const throw ()
       {
 	grad.insert (0) = -1.;
-	grad.insert (1) = 2. + x[1];
+	grad.insert (1) = 2. * x[1];
       }
 
       template <typename T>
