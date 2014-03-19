@@ -29,7 +29,7 @@ namespace roboptim
 	static const double x[];
 	static const double fx;
       };
-      const double ExpectedResult::f0 = -0.1336459;
+      const double ExpectedResult::f0 = -0.013364589564574673;
       const double ExpectedResult::x[] = {3., std::sqrt (3)};
       const double ExpectedResult::fx = -1.;
 
@@ -74,11 +74,9 @@ namespace roboptim
       {
 	double alpha = 1. / (27 * std::sqrt (3));
 	grad.insert (0) =
-	  2 * alpha * x[0] * std::pow (x[1], 3)
-	  - 6. * alpha * std::pow(x[1], 3);
+	  2 * alpha * (x[0] - 3) * std::pow (x[1], 3);
 	grad.insert (1) =
-	  3. * alpha * std::pow(x[0], 2) * std::pow (x[1], 2)
-	  - 18. * alpha * x[0] * std::pow (x[1], 2);
+	  3. * alpha * (std::pow(x[0] - 3, 2) - 9) * std::pow (x[1], 2);
       }
 
       template <typename T>
@@ -88,11 +86,9 @@ namespace roboptim
       {
 	double alpha = 1. / (27 * std::sqrt (3));
 	grad[0] =
-	  2 * alpha * x[0] * std::pow (x[1], 3)
-	  - 6. * alpha * std::pow(x[1], 3);
+	  2 * alpha * (x[0] - 3) * std::pow (x[1], 3);
 	grad[1] =
-	  3. * alpha * std::pow(x[0], 2) * std::pow (x[1], 2)
-	  - 18. * alpha * x[0] * std::pow (x[1], 2);
+	  3. * alpha * (std::pow(x[0] - 3, 2) - 9) * std::pow (x[1], 2);
       }
 
       template <typename T>
@@ -113,7 +109,7 @@ namespace roboptim
       template <typename T>
       G<T>::G () throw ()
 	: GenericDifferentiableFunction<T>
-	  (2, 1, "x₀²/√3 - x₁")
+	  (2, 1, "x₀/√3 - x₁")
       {}
 
       template <typename T>
@@ -121,25 +117,25 @@ namespace roboptim
       G<T>::impl_compute (result_t& result, const argument_t& x)
 	const throw ()
       {
-	result[0] = x[0] * x[0] / std::sqrt (3.) - x[1];
+	result[0] = x[0] / std::sqrt (3.) - x[1];
       }
 
       template <>
       void
       G<EigenMatrixSparse>::impl_gradient
-      (gradient_t& grad, const argument_t& x, size_type)
+      (gradient_t& grad, const argument_t&, size_type)
 	const throw ()
       {
-	grad.insert (0) = 2. / std::sqrt (3) * x[0];
+	grad.insert (0) = 1. / std::sqrt (3);
 	grad.insert (1) = -1.;
       }
 
       template <typename T>
       void
-      G<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+      G<T>::impl_gradient (gradient_t& grad, const argument_t&, size_type)
 	const throw ()
       {
-	grad[0] = 2. / std::sqrt (3.) * x[0];
+	grad[0] = 1. / std::sqrt (3.);
 	grad[1] = -1.;
       }
 
@@ -209,7 +205,7 @@ namespace roboptim
       template <typename T>
       G3<T>::G3 () throw ()
 	: GenericDifferentiableFunction<T>
-	  (2, 1, "-x₀ + √3 x₁ + 6")
+	  (2, 1, "-x₀ - √3 x₁ + 6")
       {}
 
       template <typename T>
@@ -217,7 +213,7 @@ namespace roboptim
       G3<T>::impl_compute (result_t& result, const argument_t& x)
 	const throw ()
       {
-	result[0] = -x[0] + std::sqrt (3.) * x[1] + 6;
+	result[0] = -x[0] - std::sqrt (3.) * x[1] + 6;
       }
 
       template <>
@@ -227,7 +223,7 @@ namespace roboptim
 	const throw ()
       {
 	grad.insert (0) = -1.;
-	grad.insert (1) = std::sqrt (3);
+	grad.insert (1) = -std::sqrt (3);
       }
 
       template <typename T>
@@ -236,7 +232,7 @@ namespace roboptim
 	const throw ()
       {
 	grad[0] = -1.;
-	grad[1] = std::sqrt (3);
+	grad[1] = -std::sqrt (3);
       }
 
     } // end of namespace problem24.
@@ -274,7 +270,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem24)
 
 
   F<functionType_t>::argument_t x (2);
-  x << 1., 5.;
+  x << 1., 0.5;
   problem.startingPoint () = x;
 
   BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
