@@ -183,8 +183,8 @@ namespace roboptim
       G2<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
 	const throw ()
       {
-	grad[0] = -2. * x[0];
-	grad[1] = -2. * x[1];
+	grad[0] = 2. * x[0];
+	grad[1] = 2. * x[1];
 	grad[2] = 2. * x[2];
       }
 
