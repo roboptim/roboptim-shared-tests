@@ -69,12 +69,12 @@ namespace roboptim
 	const throw ()
       {
 	value_type h =
-	  (std::pow (x[0] - 1.E6, 2.) / 6.4E7
+	  (std::pow (x[0] - 1.E4, 2.) / 6.4E7
 	   + (x[0] - 1E4) * (x[1] - 1.) / 2.E4
-	   + std::pow (x[1] - 1, 2.))
-	  * std::pow (x[2] - 2.E6, 2.) / (.96 * 4.9E13)
+	   + std::pow (x[1] - 1, 2.)) / 0.96
+	  + std::pow (x[2] - 2.E6, 2.) / 4.9E13
 	  + std::pow (x[3] - 10., 2.) / 2.5E3
-	  + std::pow (x[4] - 1.E-3, 2) / 2.5E3
+	  + std::pow (x[4] - 1.E-3, 2) / 2.5E-3
 	  + std::pow (x[5] - 1.E8, 2) / 2.5E17;
 	result[0] = -std::exp (-h/2.);
       }
@@ -107,7 +107,7 @@ namespace roboptim
       template <typename T>
       G<T>::G () throw ()
 	: GenericDifferentiableFunction<T>
-	  (6, 1, "x₀ + 4.E3 x₁ - 1.76E4 x₃")
+	  (6, 1, "x₀ + 4.E3 x₁ - 1.76E4")
       {}
 
       template <typename T>
@@ -115,7 +115,7 @@ namespace roboptim
       G<T>::impl_compute (result_t& result, const argument_t& x)
 	const throw ()
       {
-	result[0] = x[0] + 4.E3 * x[1] - 1.76E4 * x[3];
+	result[0] = x[0] + 4.E3 * x[1] - 1.76E4;
       }
 
       template <>
@@ -126,10 +126,6 @@ namespace roboptim
       {
 	grad.insert (0) = 1.;
 	grad.insert (1) = 4.E3;
-	grad.insert (2) = 0.;
-	grad.insert (3) = -1.76E4;
-	grad.insert (4) = 0.;
-	grad.insert (5) = 0.;
       }
 
       template <typename T>
@@ -140,7 +136,7 @@ namespace roboptim
 	grad[0] = 1.;
 	grad[1] = 4.E3;
 	grad[2] = 0.;
-	grad[3] = -1.76E4;
+	grad[3] = 0.;
 	grad[4] = 0.;
 	grad[5] = 0.;
       }
