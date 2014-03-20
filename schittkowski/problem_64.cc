@@ -1,0 +1,200 @@
+// Copyright (C) 2014 by Benjamin Chretien, CNRS.
+//
+// This file is part of the roboptim.
+//
+// roboptim is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// roboptim is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with roboptim.  If not, see <http://www.gnu.org/licenses/>.
+
+#include "common.hh"
+
+namespace roboptim
+{
+  namespace schittkowski
+  {
+    namespace problem64
+    {
+      struct ExpectedResult
+      {
+	static const double f0;
+	static const double x[];
+	static const double fx;
+      };
+      const double ExpectedResult::f0 = 266035;
+      const double ExpectedResult::x[] = {108.7347175, 85.12613942,
+                                          204.3247078};
+      const double ExpectedResult::fx = 6299.842428;
+
+      template <typename T>
+      class F : public GenericDifferentiableFunction<T>
+      {
+      public:
+	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
+	(GenericDifferentiableFunction<T>);
+
+	explicit F () throw ();
+	void
+	impl_compute (result_t& result, const argument_t& x) const throw ();
+	void
+	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	  const throw ();
+      };
+
+      template <typename T>
+      F<T>::F () throw ()
+	: GenericDifferentiableFunction<T>
+	  (3, 1, "5x₀ + 50000/x₀ + 20x₁ + 72000/x₁ + 10x₂ + 144000/x₂")
+      {}
+
+      template <typename T>
+      void
+      F<T>::impl_compute (result_t& result, const argument_t& x)
+	const throw ()
+      {
+	result[0] = 5 * x[0] + 50000. / x[0]
+	  + 20 * x[1] + 72000. / x[1]
+	  + 10 * x[2] + 144000. / x[2];
+      }
+
+      template <>
+      void
+      F<EigenMatrixSparse>::impl_gradient
+      (gradient_t& grad, const argument_t& x, size_type)
+	const throw ()
+      {
+	grad.insert (0) =  5 -  50000. / (x[0] * x[0]);
+	grad.insert (1) = 20 -  72000. / (x[1] * x[1]);
+	grad.insert (2) = 10 - 144000. / (x[2] * x[2]);
+      }
+
+      template <typename T>
+      void
+      F<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	const throw ()
+      {
+	grad (0) =  5 -  50000. / (x[0] * x[0]);
+	grad (1) = 20 -  72000. / (x[1] * x[1]);
+	grad (2) = 10 - 144000. / (x[2] * x[2]);
+      }
+
+      template <typename T>
+      class G : public GenericDifferentiableFunction<T>
+      {
+      public:
+	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
+	(GenericDifferentiableFunction<T>);
+
+	explicit G () throw ();
+	void
+	impl_compute (result_t& result, const argument_t& x) const throw ();
+	void
+	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	  const throw ();
+      };
+
+      template <typename T>
+      G<T>::G () throw ()
+	: GenericDifferentiableFunction<T>
+	  (3, 1, "1 - 4/x₀ - 32/x₁ - 120/x₃")
+      {}
+
+      template <typename T>
+      void
+      G<T>::impl_compute (result_t& result, const argument_t& x)
+	const throw ()
+      {
+	result[0] = 1 - 4. / x[0] - 32. / x[1] - 120. / x[2];
+      }
+
+      template <>
+      void
+      G<EigenMatrixSparse>::impl_gradient
+      (gradient_t& grad, const argument_t& x, size_type)
+	const throw ()
+      {
+	grad.insert (0) =   4. / (x[0] * x[0]);
+	grad.insert (1) =  32. / (x[1] * x[1]);
+	grad.insert (2) = 120. / (x[2] * x[2]);
+      }
+
+      template <typename T>
+      void
+      G<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	const throw ()
+      {
+	grad (0) =   4. / (x[0] * x[0]);
+	grad (1) =  32. / (x[1] * x[1]);
+	grad (2) = 120. / (x[2] * x[2]);
+      }
+    } // end of namespace problem64.
+  } // end of namespace schittkowski.
+} // end of namespace roboptim.
+
+BOOST_FIXTURE_TEST_SUITE (schittkowski, TestSuiteConfiguration)
+
+BOOST_AUTO_TEST_CASE (schittkowski_problem64)
+{
+  using namespace roboptim;
+  using namespace roboptim::schittkowski::problem64;
+
+  // Tolerances for Boost checks.
+  double f0_tol = 1e-4;
+  double x_tol = 1e-4;
+  double f_tol = 1e-4;
+
+  // Build problem.
+  F<functionType_t> f;
+  solver_t::problem_t problem (f);
+
+  for (F<functionType_t>::size_type i = 0; i < f.inputSize (); ++i)
+    problem.argumentBounds ()[i] = F<functionType_t>::makeLowerInterval (1e-5);
+
+  boost::shared_ptr<G<functionType_t> > g =
+    boost::make_shared<G<functionType_t> > ();
+  problem.addConstraint (g, G<functionType_t>::makeLowerInterval (0.));
+
+  F<functionType_t>::argument_t x (f.inputSize ());
+  x << 1., 1., 1.;
+  problem.startingPoint () = x;
+
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+
+  std::cout << f.inputSize () << std::endl;
+  std::cout << problem.function ().inputSize () << std::endl;
+
+  // Initialize solver.
+  SolverFactory<solver_t> factory (SOLVER_NAME, problem);
+  solver_t& solver = factory ();
+  OptimizationLogger<solver_t> logger
+    (solver,
+     "/tmp/roboptim-shared-tests/" SOLVER_NAME "/schittkowski/problem-64");
+
+  // Set optional log file for debugging
+  SET_LOG_FILE(solver);
+
+  std::cout << f.inputSize () << std::endl;
+  std::cout << problem.function ().inputSize () << std::endl;
+
+  // Compute the minimum and retrieve the result.
+  solver_t::result_t res = solver.minimum ();
+
+  std::cout << f.inputSize () << std::endl;
+  std::cout << problem.function ().inputSize () << std::endl;
+
+  // Display solver information.
+  std::cout << solver << std::endl;
+
+  // Process the result
+  PROCESS_RESULT();
+}
+
+BOOST_AUTO_TEST_SUITE_END ()
