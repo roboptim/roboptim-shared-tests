@@ -40,7 +40,7 @@ namespace roboptim
 	1e-3,
 	1e8
       };
-      const double ExpectedResult::fx = -std::exp (-27./280.);
+      const double ExpectedResult::fx = -0.93676;
 
       const double r = 0.2;
 
@@ -85,9 +85,9 @@ namespace roboptim
 	const throw ()
       {
 	value_type h = 1./(1. - r * r) *
-          ( std::pow ((x[0] - m0)/s0, 2)
-	    + 2 * r * (x[0] - m0) * (x[1] - m1) / (s0 * s1)
-	    + std::pow ((x[1] - m1)/s1, 2))
+	  (std::pow ((x[0] - m0)/s0, 2)
+	   + 2 * r * (x[0] - m0) * (x[1] - m1) / (s0 * s1)
+	   + std::pow ((x[1] - m1)/s1, 2))
 	  + std::pow ((x[2] - m2)/s2, 2)
 	  + std::pow ((x[3] - m3)/s3, 2)
 	  + std::pow ((x[4] - m4)/s4, 2)
