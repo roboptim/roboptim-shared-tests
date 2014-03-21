@@ -40,8 +40,10 @@ FOREACH(PROBLEM ${SCHITTKOWSKI_PROBLEMS})
   BUILD_TEST("schittkowski/problem_${PROBLEM}")
 ENDFOREACH()
 
-MESSAGE("-- WARNING: expecting failure for the following Schittkowski tests:")
-MESSAGE("            ${SCHITTKOWSKI_PROBLEMS_FAIL}")
+IF(DEFINED SCHITTKOWSKI_PROBLEMS_FAIL)
+  MESSAGE("-- WARNING: expecting failure for the following Schittkowski tests:")
+  MESSAGE("            ${SCHITTKOWSKI_PROBLEMS_FAIL}")
+ENDIF()
 
 # Set WILL_FAIL property for problems that are known to fail.
 FOREACH(PROBLEM ${SCHITTKOWSKI_PROBLEMS_FAIL})
