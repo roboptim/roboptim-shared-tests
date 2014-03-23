@@ -147,9 +147,7 @@ solver_t;
   /* Check that final constraint values have been copied to Result. */	\
   F<functionType_t>::size_type n_cstr = 0;				\
   for (size_t i = 0; i < problem.boundsVector ().size (); ++i) {	\
-    for (size_t j = 0; j < problem.boundsVector ()[i].size (); ++j) {	\
-      ++n_cstr;								\
-    }									\
+    n_cstr += problem.boundsVector ()[i].size ();			\
   }									\
   BOOST_CHECK(n_cstr == static_cast<F<functionType_t>::size_type>	\
               (result.constraints.size ()));				\
