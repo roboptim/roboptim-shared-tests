@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem45)
   solver_t::problem_t problem (f);
 
   for (F<functionType_t>::size_type i = 0; i < f.inputSize (); ++i)
-    problem.argumentBounds ()[i]
+    problem.argumentBounds ()[static_cast<std::size_t> (i)]
       = F<functionType_t>::makeInterval (0., 1. + static_cast<double> (i));
 
   F<functionType_t>::argument_t x (5);

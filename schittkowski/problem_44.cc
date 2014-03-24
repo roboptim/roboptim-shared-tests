@@ -394,7 +394,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G6<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+      G6<T>::impl_gradient (gradient_t& grad, const argument_t&, size_type)
 	const throw ()
       {
 	grad[0] = 0.;
