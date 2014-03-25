@@ -321,7 +321,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem43)
   solver_t& solver = factory ();
   OptimizationLogger<solver_t> logger
     (solver,
-     "/tmp/roboptim-shared-tests/" SOLVER_NAME "/schittkowski/problem-34");
+     "/tmp/roboptim-shared-tests/" SOLVER_NAME "/schittkowski/problem-43");
 
   // Set optional log file for debugging
   SET_LOG_FILE(solver);
