@@ -46,17 +46,17 @@ namespace roboptim
 	{}
 
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ()
+	impl_compute (result_ref result, const_argument_ref& x) const throw ()
 	{
 	  result[0] = x[0] * x[3] * (x[0] + x[1] + x[2]) + x[2];
 	}
 
 	void
-	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	  const throw ();
 
 	void
-	impl_hessian (hessian_t& h, const argument_t& x, size_type)
+	impl_hessian (hessian_t& h, const_argument_ref& x, size_type)
 	  const throw ();
       };
 
@@ -72,18 +72,18 @@ namespace roboptim
 	}
 
 	void
-	impl_compute (result_t& res, const argument_t& x) const throw ()
+	impl_compute (result_ref res, const_argument_ref& x) const throw ()
 	{
 	  res.setZero ();
 	  res (0) = x[0] * x[1] * x[2] * x[3];
 	}
 
 	void
-	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	  const throw ();
 
 	void
-	impl_hessian (hessian_t& h, const argument_t& x, size_type)
+	impl_hessian (hessian_t& h, const_argument_ref& x, size_type)
 	  const throw ();
       };
 
@@ -100,25 +100,25 @@ namespace roboptim
 	}
 
 	void
-	impl_compute (result_t& res, const argument_t& x) const throw ()
+	impl_compute (result_ref res, const_argument_ref& x) const throw ()
 	{
 	  res.setZero ();
 	  res (0) = x[0]*x[0] + x[1]*x[1] + x[2]*x[2] + x[3]*x[3];
 	}
 
 	void
-	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	  const throw ();
 
 	void
-	impl_hessian (hessian_t& h, const argument_t&, size_type)
+	impl_hessian (hessian_t& h, const_argument_ref&, size_type)
 	  const throw ();
       };
 
       template <>
       void
       F<EigenMatrixSparse>::impl_gradient
-      (gradient_t& grad, const argument_t& x, size_type)
+      (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad.setZero ();
@@ -131,7 +131,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_gradient
-      (gradient_t& grad, const argument_t& x, size_type)
+      (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad.setZero ();
@@ -144,7 +144,7 @@ namespace roboptim
       template <>
       void
       G0<EigenMatrixSparse>::impl_gradient
-      (gradient_t& grad, const argument_t& x, size_type)
+      (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad.reserve (4);
@@ -156,7 +156,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G0<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+      G0<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad.setZero ();
@@ -170,7 +170,7 @@ namespace roboptim
       template <>
       void
       G1<EigenMatrixSparse>::impl_gradient
-      (gradient_t& grad, const argument_t& x, size_type)
+      (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad.reserve (4);
@@ -182,7 +182,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G1<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+      G1<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad.setZero ();
@@ -195,7 +195,7 @@ namespace roboptim
       template <>
       void
       F<EigenMatrixSparse>::impl_hessian
-      (hessian_t& h, const argument_t& x, size_type) const throw ()
+      (hessian_t& h, const_argument_ref& x, size_type) const throw ()
       {
 	h.setZero ();
 	h.insert (0, 0) = 2 * x[3];
@@ -216,7 +216,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_hessian (hessian_t& h, const argument_t& x, size_type)
+      F<T>::impl_hessian (hessian_t& h, const_argument_ref& x, size_type)
 	const throw ()
       {
 	h.setZero ();
@@ -244,7 +244,7 @@ namespace roboptim
       template <>
       void
       G0<EigenMatrixSparse>::impl_hessian
-      (hessian_t& h, const argument_t& x, size_type) const throw ()
+      (hessian_t& h, const_argument_ref& x, size_type) const throw ()
       {
 	h.setZero ();
 	h.insert (0, 1) = x[2] * x[3];
@@ -267,7 +267,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G0<T>::impl_hessian (hessian_t& h, const argument_t& x, size_type)
+      G0<T>::impl_hessian (hessian_t& h, const_argument_ref& x, size_type)
 	const throw ()
       {
 	h.setZero ();
@@ -296,7 +296,7 @@ namespace roboptim
       template <>
       void
       G1<EigenMatrixSparse>::impl_hessian
-      (hessian_t& h, const argument_t&, size_type) const throw ()
+      (hessian_t& h, const_argument_ref&, size_type) const throw ()
       {
 	h.setZero ();
 	h.insert (0, 0) = 2.;
@@ -307,7 +307,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G1<T>::impl_hessian (hessian_t& h, const argument_t&, size_type)
+      G1<T>::impl_hessian (hessian_t& h, const_argument_ref&, size_type)
 	const throw ()
       {
 	h.setZero ();

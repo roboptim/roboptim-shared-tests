@@ -67,9 +67,9 @@ namespace roboptim
 
 	explicit F () throw ();
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const throw ();
 	void
-	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	  const throw ();
       };
 
@@ -81,7 +81,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_compute (result_t& result, const argument_t& x)
+      F<T>::impl_compute (result_ref result, const_argument_ref& x)
 	const throw ()
       {
 	value_type h = 1./(1. - r * r) *
@@ -98,7 +98,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type i)
+      F<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type i)
 	const throw ()
       {
 	//FIXME:
@@ -115,9 +115,9 @@ namespace roboptim
 
 	explicit G () throw ();
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const throw ();
 	void
-	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	  const throw ();
       };
 
@@ -129,7 +129,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G<T>::impl_compute (result_t& result, const argument_t& x)
+      G<T>::impl_compute (result_ref result, const_argument_ref& x)
 	const throw ()
       {
 	result[0] = (x[0] - m0) - 0.2 * s0 + 4e3 * (x[1] - m1) - 2e3 * s1;
@@ -138,7 +138,7 @@ namespace roboptim
       template <>
       void
       G<EigenMatrixSparse>::impl_gradient
-      (gradient_t& grad, const argument_t&, size_type)
+      (gradient_ref grad, const_argument_ref&, size_type)
 	const throw ()
       {
 	grad.insert (0) = 1.;
@@ -147,7 +147,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G<T>::impl_gradient (gradient_t& grad, const argument_t&, size_type)
+      G<T>::impl_gradient (gradient_ref grad, const_argument_ref&, size_type)
 	const throw ()
       {
 	grad[0] = 1.;

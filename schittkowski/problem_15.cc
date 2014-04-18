@@ -42,9 +42,9 @@ namespace roboptim
 
 	explicit F () throw ();
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const throw ();
 	void
-	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	  const throw ();
       };
 
@@ -56,7 +56,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_compute (result_t& result, const argument_t& x)
+      F<T>::impl_compute (result_ref result, const_argument_ref& x)
 	const throw ()
       {
 	result[0] = 100 * (x[1] - x[0] * x[0]) * (x[1] - x[0] * x[0])
@@ -66,7 +66,7 @@ namespace roboptim
       template <>
       void
       F<EigenMatrixSparse>::impl_gradient
-      (gradient_t& grad, const argument_t& x, size_type)
+      (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad.insert (0) =
@@ -77,7 +77,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+      F<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad[0] =
@@ -95,9 +95,9 @@ namespace roboptim
 
 	explicit G () throw ();
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const throw ();
 	void
-	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	  const throw ();
       };
 
@@ -109,7 +109,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G<T>::impl_compute (result_t& result, const argument_t& x)
+      G<T>::impl_compute (result_ref result, const_argument_ref& x)
 	const throw ()
       {
 	result[0] = x[0] * x[1] - 1;
@@ -118,7 +118,7 @@ namespace roboptim
       template <>
       void
       G<EigenMatrixSparse>::impl_gradient
-      (gradient_t& grad, const argument_t& x, size_type)
+      (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad.insert (0) = x[1];
@@ -127,7 +127,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+      G<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad[0] = x[1];
@@ -143,9 +143,9 @@ namespace roboptim
 
 	explicit G2 () throw ();
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const throw ();
 	void
-	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	  const throw ();
       };
 
@@ -157,7 +157,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G2<T>::impl_compute (result_t& result, const argument_t& x)
+      G2<T>::impl_compute (result_ref result, const_argument_ref& x)
 	const throw ()
       {
 	result[0] = x[0] + x[1] * x[1];
@@ -166,7 +166,7 @@ namespace roboptim
       template <>
       void
       G2<EigenMatrixSparse>::impl_gradient
-      (gradient_t& grad, const argument_t& x, size_type)
+      (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad.insert (0) = 1.;
@@ -175,7 +175,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G2<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
+      G2<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
 	const throw ()
       {
 	grad[0] = 1.;
