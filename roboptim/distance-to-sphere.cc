@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   std::cout << solver << std::endl;
 
   // Process the result
-  PROCESS_RESULT();
+  PROCESS_RESULT_UNCONSTRAINED();
 }
 
 BOOST_AUTO_TEST_SUITE_END ()
