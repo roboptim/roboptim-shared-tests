@@ -180,9 +180,8 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
   solver_t& solver = factory ();
 
-  // Add an optimization logger
-  OptimizationLogger<solver_t> logger
-    (solver, "/tmp/roboptim-shared-tests/" SOLVER_NAME "/distance-to-sphere");
+  // Set optimization logger
+  SET_OPTIMIZATION_LOGGER (solver, "roboptim/distance-to-sphere");
 
   // Set optional log file for debugging
   SET_LOG_FILE (solver);

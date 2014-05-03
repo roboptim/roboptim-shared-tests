@@ -97,11 +97,11 @@ typedef constraints2_t constraints_t;
 typedef ::roboptim::Solver<COST_FUNCTION_TYPE<functionType_t>, constraints_t >
 solver_t;
 
-#define SET_OPTIMIZATION_LOGGER(SOLVER,ID)	\
-  OptimizationLogger<solver_t> logger		\
-  (SOLVER,					\
-   "/tmp/roboptim-shared-tests/" SOLVER_NAME	\
-   "/schittkowski/problem-" ID);		\
+#define SET_OPTIMIZATION_LOGGER(SOLVER,FILENAME)	\
+  OptimizationLogger<solver_t> logger			\
+  (SOLVER,						\
+   "/tmp/roboptim-shared-tests/" SOLVER_NAME		\
+   "/" FILENAME);
 
 // See: http://stackoverflow.com/a/20050381/1043187
 #define BOOST_CHECK_SMALL_OR_CLOSE(EXP, OBS, TOL)	\
