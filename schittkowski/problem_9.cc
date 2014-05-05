@@ -47,16 +47,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit F () throw ();
+	explicit F ();
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
+	impl_compute (result_t& result, const argument_t& x) const;
 	void
 	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      F<T>::F () throw ()
+      F<T>::F ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "sin(πx₀² / 12) * cos(πx₁ / 16)")
       {}
@@ -64,7 +64,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_compute (result_t& result, const argument_t& x)
-	const throw ()
+	const
       {
 	result[0] =
 	  std::sin (M_PI * x[0] / 12.) * std::cos (M_PI * x[1] / 16.);
@@ -74,7 +74,7 @@ namespace roboptim
       void
       F<EigenMatrixSparse>::impl_gradient
       (gradient_t& grad, const argument_t& x, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) =
 	  M_PI * std::cos (M_PI * x[0] / 12) *
@@ -87,7 +87,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	const throw ()
+	const
       {
 	grad[0] =
 	  M_PI * std::cos (M_PI * x[0] / 12) *
@@ -104,16 +104,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit G () throw ();
+	explicit G ();
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
+	impl_compute (result_t& result, const argument_t& x) const;
 	void
 	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      G<T>::G () throw ()
+      G<T>::G ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "4x₀ - 3x₁")
       {}
@@ -121,7 +121,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_compute (result_t& result, const argument_t& x)
-	const throw ()
+	const
       {
 	result[0] = 4 * x[0] - 3 * x[1];
       }
@@ -130,7 +130,7 @@ namespace roboptim
       void
       G<EigenMatrixSparse>::impl_gradient
       (gradient_t& grad, const argument_t&, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = 4;
 	grad.insert (1) = -3;
@@ -139,7 +139,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_gradient (gradient_t& grad, const argument_t&, size_type)
-	const throw ()
+	const
       {
 	grad[0] = 4;
 	grad[1] = -3;

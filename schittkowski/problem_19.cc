@@ -40,16 +40,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit F () throw ();
+	explicit F ();
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
+	impl_compute (result_t& result, const argument_t& x) const;
 	void
 	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      F<T>::F () throw ()
+      F<T>::F ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "(x₀ - 10)³ + (x₁ - 20)³")
       {}
@@ -57,7 +57,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_compute (result_t& result, const argument_t& x)
-	const throw ()
+	const
       {
 	result[0] = std::pow (x[0] - 10, 3) + std::pow (x[1] - 20, 3);
       }
@@ -66,7 +66,7 @@ namespace roboptim
       void
       F<EigenMatrixSparse>::impl_gradient
       (gradient_t& grad, const argument_t& x, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = 3 * std::pow (x[0] - 10, 2);
 	grad.insert (1) = 3 * std::pow (x[1]  -20, 2);
@@ -75,7 +75,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	const throw ()
+	const
       {
 	grad[0] = 3 * std::pow (x[0] - 10, 2);
 	grad[1] = 3 * std::pow (x[1]  -20, 2);
@@ -88,16 +88,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit G () throw ();
+	explicit G ();
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
+	impl_compute (result_t& result, const argument_t& x) const;
 	void
 	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      G<T>::G () throw ()
+      G<T>::G ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "(x₀ - 5)² + (x₁ - 5)² - 100")
       {}
@@ -105,7 +105,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_compute (result_t& result, const argument_t& x)
-	const throw ()
+	const
       {
 	result[0] = std::pow (x[0] - 5, 2) + std::pow (x[1] - 5, 2) - 100;
       }
@@ -114,7 +114,7 @@ namespace roboptim
       void
       G<EigenMatrixSparse>::impl_gradient
       (gradient_t& grad, const argument_t& x, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = 2 * x[0] - 10;
 	grad.insert (1) = 2 * x[1] - 10;
@@ -123,7 +123,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	const throw ()
+	const
       {
 	grad[0] = 2 * x[0] - 10;
 	grad[1] = 2 * x[1] - 10;
@@ -138,16 +138,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit G2 () throw ();
+	explicit G2 ();
 	void
-	impl_compute (result_t& result, const argument_t& x) const throw ();
+	impl_compute (result_t& result, const argument_t& x) const;
 	void
 	impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      G2<T>::G2 () throw ()
+      G2<T>::G2 ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "-(x₁ - 5)² - (x₀ - 6)² + 82.81")
       {}
@@ -155,7 +155,7 @@ namespace roboptim
       template <typename T>
       void
       G2<T>::impl_compute (result_t& result, const argument_t& x)
-	const throw ()
+	const
       {
 	result[0] = - std::pow (x[1] - 5, 2) - std::pow (x[0] - 6, 2) + 82.81;
       }
@@ -164,7 +164,7 @@ namespace roboptim
       void
       G2<EigenMatrixSparse>::impl_gradient
       (gradient_t& grad, const argument_t& x, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = -2. * x[0] + 12;
 	grad.insert (1) = -2. * x[1] + 10;
@@ -173,7 +173,7 @@ namespace roboptim
       template <typename T>
       void
       G2<T>::impl_gradient (gradient_t& grad, const argument_t& x, size_type)
-	const throw ()
+	const
       {
 	grad[0] = -2. * x[0] + 12;
 	grad[1] = -2. * x[1] + 10;

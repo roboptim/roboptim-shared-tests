@@ -53,12 +53,12 @@ namespace roboptim
 	point_ *= 2.;
       }
 
-      ~F () throw ()
+      ~F ()
       {}
 
-      void impl_compute (result_t& result, const argument_t& x) const throw ();
+      void impl_compute (result_t& result, const argument_t& x) const;
       void impl_gradient (gradient_t& gradient, const argument_t& x,
-                          size_type functionId = 0) const throw ();
+                          size_type functionId = 0) const;
 
 
       static void sphericalCoordinates (result_t& res, double theta, double phi)
@@ -72,7 +72,7 @@ namespace roboptim
 
     template <typename T>
     void
-    F<T>::impl_compute (result_t& result, const argument_t& x) const throw ()
+    F<T>::impl_compute (result_t& result, const argument_t& x) const
     {
       result.setZero ();
       double theta = x[0];
@@ -85,7 +85,7 @@ namespace roboptim
     void
     F<EigenMatrixSparse>::impl_gradient
     (gradient_t& grad, const argument_t& x, size_type functionId)
-      const throw ()
+      const
     {
       grad.setZero ();
 
@@ -115,7 +115,7 @@ namespace roboptim
     void
     F<T>::impl_gradient
     (gradient_t& grad, const argument_t& x, size_type functionId)
-      const throw ()
+      const
     {
       grad.setZero ();
 
