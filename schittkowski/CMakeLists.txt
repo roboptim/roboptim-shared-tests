@@ -33,11 +33,11 @@ IF(NOT DEFINED SCHITTKOWSKI_PROBLEMS)
   ELSE()
     # Use a subset of problems to meet the deadline
     SET(SCHITTKOWSKI_PROBLEMS
-          1  2  3  4  5  6  7  8  9 # Missing problems in PDF:
-      20 21 22 23 24 25 26 27 28 29 #
-      40 41 42 43 44 45    47 48 49 # 46
-      60 61    63 64 65 66          #
-      80 81                         #
+          1  2  3  4  5  # Missing problems in PDF:
+      20 21 22 23 24 25  #
+      40 41 42 43 44 45  # 46
+      60 61    63 64 65  #
+      80 81              #
       71b)
   ENDIF()
 ENDIF()
