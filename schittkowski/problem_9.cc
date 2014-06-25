@@ -1,4 +1,4 @@
-// Copyright (C) 2014 by Thomas Moulard, AIST, CNRS.
+﻿// Copyright (C) 2014 by Thomas Moulard, AIST, CNRS.
 //
 // This file is part of the roboptim.
 //
