@@ -168,6 +168,13 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   x << ExpectedResult::x0[0], ExpectedResult::x0[1];
   problem.startingPoint () = x;
 
+  // Set arguments names (optional).
+  typename F<functionType_t>::names_t
+    names (static_cast<std::size_t> (f->inputSize ()));
+  names[0] = "θ";
+  names[1] = "φ";
+  problem.argumentNames () = names;
+
   // Bounds on theta \in [-Pi/2, Pi/2]
   problem.argumentBounds ()[0] = Function::makeInterval (-M_PI_2, M_PI_2);
 
