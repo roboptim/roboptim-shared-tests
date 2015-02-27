@@ -56,7 +56,7 @@ namespace roboptim
 	  const throw ();
 
 	void
-	impl_hessian (hessian_t& h, const_argument_ref& x, size_type)
+	impl_hessian (hessian_ref h, const_argument_ref& x, size_type)
 	  const throw ();
       };
 
@@ -83,7 +83,7 @@ namespace roboptim
 	  const throw ();
 
 	void
-	impl_hessian (hessian_t& h, const_argument_ref& x, size_type)
+	impl_hessian (hessian_ref h, const_argument_ref& x, size_type)
 	  const throw ();
       };
 
@@ -111,7 +111,7 @@ namespace roboptim
 	  const throw ();
 
 	void
-	impl_hessian (hessian_t& h, const_argument_ref&, size_type)
+	impl_hessian (hessian_ref h, const_argument_ref&, size_type)
 	  const throw ();
       };
 
@@ -195,7 +195,7 @@ namespace roboptim
       template <>
       void
       F<EigenMatrixSparse>::impl_hessian
-      (hessian_t& h, const_argument_ref& x, size_type) const throw ()
+      (hessian_ref h, const_argument_ref& x, size_type) const throw ()
       {
 	h.setZero ();
 	h.insert (0, 0) = 2 * x[3];
@@ -216,7 +216,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_hessian (hessian_t& h, const_argument_ref& x, size_type)
+      F<T>::impl_hessian (hessian_ref h, const_argument_ref& x, size_type)
 	const throw ()
       {
 	h.setZero ();
@@ -244,7 +244,7 @@ namespace roboptim
       template <>
       void
       G0<EigenMatrixSparse>::impl_hessian
-      (hessian_t& h, const_argument_ref& x, size_type) const throw ()
+      (hessian_ref h, const_argument_ref& x, size_type) const throw ()
       {
 	h.setZero ();
 	h.insert (0, 1) = x[2] * x[3];
@@ -267,7 +267,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G0<T>::impl_hessian (hessian_t& h, const_argument_ref& x, size_type)
+      G0<T>::impl_hessian (hessian_ref h, const_argument_ref& x, size_type)
 	const throw ()
       {
 	h.setZero ();
@@ -296,7 +296,7 @@ namespace roboptim
       template <>
       void
       G1<EigenMatrixSparse>::impl_hessian
-      (hessian_t& h, const_argument_ref&, size_type) const throw ()
+      (hessian_ref h, const_argument_ref&, size_type) const throw ()
       {
 	h.setZero ();
 	h.insert (0, 0) = 2.;
@@ -307,7 +307,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G1<T>::impl_hessian (hessian_t& h, const_argument_ref&, size_type)
+      G1<T>::impl_hessian (hessian_ref h, const_argument_ref&, size_type)
 	const throw ()
       {
 	h.setZero ();
