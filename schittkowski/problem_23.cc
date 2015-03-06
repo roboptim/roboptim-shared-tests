@@ -40,16 +40,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit F () throw ();
+	explicit F ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const;
 	void
 	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      F<T>::F () throw ()
+      F<T>::F ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "x₀² + x₁²")
       {}
@@ -57,7 +57,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_compute (result_ref result, const_argument_ref& x)
-	const throw ()
+	const
       {
 	result[0] = x[0] * x[0] + x[1] * x[1];
       }
@@ -66,7 +66,7 @@ namespace roboptim
       void
       F<EigenMatrixSparse>::impl_gradient
       (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = 2. * x[0];
 	grad.insert (1) = 2. * x[1];
@@ -75,7 +75,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad[0] = 2. * x[0];
 	grad[1] = 2. * x[1];
@@ -88,16 +88,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit G () throw ();
+	explicit G ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const;
 	void
 	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      G<T>::G () throw ()
+      G<T>::G ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "x₀ + x₁ - 1")
       {}
@@ -105,7 +105,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_compute (result_ref result, const_argument_ref& x)
-	const throw ()
+	const
       {
 	result[0] = x[0] + x[1] - 1;
       }
@@ -114,7 +114,7 @@ namespace roboptim
       void
       G<EigenMatrixSparse>::impl_gradient
       (gradient_ref grad, const_argument_ref&, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = 1;
 	grad.insert (1) = 1;
@@ -123,7 +123,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_gradient (gradient_ref grad, const_argument_ref&, size_type)
-	const throw ()
+	const
       {
 	grad[0] = 1.;
 	grad[1] = 1.;
@@ -137,16 +137,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit G2 () throw ();
+	explicit G2 ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const;
 	void
 	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      G2<T>::G2 () throw ()
+      G2<T>::G2 ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "x₀² + x₁² - 1")
       {}
@@ -154,7 +154,7 @@ namespace roboptim
       template <typename T>
       void
       G2<T>::impl_compute (result_ref result, const_argument_ref& x)
-	const throw ()
+	const
       {
 	result[0] = x[0] * x[0] + x[1] * x[1] - 1.;
       }
@@ -163,7 +163,7 @@ namespace roboptim
       void
       G2<EigenMatrixSparse>::impl_gradient
       (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = 2. * x[0];
 	grad.insert (1) = 2. * x[1];
@@ -172,7 +172,7 @@ namespace roboptim
       template <typename T>
       void
       G2<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad[0] = 2. * x[0];
 	grad[1] = 2. * x[1];
@@ -186,16 +186,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit G3 () throw ();
+	explicit G3 ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const;
 	void
 	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      G3<T>::G3 () throw ()
+      G3<T>::G3 ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "9x₀² + x₁² - 9")
       {}
@@ -203,7 +203,7 @@ namespace roboptim
       template <typename T>
       void
       G3<T>::impl_compute (result_ref result, const_argument_ref& x)
-	const throw ()
+	const
       {
 	result[0] = 9 * x[0] * x[0] + x[1] * x[1] - 9.;
       }
@@ -212,7 +212,7 @@ namespace roboptim
       void
       G3<EigenMatrixSparse>::impl_gradient
       (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = 9. * 2. * x[0];
 	grad.insert (1) = 2. * x[1];
@@ -221,7 +221,7 @@ namespace roboptim
       template <typename T>
       void
       G3<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad[0] = 9. * 2. * x[0];
 	grad[1] = 2. * x[1];
@@ -234,16 +234,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit G4 () throw ();
+	explicit G4 ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const;
 	void
 	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      G4<T>::G4 () throw ()
+      G4<T>::G4 ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "x₀² - x₁")
       {}
@@ -251,7 +251,7 @@ namespace roboptim
       template <typename T>
       void
       G4<T>::impl_compute (result_ref result, const_argument_ref& x)
-	const throw ()
+	const
       {
 	result[0] = x[0] * x[0] - x[1];
       }
@@ -260,7 +260,7 @@ namespace roboptim
       void
       G4<EigenMatrixSparse>::impl_gradient
       (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = 2. * x[0];
 	grad.insert (1) = -1.;
@@ -269,7 +269,7 @@ namespace roboptim
       template <typename T>
       void
       G4<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad[0] = 2. * x[0];
 	grad[1] = -1.;
@@ -282,16 +282,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit G5 () throw ();
+	explicit G5 ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const;
 	void
 	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      G5<T>::G5 () throw ()
+      G5<T>::G5 ()
 	: GenericDifferentiableFunction<T>
 	  (2, 1, "x₁² - x₀")
       {}
@@ -299,7 +299,7 @@ namespace roboptim
       template <typename T>
       void
       G5<T>::impl_compute (result_ref result, const_argument_ref& x)
-	const throw ()
+	const
       {
 	result[0] = x[1] * x[1] - x[0];
       }
@@ -308,7 +308,7 @@ namespace roboptim
       void
       G5<EigenMatrixSparse>::impl_gradient
       (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = -1.;
 	grad.insert (1) = 2. * x[1];
@@ -317,7 +317,7 @@ namespace roboptim
       template <typename T>
       void
       G5<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad[0] = -1.;
 	grad[1] = 2. * x[1];

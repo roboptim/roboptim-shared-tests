@@ -41,16 +41,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit F () throw ();
+	explicit F ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const;
 	void
 	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      F<T>::F () throw ()
+      F<T>::F ()
 	: GenericDifferentiableFunction<T>
 	  (3, 1, "4x₀² + 2x₁² + 2x₂² - 33x₀ + 16x₁ - 24x₂")
       {}
@@ -58,7 +58,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_compute (result_ref result, const_argument_ref& x)
-	const throw ()
+	const
       {
 	result[0] = 4 * x[0] * x[0] + 2 * x[1] * x[1] + 2 * x[2] * x[2]
 	  - 33 * x[0] + 16 * x[1] - 24 * x[2];
@@ -68,7 +68,7 @@ namespace roboptim
       void
       F<EigenMatrixSparse>::impl_gradient
       (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = 8 * x[0] - 33;
 	grad.insert (1) = 4 * x[1] + 16;
@@ -78,7 +78,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	const throw ()
+	const
       {
 	grad (0) = 8 * x[0] - 33;
 	grad (1) = 4 * x[1] + 16;
@@ -92,19 +92,19 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit G () throw ();
+	explicit G ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const;
 	void
 	impl_gradient (gradient_ref, const_argument_ref&, size_type)
-	  const throw () {}
+	  const {}
 	void
 	impl_jacobian (jacobian_ref jac, const_argument_ref& x)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      G<T>::G () throw ()
+      G<T>::G ()
 	: GenericDifferentiableFunction<T>
 	  (3, 2, "3x₀ - 2x₁² - 7, 4x₀ - x₂² - 11")
       {}
@@ -112,7 +112,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_compute (result_ref result, const_argument_ref& x)
-	const throw ()
+	const
       {
 	result[0] = 3 * x[0] - 2 * x[1] * x[1] - 7;
 	result[1] = 4 * x[0] - x[2] * x[2] - 11;
@@ -121,7 +121,7 @@ namespace roboptim
       template <>
       void
       G<EigenMatrixSparse>::impl_jacobian
-      (jacobian_ref jac, const_argument_ref& x) const throw ()
+      (jacobian_ref jac, const_argument_ref& x) const
       {
 	jac.insert (0,0) = 3;
 	jac.insert (0,1) = -4 * x[1];
@@ -133,7 +133,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_jacobian
-      (jacobian_ref jac, const_argument_ref& x) const throw ()
+      (jacobian_ref jac, const_argument_ref& x) const
       {
 	jac.setZero ();
 

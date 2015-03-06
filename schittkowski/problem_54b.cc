@@ -65,16 +65,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit F () throw ();
+	explicit F ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const;
 	void
 	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      F<T>::F () throw ()
+      F<T>::F ()
 	: GenericDifferentiableFunction<T>
 	  (6, 1, "-exp(-h(x)/2)")
       {}
@@ -82,7 +82,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_compute (result_ref result, const_argument_ref& x)
-	const throw ()
+	const
       {
 	value_type h = 1./(1. - r * r) *
 	  (std::pow ((x[0] - m0)/s0, 2)
@@ -99,7 +99,7 @@ namespace roboptim
       template <typename T>
       void
       F<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type i)
-	const throw ()
+	const
       {
 	//FIXME:
 	GenericFiniteDifferenceGradient<T> fd (*this);
@@ -113,16 +113,16 @@ namespace roboptim
 	ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
 	(GenericDifferentiableFunction<T>);
 
-	explicit G () throw ();
+	explicit G ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const throw ();
+	impl_compute (result_ref result, const_argument_ref& x) const;
 	void
 	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
-	  const throw ();
+	  const;
       };
 
       template <typename T>
-      G<T>::G () throw ()
+      G<T>::G ()
 	: GenericDifferentiableFunction<T>
 	  (6, 1, "((x₀ - µ₀) - 0.2σ₀ + 4000(x₁ - µ₁) - 2000σ₁")
       {}
@@ -130,7 +130,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_compute (result_ref result, const_argument_ref& x)
-	const throw ()
+	const
       {
 	result[0] = (x[0] - m0) - 0.2 * s0 + 4e3 * (x[1] - m1) - 2e3 * s1;
       }
@@ -139,7 +139,7 @@ namespace roboptim
       void
       G<EigenMatrixSparse>::impl_gradient
       (gradient_ref grad, const_argument_ref&, size_type)
-	const throw ()
+	const
       {
 	grad.insert (0) = 1.;
 	grad.insert (1) = 4e3;
@@ -148,7 +148,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_gradient (gradient_ref grad, const_argument_ref&, size_type)
-	const throw ()
+	const
       {
 	grad[0] = 1.;
 	grad[1] = 4e3;
