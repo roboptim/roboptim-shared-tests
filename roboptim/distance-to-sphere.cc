@@ -56,8 +56,8 @@ namespace roboptim
       ~F ()
       {}
 
-      void impl_compute (result_ref result, const_argument_ref& x) const;
-      void impl_gradient (gradient_ref gradient, const_argument_ref& x,
+      void impl_compute (result_ref result, const_argument_ref x) const;
+      void impl_gradient (gradient_ref gradient, const_argument_ref x,
                           size_type functionId = 0) const;
 
 
@@ -72,7 +72,7 @@ namespace roboptim
 
     template <typename T>
     void
-    F<T>::impl_compute (result_ref result, const_argument_ref& x) const
+    F<T>::impl_compute (result_ref result, const_argument_ref x) const
     {
       result.setZero ();
       double theta = x[0];
@@ -84,7 +84,7 @@ namespace roboptim
     template <>
     void
     F<EigenMatrixSparse>::impl_gradient
-    (gradient_ref grad, const_argument_ref& x, size_type functionId)
+    (gradient_ref grad, const_argument_ref x, size_type functionId)
       const
     {
       grad.setZero ();
@@ -114,7 +114,7 @@ namespace roboptim
     template <typename T>
     void
     F<T>::impl_gradient
-    (gradient_ref grad, const_argument_ref& x, size_type functionId)
+    (gradient_ref grad, const_argument_ref x, size_type functionId)
       const
     {
       grad.setZero ();

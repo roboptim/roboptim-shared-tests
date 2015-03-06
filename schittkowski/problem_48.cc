@@ -42,9 +42,9 @@ namespace roboptim
 
 	explicit F ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const;
+	impl_compute (result_ref result, const_argument_ref x) const;
 	void
-	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
 	  const;
       };
 
@@ -56,7 +56,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_compute (result_ref result, const_argument_ref& x)
+      F<T>::impl_compute (result_ref result, const_argument_ref x)
 	const
       {
 	result[0] = std::pow (x[0] - 1, 2)
@@ -67,7 +67,7 @@ namespace roboptim
       template <>
       void
       F<EigenMatrixSparse>::impl_gradient
-      (gradient_ref grad, const_argument_ref& x, size_type)
+      (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
 	grad.insert (0) = 2 * (x[0] - 1);
@@ -79,7 +79,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
+      F<T>::impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
 	grad[0] = 2 * (x[0] - 1);
@@ -98,12 +98,12 @@ namespace roboptim
 
 	explicit G ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const;
+	impl_compute (result_ref result, const_argument_ref x) const;
 	void
-	impl_gradient (gradient_ref, const_argument_ref&, size_type)
+	impl_gradient (gradient_ref, const_argument_ref, size_type)
 	  const {}
 	void
-	impl_jacobian (jacobian_ref jac, const_argument_ref& x)
+	impl_jacobian (jacobian_ref jac, const_argument_ref x)
 	  const;
       };
 
@@ -115,7 +115,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G<T>::impl_compute (result_ref result, const_argument_ref& x)
+      G<T>::impl_compute (result_ref result, const_argument_ref x)
 	const
       {
 	result[0] = x[0] + x[1] + x[2] + x[3] + x[4];
@@ -125,7 +125,7 @@ namespace roboptim
       template <>
       void
       G<EigenMatrixSparse>::impl_jacobian
-      (jacobian_ref jac, const_argument_ref&) const
+      (jacobian_ref jac, const_argument_ref) const
       {
 	jac.insert (0,0) = 1;
 	jac.insert (0,1) = 1;
@@ -141,7 +141,7 @@ namespace roboptim
       template <typename T>
       void
       G<T>::impl_jacobian
-      (jacobian_ref jac, const_argument_ref&) const
+      (jacobian_ref jac, const_argument_ref) const
       {
 	jac.setZero ();
 

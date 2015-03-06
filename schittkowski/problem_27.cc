@@ -42,9 +42,9 @@ namespace roboptim
 
 	explicit F ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const;
+	impl_compute (result_ref result, const_argument_ref x) const;
 	void
-	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
 	  const;
       };
 
@@ -56,7 +56,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_compute (result_ref result, const_argument_ref& x)
+      F<T>::impl_compute (result_ref result, const_argument_ref x)
 	const
       {
 	result[0] =
@@ -66,7 +66,7 @@ namespace roboptim
       template <>
       void
       F<EigenMatrixSparse>::impl_gradient
-      (gradient_ref grad, const_argument_ref& x, size_type)
+      (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
 	grad.insert (0) =
@@ -77,7 +77,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
+      F<T>::impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
 	grad[0] =
@@ -95,9 +95,9 @@ namespace roboptim
 
 	explicit G ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const;
+	impl_compute (result_ref result, const_argument_ref x) const;
 	void
-	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
 	  const;
       };
 
@@ -109,7 +109,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G<T>::impl_compute (result_ref result, const_argument_ref& x)
+      G<T>::impl_compute (result_ref result, const_argument_ref x)
 	const
       {
 	result[0] = x[0] + x[2] * x[2] + 1;
@@ -118,7 +118,7 @@ namespace roboptim
       template <>
       void
       G<EigenMatrixSparse>::impl_gradient
-      (gradient_ref grad, const_argument_ref& x, size_type)
+      (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
 	grad.insert (0) = 1;
@@ -128,7 +128,7 @@ namespace roboptim
 
       template <typename T>
       void
-      G<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
+      G<T>::impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
 	grad[0] = 1.;

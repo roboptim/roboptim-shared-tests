@@ -42,9 +42,9 @@ namespace roboptim
 
 	explicit F ();
 	void
-	impl_compute (result_ref result, const_argument_ref& x) const;
+	impl_compute (result_ref result, const_argument_ref x) const;
 	void
-	impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
 	  const;
       };
 
@@ -56,7 +56,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_compute (result_ref result, const_argument_ref& x)
+      F<T>::impl_compute (result_ref result, const_argument_ref x)
 	const
       {
 	result[0] = 0.;
@@ -72,7 +72,7 @@ namespace roboptim
       template <>
       void
       F<EigenMatrixSparse>::impl_gradient
-      (gradient_ref grad, const_argument_ref& x, size_type)
+      (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
 	value_type dx0 = 0.;
@@ -106,7 +106,7 @@ namespace roboptim
 
       template <typename T>
       void
-      F<T>::impl_gradient (gradient_ref grad, const_argument_ref& x, size_type)
+      F<T>::impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
 	value_type dx0 = 0.;
