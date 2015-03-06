@@ -51,7 +51,7 @@ namespace roboptim
       template <typename T>
       F<T>::F ()
 	: GenericDifferentiableFunction<T>
-	  (3, 1, "裡 f_i(x)族")
+	  (3, 1, "Σ f_i(x)²")
       {}
 
       template <typename T>
