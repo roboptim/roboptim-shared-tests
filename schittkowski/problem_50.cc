@@ -1,4 +1,4 @@
-// Copyright (C) 2014 by Benjamin Chretien, CNRS.
+﻿// Copyright (C) 2014 by Benjamin Chretien, CNRS.
 //
 // This file is part of the roboptim.
 //
@@ -205,9 +205,8 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem50)
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
   solver_t& solver = factory ();
-  OptimizationLogger<solver_t> logger
-    (solver,
-     "/tmp/roboptim-shared-tests/" SOLVER_NAME "/schittkowski/problem-50");
+  // Set optimization logger
+  SET_OPTIMIZATION_LOGGER (solver, "schittkowski/problem-50");
 
   // Set optional log file for debugging
   SET_LOG_FILE(solver);

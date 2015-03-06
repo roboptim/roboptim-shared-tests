@@ -1,4 +1,4 @@
-// Copyright (C) 2014 by Thomas Moulard, AIST, CNRS.
+﻿// Copyright (C) 2014 by Thomas Moulard, AIST, CNRS.
 //
 // This file is part of the roboptim.
 //
@@ -226,9 +226,8 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem26)
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
   solver_t& solver = factory ();
-  OptimizationLogger<solver_t> logger
-    (solver,
-     "/tmp/roboptim-shared-tests/" SOLVER_NAME "/schittkowski/problem-36");
+  // Set optimization logger
+  SET_OPTIMIZATION_LOGGER (solver, "schittkowski/problem-36");
 
   // Set optional log file for debugging
   SET_LOG_FILE(solver);

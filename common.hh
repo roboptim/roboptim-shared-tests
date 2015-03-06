@@ -97,6 +97,12 @@ typedef constraints2_t constraints_t;
 typedef ::roboptim::Solver<COST_FUNCTION_TYPE<functionType_t>, constraints_t >
 solver_t;
 
+#define SET_OPTIMIZATION_LOGGER(SOLVER,FILENAME)	\
+  OptimizationLogger<solver_t> logger			\
+  (SOLVER,						\
+   "/tmp/roboptim-shared-tests/" SOLVER_NAME		\
+   "/" FILENAME);
+
 // See: http://stackoverflow.com/a/20050381/1043187
 #define BOOST_CHECK_SMALL_OR_CLOSE(EXP, OBS, TOL)	\
   if (std::fabs (EXP) < TOL) {				\
@@ -121,11 +127,44 @@ solver_t;
   BOOST_CHECK(COND);				\
   RES = (COND);
 
+// Check the result of the optimization process for an unconstrained problem
+#define CHECK_RESULT_UNCONSTRAINED(RESULT_TYPE)				\
+  /* Get the result. */							\
+  RESULT_TYPE& result = boost::get<RESULT_TYPE> (res);			\
+  /* Check final value. */						\
+  bool correct_fx = true;						\
+  BOOST_SMALL_OR_CLOSE_RES (result.value[0], ExpectedResult::fx, f_tol, correct_fx); \
+  /* Check final bounds on x. */					\
+  bool correct_bounds = true;						\
+  for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i) {	\
+    bool res = true;							\
+    std::size_t ii = static_cast<std::size_t> (i);			\
+    /* Check lower bound. */						\
+    BOOST_CHECK_RES (result.x[i]					\
+                     - problem.argumentBounds ()[ii].first > -x_tol, res); \
+    correct_bounds &= res;						\
+    /* Check upper bound. */						\
+    BOOST_CHECK_RES (result.x[i]					\
+                     - problem.argumentBounds ()[ii].second < x_tol, res); \
+    correct_bounds &= res;						\
+  }									\
+  /* Only check x is we have not found an optimal result. */		\
+  if (!(correct_fx && correct_bounds)) {				\
+    /* Check final x. */						\
+    for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
+      BOOST_CHECK_SMALL_OR_CLOSE (result.x[i], ExpectedResult::x[i], x_tol); \
+  }									\
+  /* Display the result. */						\
+  std::cout << "A solution has been found: " << std::endl		\
+  << result << std::endl;
+
+
 // Check the result of the optimization process
 #define CHECK_RESULT(RESULT_TYPE)					\
   /* Get the result. */							\
   RESULT_TYPE& result = boost::get<RESULT_TYPE> (res);			\
   /* Check final value. */						\
+  bool success = false;							\
   bool correct_fx = true;						\
   BOOST_SMALL_OR_CLOSE_RES (result.value[0], ExpectedResult::fx, f_tol, correct_fx); \
   /* Check final bounds on x. */					\
@@ -171,15 +210,29 @@ solver_t;
   }									\
   /* Only check x is we have not found an optimal result. */		\
   if (!(correct_fx && correct_g && correct_bounds)) {			\
+    success = true;							\
     /* Check final x. */						\
     for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
-      BOOST_CHECK_SMALL_OR_CLOSE (result.x[i], ExpectedResult::x[i], x_tol); \
+      {									\
+	bool res = false;						\
+	BOOST_SMALL_OR_CLOSE_RES (result.x[i], ExpectedResult::x[i],	\
+				  x_tol, res);				\
+        success &= res;							\
+      }									\
   }									\
+  else success = true;							\
+  if (success)								\
+    logger.append (log_result_true);					\
+  else									\
+    logger.append (log_result_false);					\
   /* Display the result. */						\
   std::cout << "A solution has been found: " << std::endl		\
   << result << std::endl;
 
+// Process the result for a constrained problem
 #define PROCESS_RESULT()						\
+  std::string log_result_true  = "Optimal solution found: true";	\
+  std::string log_result_false = "Optimal solution found: false";	\
   /* Process the result */						\
   switch (res.which ())							\
     {									\
@@ -200,6 +253,7 @@ solver_t;
 		  << "No solution was found."				\
 		  << std::endl;						\
 	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
+	logger.append (log_result_false);				\
 	return;								\
       }									\
     case solver_t::SOLVER_ERROR:					\
@@ -209,10 +263,49 @@ solver_t;
 		  << boost::get<SolverError> (res).what ()		\
 		  << std::endl;						\
 	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
+	logger.append (log_result_false);				\
 	return;								\
       }									\
     }
 
+// Process the result for an unconstrained problem
+#define PROCESS_RESULT_UNCONSTRAINED()					\
+  std::string log_result_true  = "Optimal solution found: true";	\
+  std::string log_result_false = "Optimal solution found: false";	\
+  /* Process the result */						\
+  switch (res.which ())							\
+    {									\
+    case solver_t::SOLVER_VALUE:					\
+      {									\
+	CHECK_RESULT_UNCONSTRAINED (Result);				\
+	break;								\
+      }									\
+    case solver_t::SOLVER_VALUE_WARNINGS:				\
+      {									\
+	CHECK_RESULT_UNCONSTRAINED (ResultWithWarnings);		\
+	break;								\
+      }									\
+    case solver_t::SOLVER_NO_SOLUTION:					\
+      {									\
+	std::cout << "A solution should have been found. Failing..."	\
+		  << std::endl						\
+		  << "No solution was found."				\
+		  << std::endl;						\
+	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
+	logger.append (log_result_false);				\
+	return;								\
+      }									\
+    case solver_t::SOLVER_ERROR:					\
+      {									\
+	std::cout << "A solution should have been found. Failing..."	\
+		  << std::endl						\
+		  << boost::get<SolverError> (res).what ()		\
+		  << std::endl;						\
+	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
+	logger.append (log_result_false);				\
+	return;								\
+      }									\
+    }
 struct TestSuiteConfiguration
 {
   TestSuiteConfiguration ()

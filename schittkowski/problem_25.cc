@@ -1,4 +1,4 @@
-// Copyright (C) 2014 by Thomas Moulard, AIST, CNRS.
+﻿// Copyright (C) 2014 by Thomas Moulard, AIST, CNRS.
 //
 // This file is part of the roboptim.
 //
@@ -51,7 +51,7 @@ namespace roboptim
       template <typename T>
       F<T>::F ()
 	: GenericDifferentiableFunction<T>
-	  (3, 1, "Σ f_i(x)²")
+	  (3, 1, "裡 f_i(x)族")
       {}
 
       template <typename T>
@@ -171,9 +171,8 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem25)
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
   solver_t& solver = factory ();
-  OptimizationLogger<solver_t> logger
-    (solver,
-     "/tmp/roboptim-shared-tests/" SOLVER_NAME "/schittkowski/problem-25");
+  // Set optimization logger
+  SET_OPTIMIZATION_LOGGER (solver, "schittkowski/problem-25");
 
   // Set optional log file for debugging
   SET_LOG_FILE(solver);

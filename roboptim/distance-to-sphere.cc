@@ -168,6 +168,13 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   x << ExpectedResult::x0[0], ExpectedResult::x0[1];
   problem.startingPoint () = x;
 
+  // Set arguments names (optional).
+  typename F<functionType_t>::names_t
+    names (static_cast<std::size_t> (f->inputSize ()));
+  names[0] = "θ";
+  names[1] = "φ";
+  problem.argumentNames () = names;
+
   // Bounds on theta \in [-Pi/2, Pi/2]
   problem.argumentBounds ()[0] = Function::makeInterval (-M_PI_2, M_PI_2);
 
@@ -180,9 +187,8 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
   solver_t& solver = factory ();
 
-  // Add an optimization logger
-  OptimizationLogger<solver_t> logger
-    (solver, "/tmp/roboptim-shared-tests/" SOLVER_NAME "/distance-to-sphere");
+  // Set optimization logger
+  SET_OPTIMIZATION_LOGGER (solver, "roboptim/distance-to-sphere");
 
   // Set optional log file for debugging
   SET_LOG_FILE (solver);
@@ -194,7 +200,7 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   std::cout << solver << std::endl;
 
   // Process the result
-  PROCESS_RESULT();
+  PROCESS_RESULT_UNCONSTRAINED();
 }
 
 BOOST_AUTO_TEST_SUITE_END ()
