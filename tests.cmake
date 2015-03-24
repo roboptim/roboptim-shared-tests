@@ -129,6 +129,15 @@ MACRO(BUILD_SCHITTKOWSKI_PROBLEMS)
   INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/schittkowski/CMakeLists.txt)
 ENDMACRO()
 
+# BUILD_QP_PROBLEMS()
+# -------------------------
+#
+# Build QP problems.
+#
+MACRO(BUILD_QP_PROBLEMS)
+  INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/qp/CMakeLists.txt)
+ENDMACRO()
+
 # BUILD_ROBOPTIM_PROBLEMS()
 # -------------------------
 #
