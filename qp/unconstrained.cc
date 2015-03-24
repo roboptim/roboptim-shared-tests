@@ -55,6 +55,7 @@ namespace roboptim
           this->A () <<  5., -2., -1.,
                         -2.,  4.,  3.,
                         -1.,  3.,  5.;
+          this->A () *= 0.5;
 
           // Fill vector b.
           this->b () << 2., -35., -47.;
