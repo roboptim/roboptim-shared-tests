@@ -14,7 +14,7 @@
 # along with roboptim-core.  If not, see <http://www.gnu.org/licenses/>.
 
 IF(NOT DEFINED QP_PROBLEMS)
-  SET(QP_PROBLEMS unconstrained)
+  SET(QP_PROBLEMS qp_unconstrained)
 ENDIF()
 
 FOREACH(PROBLEM ${QP_PROBLEMS})
