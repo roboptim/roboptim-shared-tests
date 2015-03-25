@@ -51,22 +51,48 @@ namespace roboptim
                          vector_t::Zero (3),
                          vector_t::Zero (1))
         {
-          // Fill matrix A.
-          this->A () <<  5., -2., -1.,
-                        -2.,  4.,  3.,
-                        -1.,  3.,  5.;
-          this->A () *= 0.5;
-
-          // Fill vector b.
-          this->b () << 2., -35., -47.;
-
-          // Fill c.
-          this->c () << 5.;
+          initialize ();
         }
+
+        void initialize ();
 
         ~F ()
         {}
       };
+
+      template <>
+      void F<EigenMatrixSparse>::initialize ()
+      {
+        // Fill matrix A.
+        Eigen::MatrixXd denseA (3, 3);
+        denseA <<  5., -2., -1.,
+                  -2.,  4.,  3.,
+                  -1.,  3.,  5.;
+        denseA *= 0.5;
+        this->A () = denseA.sparseView ();
+
+        // Fill vector b.
+        this->b () << 2., -35., -47.;
+
+        // Fill c.
+        this->c () << 5.;
+      }
+
+      template <typename T>
+      void F<T>::initialize ()
+      {
+        // Fill matrix A.
+        this->A () <<  5., -2., -1.,
+                      -2.,  4.,  3.,
+                      -1.,  3.,  5.;
+        this->A () *= 0.5;
+
+        // Fill vector b.
+        this->b () << 2., -35., -47.;
+
+        // Fill c.
+        this->c () << 5.;
+      }
     } // end of namespace unconstrained
   } // end of namespace qp
 } // end of namespace roboptim
