@@ -146,3 +146,12 @@ ENDMACRO()
 MACRO(BUILD_ROBOPTIM_PROBLEMS)
   INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/roboptim/CMakeLists.txt)
 ENDMACRO()
+
+# BUILD_MANIFOLD_PROBLEMS()
+# -------------------------
+#
+# Build Manifolds problems.
+#
+MACRO(BUILD_MANIFOLD_PROBLEMS)
+  INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/manifold/CMakeLists.txt)
+ENDMACRO()
