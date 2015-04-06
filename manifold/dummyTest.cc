@@ -35,21 +35,6 @@ using namespace pgs;
 using namespace Eigen;
 using namespace roboptim;
 
-//namespace roboptim
-//{
-//  namespace manifold
-//  {
-//    template <typename T>
-//    struct F : public GenericDifferentiableFunction< T >
-//    {
-//      ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
-//      (FunctionOnManifold<GenericDifferentiableFunction< T > >);
-//      F () : GenericDifferentiableFunction<T> (3, 1, "f_n (x) = empty")
-//      {}
-//    };
-//  } // end of namespace manifold
-//} // end of namespace roboptim
-
 typedef boost::mpl::list< ::roboptim::EigenMatrixDense/*,
 			  ::roboptim::EigenMatrixSparse*/> functionTypes_t;
 
@@ -59,27 +44,18 @@ struct F : public GenericDifferentiableFunction<T>
   ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
   (GenericDifferentiableFunction<T>);
 
-  F () : GenericDifferentiableFunction<T> (22, 10, "f_n (x) = n * x")
+  F () : GenericDifferentiableFunction<T> (1, 3, "f_n (x) = n * x")
   {}
 
-  void impl_compute (result_ref res, const_argument_ref argument) const
+  void impl_compute (result_ref res, const_argument_ref ) const
   {
     res.setZero ();
-    for (size_type i = 0; i < this->outputSize (); ++i)
-      for (size_type j = 0; j < 3; ++j)
-  {
-    res[i] += (value_type)i * argument[0];
-  }
   }
 
   void impl_gradient (gradient_ref grad, const_argument_ref,
-          size_type functionId) const
+          size_type ) const
   {
     grad.setZero ();
-    for (size_type j = 0; j < 3; ++j)
-      {
-  grad[0] += (value_type)functionId;
-      }
   }
 };
 
@@ -92,10 +68,10 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (DummyTest, T, functionTypes_t)
   DESC_MANIFOLD(R3, REAL_SPACE(3));
   NAMED_FUNCTION_BINDING(F_On_R3, Func, R3);
 
-  pgs::RealSpace pos(3);pos.name() = "position";
+  pgs::RealSpace pos(3);
+  pos.name() = "position";
 
-  boost::shared_ptr<F_On_R3>
-    descWrapPtr(new F_On_R3());
+  boost::shared_ptr<F_On_R3> descWrapPtr(new F_On_R3());
 
   Instance_F_On_R3 instWrap(descWrapPtr, pos, pos);
 
@@ -105,11 +81,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (DummyTest, T, functionTypes_t)
   SolverFactory<solver_t> factory ("pgsolver", problem);
   solver_t& solver = factory ();
 
-  std::cout << solver << std::endl; 
+  //Solve
   solver.solve();
-
-  std::cout << "HelloWorld" << std::endl;
-  BOOST_CHECK_EQUAL(2, 2);
 }
 
 BOOST_AUTO_TEST_SUITE_END ()
