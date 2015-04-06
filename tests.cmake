@@ -97,8 +97,11 @@ MACRO(BUILD_TEST FILE_NAME)
 
   PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} roboptim-core)
 
+  PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} manifolds)
+  
   # Link against Boost.
   TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} ${Boost_LIBRARIES})
+  TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} debug manifolds_d optimized manifolds)
 
   # Make sure the plugins will be found.
   SET_PROPERTY(

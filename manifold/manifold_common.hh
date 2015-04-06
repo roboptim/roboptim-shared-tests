@@ -3,14 +3,14 @@
 
 # include <roboptim/core/differentiable-function.hh>
 # include <roboptim/core/linear-function.hh>
-# include <roboptim/core/decorator/manifold-map/instance-wrapper.hh>
+# include <roboptim/core/decorator/manifold-map/function-on-manifold.hh>
 
 namespace roboptim
 {
   template <typename T>
-  using ManifoldLinearFunction_t = InstanceWrapper<GenericLinearFunction< T > >;
+  using ManifoldLinearFunction_t = FunctionOnManifold<GenericLinearFunction< T > >;
   template <typename T>
-  using ManifoldDifferentiableFunction_t = InstanceWrapper<GenericDifferentiableFunction< T > >;
+  using ManifoldDifferentiableFunction_t = FunctionOnManifold<GenericDifferentiableFunction< T > >;
 }
 
 # include "common.hh"

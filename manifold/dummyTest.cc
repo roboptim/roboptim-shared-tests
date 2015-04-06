@@ -23,6 +23,7 @@
 #include <roboptim/core/differentiable-function.hh>
 #include <roboptim/core/plugin/pgsolver/pgsolver.hh>
 #include <roboptim/core/decorator/manifold-map/manifold-map.hh>
+#include <roboptim/core/decorator/manifold-map/function-on-manifold.hh>
 
 #include <manifolds/SO3.h>
 #include <manifolds/RealSpace.h>
@@ -42,7 +43,7 @@ using namespace roboptim;
 //    struct F : public GenericDifferentiableFunction< T >
 //    {
 //      ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
-//      (InstanceWrapper<GenericDifferentiableFunction< T > >);
+//      (FunctionOnManifold<GenericDifferentiableFunction< T > >);
 //      F () : GenericDifferentiableFunction<T> (3, 1, "f_n (x) = empty")
 //      {}
 //    };
@@ -67,7 +68,7 @@ struct F : public GenericDifferentiableFunction<T>
     for (size_type i = 0; i < this->outputSize (); ++i)
       for (size_type j = 0; j < 3; ++j)
   {
-    res[i] += (value_type)i * argument[19 + j];
+    res[i] += (value_type)i * argument[0];
   }
   }
 
@@ -77,7 +78,7 @@ struct F : public GenericDifferentiableFunction<T>
     grad.setZero ();
     for (size_type j = 0; j < 3; ++j)
       {
-  grad[19 + j] += (value_type)functionId;
+  grad[0] += (value_type)functionId;
       }
   }
 };
@@ -87,31 +88,28 @@ BOOST_FIXTURE_TEST_SUITE (manifold, TestSuiteConfiguration)
 BOOST_AUTO_TEST_CASE_TEMPLATE (DummyTest, T, functionTypes_t)
 {
   typedef F<T> Func;
-
+  
   DESC_MANIFOLD(R3, REAL_SPACE(3));
-  //NAMED_FUNCTION_BINDING(F_On_R3, Func, R3);
-  roboptim::FunctionOnManifold<DifferentiableFunction> a;
+  NAMED_FUNCTION_BINDING(F_On_R3, Func, R3);
 
-  //DESC_MANIFOLD(FreeFlyerPlus10, REAL_SPACE(10), roboptim::SO3, REAL_SPACE(3));
-  //NAMED_FUNCTION_BINDING(F_On_FreeFlyerPlus10, Func, FreeFlyerPlus10);
+  pgs::RealSpace pos(3);pos.name() = "position";
 
-  //pgs::RealSpace pos(3);pos.name() = "position";
+  boost::shared_ptr<F_On_R3>
+    descWrapPtr(new F_On_R3());
 
-  //boost::shared_ptr<F_On_R3>
-    //descWrapPtr(new F_On_R3());
+  Instance_F_On_R3 instWrap(descWrapPtr, pos, pos);
 
-  //Instance_F_On_R3 instWrap(descWrapPtr, pos, R3);
+  solver_t::problem_t problem (instWrap);
 
-  //solver_t::problem_t problem (instWrap);
+  // Initialize solver.
+  SolverFactory<solver_t> factory ("pgsolver", problem);
+  solver_t& solver = factory ();
 
-  //// Initialize solver.
-  //SolverFactory<solver_t> factory ("pgsolver", problem);
-  //solver_t& solver = factory ();
+  std::cout << solver << std::endl; 
+  solver.solve();
 
-  //std::cout << solver << std::endl; 
-
-  //std::cout << "HelloWorld" << std::endl;
-  //BOOST_CHECK_EQUAL(2, 2);
+  std::cout << "HelloWorld" << std::endl;
+  BOOST_CHECK_EQUAL(2, 2);
 }
 
 BOOST_AUTO_TEST_SUITE_END ()
