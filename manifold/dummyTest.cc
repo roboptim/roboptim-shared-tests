@@ -78,7 +78,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (DummyTest, T, functionTypes_t)
   solver_t::problem_t problem (instWrap);
 
   // Initialize solver.
+#ifdef NDEBUG
   SolverFactory<solver_t> factory ("pgsolver", problem);
+#else
+  SolverFactory<solver_t> factory ("pgsolver_d", problem);
+#endif
   solver_t& solver = factory ();
 
   //Solve
