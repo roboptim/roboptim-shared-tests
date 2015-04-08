@@ -10,7 +10,7 @@
 // roboptim is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
+// gnu Lesser General Public License for more details.
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with roboptim.  If not, see <http://www.gnu.org/licenses/>.
@@ -204,10 +204,15 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (ConversionTest, T, functionTypes_t)
 
   std::cout << "problem.argumentBounds().size(): " << problem.argumentBounds().size() << std::endl;
 
+
   roboptim::pgsolver::ConvertedProblem<solver_t>* cP = roboptim::pgsolver::ConvertedProblem<solver_t>::convertProblem(problem, robot);
 
-  std::cout << "cP->numberOfCstr(): " << cP->numberOfCstr() << std::endl;
 
+  if (cP != nullptr)
+    {
+      std::cout << "cP->numberOfCstr(): " << cP->numberOfCstr() << std::endl;
+    }
+  /*
   Eigen::VectorXd store = Eigen::VectorXd::Zero(instWrapPtr->outputSize());
   Eigen::VectorXd store2 = Eigen::VectorXd::Zero(16);
 
@@ -218,10 +223,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (ConversionTest, T, functionTypes_t)
   cP->getTangentLB(store2);
 
   std::cout << "store2: " << store2 << std::endl;
+  //*/
 
+  delete cP;
 
   std::cout << "OHAI" << std::endl;
   BOOST_CHECK_EQUAL(2, 2);
 }
-//*/
+
 BOOST_AUTO_TEST_SUITE_END ()
