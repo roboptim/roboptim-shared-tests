@@ -3,7 +3,7 @@
 
 # include <roboptim/core/differentiable-function.hh>
 # include <roboptim/core/linear-function.hh>
-# include <roboptim/core/decorator/manifold-map/function-on-manifold.hh>
+# include <roboptim/core/manifold-map/decorator/manifold-map.hh>
 
 namespace roboptim
 {
