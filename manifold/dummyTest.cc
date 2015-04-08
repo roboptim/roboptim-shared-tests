@@ -212,7 +212,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (ConversionTest, T, functionTypes_t)
     {
       std::cout << "cP->numberOfCstr(): " << cP->numberOfCstr() << std::endl;
     }
-  /*
   Eigen::VectorXd store = Eigen::VectorXd::Zero(instWrapPtr->outputSize());
   Eigen::VectorXd store2 = Eigen::VectorXd::Zero(16);
 
