@@ -97,8 +97,13 @@ MACRO(BUILD_TEST FILE_NAME)
 
   PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} roboptim-core)
 
+  PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} manifolds)
+  PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} PGSolver)
+  
   # Link against Boost.
   TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} ${Boost_LIBRARIES})
+  TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} debug manifolds_d optimized manifolds)
+  TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} debug PGSolver_d optimized PGSolver)
 
   # Make sure the plugins will be found.
   SET_PROPERTY(
@@ -145,4 +150,13 @@ ENDMACRO()
 #
 MACRO(BUILD_ROBOPTIM_PROBLEMS)
   INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/roboptim/CMakeLists.txt)
+ENDMACRO()
+
+# BUILD_MANIFOLD_PROBLEMS()
+# -------------------------
+#
+# Build Manifolds problems.
+#
+MACRO(BUILD_MANIFOLD_PROBLEMS)
+  INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/manifold/CMakeLists.txt)
 ENDMACRO()
