@@ -17,6 +17,7 @@
 
 
 #include "manifold/manifold_common.hh"
+#include "common.hh"
 
 #include <boost/test/unit_test.hpp>
 
@@ -30,6 +31,11 @@
 #include <manifolds/CartesianProduct.h>
 #include <manifolds/ExpMapMatrix.h>
 #include <manifolds/S2.h>
+#include <manifolds/Point.h>
+#include <manifolds/utils.h>
+
+#include <roboptim/core/manifold-map/decorator/problem-on-manifold.hh>
+
 
 using namespace pgs;
 using namespace Eigen;
@@ -86,7 +92,6 @@ struct F : public GenericDifferentiableFunction<T>
 template<class T>
 struct G : public GenericLinearFunction<T>
 {
-  //ROBOPTIM_LINEAR_FUNCTION_FWD_TYPEDEFS_(GenericLinearFunction<T>);
   ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
     (GenericLinearFunction<T>);
 
@@ -117,10 +122,12 @@ struct G : public GenericLinearFunction<T>
 
 BOOST_FIXTURE_TEST_SUITE (manifold, TestSuiteConfiguration)
 
-
+/*
 BOOST_AUTO_TEST_CASE_TEMPLATE (DummyTest, T, functionTypes_t)
 {
   typedef F<T> Func;
+
+  std::cout << "ZA DUMMY_TEST" << std::endl;
 
   DESC_MANIFOLD(R3, REAL_SPACE(3));
   NAMED_FUNCTION_BINDING(F_On_R3, Func, R3);
@@ -135,7 +142,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (DummyTest, T, functionTypes_t)
   solver_t::problem_t problem (instWrap);
 
   // Initialize solver.
-  SolverFactory<solver_t> factory ("pgsolver", problem);
+  SolverFactory<solver_t> factory ("pgsolver_d", problem);
   solver_t& solver = factory ();
 
   // Solve
@@ -144,10 +151,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (DummyTest, T, functionTypes_t)
   std::cout << "HelloWorld" << std::endl;
   BOOST_CHECK_EQUAL(2, 2);
 }
+*/
 
-
+/*
 BOOST_AUTO_TEST_CASE_TEMPLATE (ConversionTest, T, functionTypes_t)
 {
+
   typedef F<T> Func;
   typedef G<T> Gunc;
 
@@ -222,12 +231,292 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (ConversionTest, T, functionTypes_t)
   cP->getTangentLB(store2);
 
   std::cout << "store2: " << store2 << std::endl;
-  //*/
 
   delete cP;
 
   std::cout << "OHAI" << std::endl;
   BOOST_CHECK_EQUAL(2, 2);
+}
+*/
+
+// ---- //
+
+template<class T>
+struct SquaredNormFunc : public GenericDifferentiableFunction<T>
+{
+  ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
+  (GenericDifferentiableFunction<T>);
+
+  SquaredNormFunc () : GenericDifferentiableFunction<T> (3, 1, "f_n (x) = n * x")
+  {
+  }
+
+  void impl_compute (result_ref res, const_argument_ref argument) const
+  {
+    res.setZero ();
+    for (size_type i = 0; i < 3; ++i)
+      res[0] += argument[i] * argument[i];
+  }
+
+  void impl_gradient (gradient_ref grad, const_argument_ref argument,
+          size_type) const
+  {
+    for(size_type i = 0; i < 3; ++i)
+      {
+	grad[i] = 2 * argument[i];
+      }
+  }
+
+};
+template<class T>
+struct BelongsToPlane : public GenericLinearFunction<T>
+{
+  ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
+  (GenericLinearFunction<T>);
+
+  BelongsToPlane (double a, double b, double c, double d) :
+    GenericLinearFunction<T> (3, 1, "f_n (x) = n * x"),
+    a_(a),
+    b_(b),
+    c_(c),
+    d_(d)
+  {
+  }
+
+  void impl_compute (result_ref res, const_argument_ref argument) const
+  {
+    res[0] = a_*argument[0] + b_*argument[1] + c_*argument[2] + d_;
+  }
+
+  void impl_gradient (gradient_ref grad, const_argument_ref,
+          size_type) const
+  {
+    grad[0] = a_;
+    grad[1] = b_;
+    grad[2] = c_;
+  }
+
+private:
+  double a_, b_, c_, d_;
+
+};
+
+/*
+BOOST_AUTO_TEST_CASE_TEMPLATE (GeometricProblemTest, T, functionTypes_t)
+{
+  double R1 = 0.5;
+  double R2 = 1;
+
+  DESC_MANIFOLD(R3, REAL_SPACE(3));
+  NAMED_FUNCTION_BINDING(SquaredNorm_On_R3, SquaredNormFunc<T>, R3);
+  NAMED_FUNCTION_BINDING(BelongsToPlane_On_R3, BelongsToPlane<T>, R3);
+
+  pgs::RealSpace r3(3);
+
+  boost::shared_ptr<SquaredNorm_On_R3>
+    squaredNormDesc(new SquaredNorm_On_R3());
+
+  boost::shared_ptr<BelongsToPlane_On_R3>
+    belongsToPlaneDesc(new BelongsToPlane_On_R3(1, 0.5, -2, 0.6));
+
+  boost::shared_ptr<Instance_SquaredNorm_On_R3> objFunc(new Instance_SquaredNorm_On_R3(squaredNormDesc, r3, r3));
+  boost::shared_ptr<Instance_BelongsToPlane_On_R3> belongsToPlane(new Instance_BelongsToPlane_On_R3(belongsToPlaneDesc, r3, r3));
+  boost::shared_ptr<Instance_SquaredNorm_On_R3> betweenTwoSpheres(new Instance_SquaredNorm_On_R3(squaredNormDesc, r3, r3));
+
+  // Create a Roboptim problem
+  solver_t::problem_t problem (*objFunc);
+
+  typename SquaredNormFunc<T>::intervals_t bounds;
+  solver_t::problem_t::scales_t scales;
+
+  bounds.push_back(Function::makeInterval (0., 0.));
+  scales.push_back (1.);
+
+  problem.addConstraint
+    (belongsToPlane,
+     bounds, scales);
+
+  bounds.clear();
+  scales.clear();
+
+  bounds.push_back(Function::makeInterval (R1*R1, R2*R2));
+  scales.push_back (1.);
+
+  problem.addConstraint
+    (betweenTwoSpheres,
+     bounds, scales);
+
+  SolverFactory<solver_t> factory ("pgsolver_d", problem);
+  solver_t& solver = factory ();
+
+  // Solve
+  solver.solve();
+}
+*/
+
+// ---- //
+
+size_t nPoints;
+pgs::SO3<pgs::ExpMapMatrix> SO3_;
+std::vector<Eigen::Vector3d> PCI; //Initial pointCloud
+std::vector<Eigen::Vector3d> PCTMP; //Tmp pointCloud
+std::vector<Eigen::Vector3d> PCG; //Goal pointCloud
+Eigen::Matrix3d goalRot_; // Goal rotation
+typedef Eigen::Map<const Eigen::Matrix3d> toMat3;
+
+template<class T>
+struct PointCloudDistFunc : public GenericDifferentiableFunction<T>
+{
+  ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
+  (GenericDifferentiableFunction<T>);
+
+  PointCloudDistFunc () : GenericDifferentiableFunction<T> (9, 1, "Objective function")
+  {
+    rot = Eigen::Matrix3d::Zero();
+    dist = Eigen::Vector3d::Zero();
+    outRepPoint = Eigen::VectorXd::Zero(9);
+  }
+
+  mutable Eigen::Matrix3d rot;
+  mutable Eigen::Vector3d dist;
+  mutable Eigen::VectorXd outRepPoint;
+
+  void impl_compute (result_ref res, const_argument_ref argument) const
+  {
+    res.setZero ();
+    dist.setZero();
+
+    rot = toMat3(argument.data());
+    double out = 0;
+    for (size_t i = 0; i<nPoints; ++i)
+    {
+      dist = PCG[i]-rot*PCI[i];
+      out += dist.transpose()*dist;
+    }
+    out = out / static_cast<double>(nPoints);
+
+    res[0] = out;
+  }
+
+  void impl_gradient (gradient_ref grad, const_argument_ref,
+          size_type) const
+  {
+    grad.setZero();
+    outRepPoint.setZero();
+    for( size_t i = 0; i < nPoints; ++i)
+    {
+      outRepPoint(0) = -2*PCG[i](0)*PCI[i](0),
+      outRepPoint(1) = -2*PCG[i](1)*PCI[i](0),
+      outRepPoint(2) = -2*PCG[i](2)*PCI[i](0),
+      outRepPoint(3) = -2*PCG[i](0)*PCI[i](1),
+      outRepPoint(4) = -2*PCG[i](1)*PCI[i](1),
+      outRepPoint(5) = -2*PCG[i](2)*PCI[i](1),
+      outRepPoint(6) = -2*PCG[i](0)*PCI[i](2),
+      outRepPoint(7) = -2*PCG[i](1)*PCI[i](2),
+      outRepPoint(8) = -2*PCG[i](2)*PCI[i](2);
+      grad += outRepPoint;
+    }
+    grad.array() /= static_cast<double>(nPoints);
+  }
+
+};
+
+template<class T>
+struct RemoveOneRotation : public GenericLinearFunction<T>
+{
+  ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
+  (GenericLinearFunction<T>);
+
+  RemoveOneRotation () :
+    GenericLinearFunction<T> (9, 2, "RemoveOneRotation")
+  {
+    rot = Eigen::Matrix3d::Zero();
+  }
+
+  mutable Eigen::Matrix3d rot;
+
+  void impl_compute (result_ref res, const_argument_ref argument) const
+  {
+    rot = toMat3(argument.data());
+    res[0] = rot(2, 0);
+    res[1] = rot(2, 1);
+  }
+
+  void impl_gradient (gradient_ref grad, const_argument_ref,
+          size_type functionId) const
+  {
+    if (functionId == 0)
+      {
+	grad << 0, 0, 1, 0, 0, 0, 0, 0, 0;
+      }
+    else
+      {
+	grad << 0, 0, 0, 0, 0, 1, 0, 0, 0;
+      }
+  }
+
+};
+
+BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
+{
+  Eigen::Vector3d v;
+  v << 0.10477, 0.03291, -0.19174;
+
+  pgs::Point goalRot = SO3_.getZero();
+  goalRot.increment(v);
+  std::cout << "goalRot = \n" << goalRot << std::endl;
+  goalRot_ = toMat3(goalRot[0].data());
+  nPoints = 300;
+  PCI.resize(nPoints);
+  PCG.resize(nPoints);
+  double nPoints_d = static_cast<double>(nPoints);
+  for (size_t i = 0; i < nPoints/3; ++i)
+    PCI[i] << cos(3*static_cast<double>(i)*2*M_PI/nPoints_d), sin(3*static_cast<double>(i)*2*M_PI/nPoints_d), 0;
+  for (size_t i = nPoints/3; i < 2*nPoints/3; ++i)
+    PCI[i] << 0, cos(3*static_cast<double>(i)*2*M_PI/nPoints_d), sin(3*static_cast<double>(i)*2*M_PI/nPoints_d);
+  for (size_t i = 2*nPoints/3; i < nPoints; ++i)
+    PCI[i] << cos(3*static_cast<double>(i)*2*M_PI/nPoints_d), 0, sin(3*static_cast<double>(i)*2*M_PI/nPoints_d);
+
+  for (size_t i = 0; i<nPoints; ++i)
+    {
+      PCG[i] = goalRot_*PCI[i];
+    }
+
+  DESC_MANIFOLD(RotSpace, roboptim::SO3);
+  NAMED_FUNCTION_BINDING(PC_Dist_On_RotSpace, PointCloudDistFunc<T>, RotSpace);
+  NAMED_FUNCTION_BINDING(Remove_Rotation_On_RotSpace, RemoveOneRotation<T>, RotSpace);
+
+  boost::shared_ptr<PC_Dist_On_RotSpace>
+    pcDistDesc(new PC_Dist_On_RotSpace());
+
+  boost::shared_ptr<Remove_Rotation_On_RotSpace>
+    remRotDesc(new Remove_Rotation_On_RotSpace());
+
+  Instance_PC_Dist_On_RotSpace objFunc(pcDistDesc, SO3_, SO3_);
+
+  boost::shared_ptr<Instance_Remove_Rotation_On_RotSpace> remRotCnstr(new Instance_Remove_Rotation_On_RotSpace(remRotDesc, SO3_, SO3_));
+
+  roboptim::ProblemOnManifold<solver_t::problem_t> problem(SO3_, objFunc);
+
+  typename RemoveOneRotation<T>::intervals_t bounds;
+  solver_t::problem_t::scales_t scales;
+
+  bounds.push_back(Function::makeInterval (0., 0.));
+  bounds.push_back(Function::makeInterval (0., 0.));
+  scales.push_back (1.);
+  scales.push_back (1.);
+
+  problem.addConstraint
+    (remRotCnstr,
+     bounds, scales);
+
+
+  SolverFactory<solver_t> factory ("pgsolver_d", problem);
+  solver_t& solver = factory ();
+
+  // Solve
+  solver.solve();
+
 }
 
 BOOST_AUTO_TEST_SUITE_END ()
