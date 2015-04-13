@@ -41,21 +41,6 @@ using namespace pgs;
 using namespace Eigen;
 using namespace roboptim;
 
-//namespace roboptim
-//{
-//  namespace manifold
-//  {
-//    template <typename T>
-//    struct F : public GenericDifferentiableFunction< T >
-//    {
-//      ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
-//      (FunctionOnManifold<GenericDifferentiableFunction< T > >);
-//      F () : GenericDifferentiableFunction<T> (3, 1, "f_n (x) = empty")
-//      {}
-//    };
-//  } // end of namespace manifold
-//} // end of namespace roboptim
-
 typedef boost::mpl::list< ::roboptim::EigenMatrixDense/*,
 			  ::roboptim::EigenMatrixSparse*/> functionTypes_t;
 
@@ -122,38 +107,6 @@ struct G : public GenericLinearFunction<T>
 
 BOOST_FIXTURE_TEST_SUITE (manifold, TestSuiteConfiguration)
 
-/*
-BOOST_AUTO_TEST_CASE_TEMPLATE (DummyTest, T, functionTypes_t)
-{
-  typedef F<T> Func;
-
-  std::cout << "ZA DUMMY_TEST" << std::endl;
-
-  DESC_MANIFOLD(R3, REAL_SPACE(3));
-  NAMED_FUNCTION_BINDING(F_On_R3, Func, R3);
-
-  pgs::RealSpace pos(3);pos.name() = "position";
-
-  boost::shared_ptr<F_On_R3>
-    descWrapPtr(new F_On_R3());
-
-  Instance_F_On_R3 instWrap(descWrapPtr, pos, pos);
-
-  solver_t::problem_t problem (instWrap);
-
-  // Initialize solver.
-  SolverFactory<solver_t> factory ("pgsolver_d", problem);
-  solver_t& solver = factory ();
-
-  // Solve
-  solver.solve();
-
-  std::cout << "HelloWorld" << std::endl;
-  BOOST_CHECK_EQUAL(2, 2);
-}
-*/
-
-/*
 BOOST_AUTO_TEST_CASE_TEMPLATE (ConversionTest, T, functionTypes_t)
 {
 
@@ -237,7 +190,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (ConversionTest, T, functionTypes_t)
   std::cout << "OHAI" << std::endl;
   BOOST_CHECK_EQUAL(2, 2);
 }
-*/
+
 
 // ---- //
 
@@ -301,7 +254,8 @@ private:
 
 };
 
-/*
+
+
 BOOST_AUTO_TEST_CASE_TEMPLATE (GeometricProblemTest, T, functionTypes_t)
 {
   double R1 = 0.5;
@@ -352,7 +306,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (GeometricProblemTest, T, functionTypes_t)
   // Solve
   solver.solve();
 }
-*/
+
 
 // ---- //
 
