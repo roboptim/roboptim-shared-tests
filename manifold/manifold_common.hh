@@ -8,9 +8,9 @@
 namespace roboptim
 {
   template <typename T>
-  using ManifoldLinearFunction_t = FunctionOnManifold<GenericLinearFunction< T > >;
+  using ManifoldLinearFunction_t = GenericLinearFunction< T >;
   template <typename T>
-  using ManifoldDifferentiableFunction_t = FunctionOnManifold<GenericDifferentiableFunction< T > >;
+  using ManifoldDifferentiableFunction_t = GenericDifferentiableFunction< T >;
 }
 
 # include "common.hh"
