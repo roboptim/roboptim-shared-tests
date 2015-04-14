@@ -123,10 +123,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (ConversionTest, T, functionTypes_t)
   pgs::CartesianProduct freeFlyer(pos, ori);
   pgs::CartesianProduct robot(freeFlyer, joints);
 
-  boost::shared_ptr<F_On_R22>
-    descWrapPtr(new F_On_R22());
-  boost::shared_ptr<G_On_R22>
-    descWrapPtr1(new G_On_R22());
+  F_On_R22 descWrapPtr;
+  G_On_R22 descWrapPtr1;
 
   boost::shared_ptr<Instance_F_On_R22> instWrapPtr (new Instance_F_On_R22(descWrapPtr, robot, robot));
   boost::shared_ptr<Instance_G_On_R22> instWrapPtr1 (new Instance_G_On_R22(descWrapPtr1, robot, robot));

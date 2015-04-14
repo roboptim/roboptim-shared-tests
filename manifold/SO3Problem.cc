@@ -35,6 +35,7 @@
 #include <manifolds/utils.h>
 
 #include <roboptim/core/manifold-map/decorator/problem-on-manifold.hh>
+#include <roboptim/core/manifold-map/decorator/problem-factory.hh>
 
 
 using namespace pgs;
@@ -176,18 +177,10 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
   DESC_MANIFOLD(RotSpace, roboptim::SO3);
   NAMED_FUNCTION_BINDING(PC_Dist_On_RotSpace, PointCloudDistFunc<T>, RotSpace);
   NAMED_FUNCTION_BINDING(Remove_Rotation_On_RotSpace, RemoveOneRotation<T>, RotSpace);
+  PC_Dist_On_RotSpace pcDistDesc;
+  Remove_Rotation_On_RotSpace remRotDesc;
 
-  boost::shared_ptr<PC_Dist_On_RotSpace>
-    pcDistDesc(new PC_Dist_On_RotSpace());
-
-  boost::shared_ptr<Remove_Rotation_On_RotSpace>
-    remRotDesc(new Remove_Rotation_On_RotSpace());
-
-  Instance_PC_Dist_On_RotSpace objFunc(pcDistDesc, SO3_, SO3_);
-
-  boost::shared_ptr<Instance_Remove_Rotation_On_RotSpace> remRotCnstr(new Instance_Remove_Rotation_On_RotSpace(remRotDesc, SO3_, SO3_));
-
-  roboptim::ProblemOnManifold<solver_t::problem_t> problem(SO3_, objFunc);
+  ProblemFactory<solver_t::problem_t> problemFactory;
 
   typename RemoveOneRotation<T>::intervals_t bounds;
   solver_t::problem_t::scales_t scales;
@@ -197,15 +190,16 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
   scales.push_back (1.);
   scales.push_back (1.);
 
-  problem.addConstraint
-    (remRotCnstr,
+  problemFactory.addConstraint
+    (remRotDesc, SO3_,
      bounds, scales);
 
+  roboptim::ProblemOnManifold<solver_t::problem_t>* problem = problemFactory.getProblem(pcDistDesc, SO3_);
 
 #ifndef NDEBUG
-  SolverFactory<solver_t> factory ("pgsolver_d", problem);
+  SolverFactory<solver_t> factory ("pgsolver_d", *problem);
 #else
-  SolverFactory<solver_t> factory ("pgsolver", problem);
+  SolverFactory<solver_t> factory ("pgsolver", *problem);
 #endif
   solver_t& solver = factory ();
   // Solve

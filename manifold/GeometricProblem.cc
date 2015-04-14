@@ -119,11 +119,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (GeometricProblemTest, T, functionTypes_t)
 
   pgs::RealSpace r3(3);
 
-  boost::shared_ptr<SquaredNorm_On_R3>
-    squaredNormDesc(new SquaredNorm_On_R3());
+  SquaredNorm_On_R3 squaredNormDesc;
 
-  boost::shared_ptr<BelongsToPlane_On_R3>
-    belongsToPlaneDesc(new BelongsToPlane_On_R3(1, 0.5, -2, 0.6));
+  BelongsToPlane_On_R3 belongsToPlaneDesc(1, 0.5, -2, 0.6);
 
   boost::shared_ptr<Instance_SquaredNorm_On_R3> objFunc(new Instance_SquaredNorm_On_R3(squaredNormDesc, r3, r3));
   boost::shared_ptr<Instance_BelongsToPlane_On_R3> belongsToPlane(new Instance_BelongsToPlane_On_R3(belongsToPlaneDesc, r3, r3));
