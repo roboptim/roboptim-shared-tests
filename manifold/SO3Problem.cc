@@ -40,7 +40,6 @@
 
 using namespace pgs;
 using namespace Eigen;
-using namespace roboptim;
 
 typedef boost::mpl::list< ::roboptim::EigenMatrixDense/*,
 			  ::roboptim::EigenMatrixSparse*/> functionTypes_t;
@@ -57,12 +56,12 @@ Eigen::Matrix3d goalRot_; // Goal rotation
 typedef Eigen::Map<const Eigen::Matrix3d> toMat3;
 
 template<class T>
-struct PointCloudDistFunc : public GenericDifferentiableFunction<T>
+struct PointCloudDistFunc : public roboptim::GenericDifferentiableFunction<T>
 {
   ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
-  (GenericDifferentiableFunction<T>);
+  (roboptim::GenericDifferentiableFunction<T>);
 
-  PointCloudDistFunc () : GenericDifferentiableFunction<T> (9, 1, "Objective function")
+  PointCloudDistFunc () : roboptim::GenericDifferentiableFunction<T> (9, 1, "Objective function")
   {
     rot = Eigen::Matrix3d::Zero();
     dist = Eigen::Vector3d::Zero();
@@ -114,13 +113,13 @@ struct PointCloudDistFunc : public GenericDifferentiableFunction<T>
 };
 
 template<class T>
-struct RemoveOneRotation : public GenericLinearFunction<T>
+struct RemoveOneRotation : public roboptim::GenericLinearFunction<T>
 {
   ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
-  (GenericLinearFunction<T>);
+  (roboptim::GenericLinearFunction<T>);
 
   RemoveOneRotation () :
-    GenericLinearFunction<T> (9, 2, "RemoveOneRotation")
+    roboptim::GenericLinearFunction<T> (9, 2, "RemoveOneRotation")
   {
     rot = Eigen::Matrix3d::Zero();
   }
@@ -180,13 +179,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
   PC_Dist_On_RotSpace pcDistDesc;
   Remove_Rotation_On_RotSpace remRotDesc;
 
-  ProblemFactory<solver_t::problem_t> problemFactory;
+  roboptim::ProblemFactory<solver_t::problem_t> problemFactory;
 
   typename RemoveOneRotation<T>::intervals_t bounds;
   solver_t::problem_t::scales_t scales;
 
-  bounds.push_back(Function::makeInterval (0., 0.));
-  bounds.push_back(Function::makeInterval (0., 0.));
+  bounds.push_back(roboptim::Function::makeInterval (0., 0.));
+  bounds.push_back(roboptim::Function::makeInterval (0., 0.));
   scales.push_back (1.);
   scales.push_back (1.);
 
@@ -197,9 +196,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
   roboptim::ProblemOnManifold<solver_t::problem_t>* problem = problemFactory.getProblem(pcDistDesc, SO3_);
 
 #ifndef NDEBUG
-  SolverFactory<solver_t> factory ("pgsolver_d", *problem);
+  roboptim::SolverFactory<solver_t> factory ("pgsolver_d", *problem);
 #else
-  SolverFactory<solver_t> factory ("pgsolver", *problem);
+  roboptim::SolverFactory<solver_t> factory ("pgsolver", *problem);
 #endif
   solver_t& solver = factory ();
   // Solve
