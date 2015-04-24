@@ -21,11 +21,6 @@
 
 #include <boost/test/unit_test.hpp>
 
-#include <roboptim/core/linear-function.hh>
-#include <roboptim/core/differentiable-function.hh>
-#include <roboptim/core/plugin/pgsolver/pgsolver.hh>
-#include <roboptim/core/plugin/pgsolver/converted-problem.hh>
-
 #include <manifolds/SO3.h>
 #include <manifolds/RealSpace.h>
 #include <manifolds/CartesianProduct.h>
@@ -34,23 +29,26 @@
 #include <manifolds/Point.h>
 #include <manifolds/utils.h>
 
+#include <roboptim/core/linear-function.hh>
+#include <roboptim/core/differentiable-function.hh>
+#include <roboptim/core/plugin/pgsolver/pgsolver.hh>
+#include <roboptim/core/plugin/pgsolver/converted-problem.hh>
+#include <roboptim/core/manifold-map/decorator/problem-factory.hh>
 #include <roboptim/core/manifold-map/decorator/problem-on-manifold.hh>
-
-
-using namespace pgs;
-using namespace Eigen;
-using namespace roboptim;
 
 typedef boost::mpl::list< ::roboptim::EigenMatrixDense/*,
 			  ::roboptim::EigenMatrixSparse*/> functionTypes_t;
 
+using namespace pgs;
+using namespace Eigen;
+
 template<class T>
-struct F : public GenericDifferentiableFunction<T>
+struct F : public roboptim::GenericDifferentiableFunction<T>
 {
   ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
-  (GenericDifferentiableFunction<T>);
+  (roboptim::GenericDifferentiableFunction<T>);
 
-  F () : GenericDifferentiableFunction<T> (22, 10, "f_n (x) = n * x")
+  F () : roboptim::GenericDifferentiableFunction<T> (22, 10, "f_n (x) = n * x")
   {}
 
   void impl_compute (result_ref res, const_argument_ref argument) const
@@ -75,13 +73,13 @@ struct F : public GenericDifferentiableFunction<T>
 };
 
 template<class T>
-struct G : public GenericLinearFunction<T>
+struct G : public roboptim::GenericLinearFunction<T>
 {
   ROBOPTIM_TWICE_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
-    (GenericLinearFunction<T>);
+    (roboptim::GenericLinearFunction<T>);
 
 
-  G () : GenericLinearFunction<T> (22, 10, "f_n (x) = n * x")
+  G () : roboptim::GenericLinearFunction<T> (22, 10, "f_n (x) = n * x")
   {}
 
   void impl_compute (result_ref res, const_argument_ref argument) const
@@ -126,34 +124,25 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (ConversionTest, T, functionTypes_t)
   F_On_R22 descWrapPtr;
   G_On_R22 descWrapPtr1;
 
-  boost::shared_ptr<Instance_F_On_R22> instWrapPtr (new Instance_F_On_R22(descWrapPtr, robot, robot));
-  boost::shared_ptr<Instance_G_On_R22> instWrapPtr1 (new Instance_G_On_R22(descWrapPtr1, robot, robot));
-
-  solver_t::problem_t problem (*instWrapPtr);
+  roboptim::ProblemFactory<solver_t::problem_t> probFactory;
+  probFactory.setObjective(descWrapPtr, robot);
+  probFactory.addConstraint(descWrapPtr1, robot);
 
   typename Func::intervals_t bounds;
   solver_t::problem_t::scales_t scales;
 
-  for(int i = 0; i < instWrapPtr->outputSize(); ++i) {
-    bounds.push_back(Function::makeLowerInterval (25.));
-    scales.push_back (1.);
+  for(int i = 0; i < descWrapPtr.fct().outputSize(); ++i) {
+    bounds.push_back(roboptim::Function::makeLowerInterval (25.));
   }
-
-  problem.addConstraint
-    (instWrapPtr,
-     bounds, scales);
+  probFactory.addConstraint(descWrapPtr, robot).setBounds(bounds);
 
   bounds.clear();
-  scales.clear();
-
-  for(int i = 0; i < instWrapPtr->outputSize(); ++i) {
-    bounds.push_back(Function::makeLowerInterval (14.));
-    scales.push_back (1.);
+  for(int i = 0; i < descWrapPtr.fct().outputSize(); ++i) {
+    bounds.push_back(roboptim::Function::makeLowerInterval (14.));
   }
+  probFactory.addConstraint(descWrapPtr1, robot).setBounds(bounds);
 
-  problem.addConstraint
-    (instWrapPtr1,
-     bounds, scales);
+  solver_t::problem_t & problem = *(probFactory.getProblem());
 
   std::cout << "problem.argumentBounds().size(): " << problem.argumentBounds().size() << std::endl;
 
@@ -172,7 +161,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (ConversionTest, T, functionTypes_t)
     {
       std::cout << "cP->numberOfCstr(): " << cP->numberOfCstr() << std::endl;
     }
-  Eigen::VectorXd store = Eigen::VectorXd::Zero(instWrapPtr->outputSize());
+  Eigen::VectorXd store = Eigen::VectorXd::Zero(descWrapPtr.fct().outputSize());
   Eigen::VectorXd store2 = Eigen::VectorXd::Zero(16);
 
   cP->getNonLinCstrLB(store, 0);
