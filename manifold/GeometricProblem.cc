@@ -37,7 +37,6 @@
 typedef boost::mpl::list< ::roboptim::EigenMatrixDense/*,
 			  ::roboptim::EigenMatrixSparse*/> functionTypes_t;
 
-using namespace pgs;
 using namespace Eigen;
 
 BOOST_FIXTURE_TEST_SUITE (manifold, TestSuiteConfiguration)
@@ -115,7 +114,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (GeometricProblemTest, T, functionTypes_t)
   NAMED_FUNCTION_BINDING(SquaredNorm_On_R3, SquaredNormFunc<T>, R3);
   NAMED_FUNCTION_BINDING(BelongsToPlane_On_R3, BelongsToPlane<T>, R3);
 
-  pgs::RealSpace r3(3);
+  mnf::RealSpace r3(3);
 
   SquaredNorm_On_R3 squaredNormDesc;
   BelongsToPlane_On_R3 belongsToPlaneDesc(1, 0.5, -2, 0.6);

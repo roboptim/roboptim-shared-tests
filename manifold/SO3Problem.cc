@@ -36,7 +36,6 @@
 #include <roboptim/core/manifold-map/decorator/problem-factory.hh>
 
 
-using namespace pgs;
 using namespace Eigen;
 
 typedef boost::mpl::list< ::roboptim::EigenMatrixDense/*,
@@ -46,7 +45,7 @@ BOOST_FIXTURE_TEST_SUITE (manifold, TestSuiteConfiguration)
 
 
 size_t nPoints;
-pgs::SO3<pgs::ExpMapMatrix> SO3_;
+mnf::SO3<mnf::ExpMapMatrix> SO3_;
 std::vector<Eigen::Vector3d> PCI; //Initial pointCloud
 std::vector<Eigen::Vector3d> PCTMP; //Tmp pointCloud
 std::vector<Eigen::Vector3d> PCG; //Goal pointCloud
@@ -151,7 +150,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
   Eigen::Vector3d v;
   v << 0.10477, 0.03291, -0.19174;
 
-  pgs::Point goalRot = SO3_.getZero();
+  mnf::Point goalRot = SO3_.getZero();
   goalRot.increment(v);
   std::cout << "goalRot = \n" << goalRot << std::endl;
   goalRot_ = toMat3(goalRot[0].data());
