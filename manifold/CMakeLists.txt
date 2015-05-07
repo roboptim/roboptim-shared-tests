@@ -14,7 +14,7 @@
 # along with roboptim-core.  If not, see <http://www.gnu.org/licenses/>.
 
 IF(NOT DEFINED MANIFOLD_PROBLEMS)
-  SET(MANIFOLD_PROBLEMS conversionTest GeometricProblem SO3Problem)
+  SET(MANIFOLD_PROBLEMS GeometricProblem SO3Problem)
 ENDIF()
 
 FOREACH(PROBLEM ${MANIFOLD_PROBLEMS})

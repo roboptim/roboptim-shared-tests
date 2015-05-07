@@ -23,8 +23,6 @@
 
 #include <roboptim/core/linear-function.hh>
 #include <roboptim/core/differentiable-function.hh>
-#include <roboptim/core/plugin/pgsolver/pgsolver.hh>
-#include <roboptim/core/plugin/pgsolver/converted-problem.hh>
 
 #include <manifolds/SO3.h>
 #include <manifolds/RealSpace.h>

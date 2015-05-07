@@ -31,8 +31,6 @@
 
 #include <roboptim/core/linear-function.hh>
 #include <roboptim/core/differentiable-function.hh>
-#include <roboptim/core/plugin/pgsolver/pgsolver.hh>
-#include <roboptim/core/plugin/pgsolver/converted-problem.hh>
 #include <roboptim/core/manifold-map/decorator/problem-factory.hh>
 #include <roboptim/core/manifold-map/decorator/problem-on-manifold.hh>
 
