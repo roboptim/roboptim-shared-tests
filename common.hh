@@ -136,7 +136,7 @@ solver_t;
   BOOST_SMALL_OR_CLOSE_RES (result.value[0], ExpectedResult::fx, f_tol, correct_fx); \
   /* Check final bounds on x. */					\
   bool correct_bounds = true;						\
-  for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i) {	\
+  for (GenericFunction<functionType_t>::size_type i = 0; i < result.x.size (); ++i) {	\
     bool res = true;							\
     std::size_t ii = static_cast<std::size_t> (i);			\
     /* Check lower bound. */						\
@@ -151,7 +151,7 @@ solver_t;
   /* Only check x is we have not found an optimal result. */		\
   if (!(correct_fx && correct_bounds)) {				\
     /* Check final x. */						\
-    for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
+    for (GenericFunction<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
       BOOST_CHECK_SMALL_OR_CLOSE (result.x[i], ExpectedResult::x[i], x_tol); \
   }									\
   /* Display the result. */						\

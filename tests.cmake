@@ -119,6 +119,15 @@ MACRO(EXPECT_TEST_FAIL FILE_NAME)
   SET_TESTS_PROPERTIES(${EXE_NAME}${PROGRAM_SUFFIX} PROPERTIES WILL_FAIL TRUE)
 ENDMACRO()
 
+# BUILD_COMMON_TESTS()
+# -------------------------
+#
+# Build common tests for plugins.
+#
+MACRO(BUILD_COMMON_TESTS)
+  INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/common/CMakeLists.txt)
+ENDMACRO()
+
 # BUILD_SCHITTKOWSKI_PROBLEMS()
 # -----------------------------
 #
