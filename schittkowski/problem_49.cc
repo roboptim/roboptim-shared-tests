@@ -178,10 +178,10 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem49)
   solver_t::problem_t::intervals_t intervals;
   intervals.push_back (G<functionType_t>::makeInterval (7., 7.));
   intervals.push_back (G<functionType_t>::makeInterval (6., 6.));
-  solver_t::problem_t::scales_t scales
+  solver_t::problem_t::scaling_t scaling
     (static_cast<std::size_t> (g->outputSize ()), 1.);
 
-  problem.addConstraint (g, intervals, scales);
+  problem.addConstraint (g, intervals, scaling);
 
   F<functionType_t>::argument_t x (5);
   x << 10, 7, 2, -3, 0.8;
