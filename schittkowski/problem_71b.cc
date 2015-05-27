@@ -313,7 +313,7 @@ BOOST_AUTO_TEST_CASE (problem_71b)
   bounds.push_back(Function::makeLowerInterval (25.));
   bounds.push_back(Function::makeInterval (40., 40.));
 
-  solver_t::problem_t::scales_t scales;
+  solver_t::problem_t::scaling_t scales;
   scales.push_back (1.);
   scales.push_back (1.);
 
