@@ -313,14 +313,14 @@ BOOST_AUTO_TEST_CASE (problem_71b)
   bounds.push_back(Function::makeLowerInterval (25.));
   bounds.push_back(Function::makeInterval (40., 40.));
 
-  solver_t::problem_t::scaling_t scales;
-  scales.push_back (1.);
-  scales.push_back (1.);
+  solver_t::problem_t::scaling_t scaling;
+  scaling.push_back (1.);
+  scaling.push_back (1.);
 
   problem.addConstraint
     (boost::static_pointer_cast<
      GenericDifferentiableFunction<functionType_t>  > (g),
-     bounds, scales);
+     bounds, scaling);
 
   // Set the starting point.
   F<functionType_t>::argument_t x (4);
