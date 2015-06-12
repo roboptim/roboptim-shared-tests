@@ -31,7 +31,7 @@
 
 #include <roboptim/core/linear-function.hh>
 #include <roboptim/core/differentiable-function.hh>
-#include <roboptim/core/manifold-map/decorator/problem-factory.hh>
+#include <roboptim/core/manifold-map/decorator/manifold-problem-factory.hh>
 #include <roboptim/core/manifold-map/decorator/problem-on-manifold.hh>
 
 typedef boost::mpl::list< ::roboptim::EigenMatrixDense/*,
@@ -108,11 +108,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (GeometricProblemTest, T, functionTypes_t)
   double R1 = 0.5;
   double R2 = 1;
 
-  roboptim::ProblemFactory<solver_t::problem_t> probFactory;
+  roboptim::ManifoldProblemFactory<solver_t::problem_t> probFactory;
 
-  DESC_MANIFOLD(R3, REAL_SPACE(3));
-  NAMED_FUNCTION_BINDING(SquaredNorm_On_R3, SquaredNormFunc<T>, R3);
-  NAMED_FUNCTION_BINDING(BelongsToPlane_On_R3, BelongsToPlane<T>, R3);
+  ROBOPTIM_DESC_MANIFOLD(R3, ROBOPTIM_REAL_SPACE(3));
+  ROBOPTIM_NAMED_FUNCTION_BINDING(SquaredNorm_On_R3, SquaredNormFunc<T>, R3);
+  ROBOPTIM_NAMED_FUNCTION_BINDING(BelongsToPlane_On_R3, BelongsToPlane<T>, R3);
 
   mnf::RealSpace r3(3);
 

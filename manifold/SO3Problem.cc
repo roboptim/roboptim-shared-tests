@@ -33,7 +33,7 @@
 #include <manifolds/utils.h>
 
 #include <roboptim/core/manifold-map/decorator/problem-on-manifold.hh>
-#include <roboptim/core/manifold-map/decorator/problem-factory.hh>
+#include <roboptim/core/manifold-map/decorator/manifold-problem-factory.hh>
 
 
 using namespace Eigen;
@@ -170,13 +170,13 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
       PCG[i] = goalRot_*PCI[i];
     }
 
-  DESC_MANIFOLD(RotSpace, roboptim::SO3);
-  NAMED_FUNCTION_BINDING(PC_Dist_On_RotSpace, PointCloudDistFunc<T>, RotSpace);
-  NAMED_FUNCTION_BINDING(Remove_Rotation_On_RotSpace, RemoveOneRotation<T>, RotSpace);
+  ROBOPTIM_DESC_MANIFOLD(RotSpace, roboptim::SO3);
+  ROBOPTIM_NAMED_FUNCTION_BINDING(PC_Dist_On_RotSpace, PointCloudDistFunc<T>, RotSpace);
+  ROBOPTIM_NAMED_FUNCTION_BINDING(Remove_Rotation_On_RotSpace, RemoveOneRotation<T>, RotSpace);
   PC_Dist_On_RotSpace pcDistDesc;
   Remove_Rotation_On_RotSpace remRotDesc;
 
-  roboptim::ProblemFactory<solver_t::problem_t> problemFactory;
+  roboptim::ManifoldProblemFactory<solver_t::problem_t> problemFactory;
 
   typename RemoveOneRotation<T>::intervals_t bounds;
   bounds.push_back(roboptim::Function::makeInterval (0., 0.));
