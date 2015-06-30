@@ -94,7 +94,7 @@ typedef constraints2_t constraints_t;
 
 
 // Define solver type.
-typedef ::roboptim::Solver<COST_FUNCTION_TYPE<functionType_t>, constraints_t >
+typedef ::roboptim::Solver<COST_FUNCTION_TYPE<functionType_t>::traits_t>
 solver_t;
 
 #define SET_OPTIMIZATION_LOGGER(SOLVER,FILENAME)	\
