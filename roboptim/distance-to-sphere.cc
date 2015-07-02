@@ -95,16 +95,16 @@ namespace roboptim
       switch (functionId)
         {
         case 0:
-          grad.insert (0) = -sin(theta) * cos(phi);
-          grad.insert (1) = -cos(theta) * sin(phi);
+          grad.coeffRef (0) = -sin(theta) * cos(phi);
+          grad.coeffRef (1) = -cos(theta) * sin(phi);
           break;
         case 1:
-          grad.insert (0) = cos(theta) * cos(phi);
-          grad.insert (1) = -sin(theta) * sin(phi);
+          grad.coeffRef (0) = cos(theta) * cos(phi);
+          grad.coeffRef (1) = -sin(theta) * sin(phi);
           break;
         case 2:
-          grad.insert (0) = 0.;
-          grad.insert (1) = cos(phi);
+          grad.coeffRef (0) = 0.;
+          grad.coeffRef (1) = cos(phi);
           break;
         default:
           abort();

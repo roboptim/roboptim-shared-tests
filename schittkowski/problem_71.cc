@@ -122,10 +122,10 @@ namespace roboptim
 	const
       {
 	grad.setZero ();
-	grad.insert (0) = x[0] * x[3] + x[3] * (x[0] + x[1] + x[2]);
-	grad.insert (1) = x[0] * x[3];
-	grad.insert (2) = x[0] * x[3] + 1;
-	grad.insert (3) = x[0] * (x[0] + x[1] + x[2]);
+	grad.coeffRef (0) = x[0] * x[3] + x[3] * (x[0] + x[1] + x[2]);
+	grad.coeffRef (1) = x[0] * x[3];
+	grad.coeffRef (2) = x[0] * x[3] + 1;
+	grad.coeffRef (3) = x[0] * (x[0] + x[1] + x[2]);
       }
 
       template <typename T>
@@ -148,10 +148,10 @@ namespace roboptim
 	const
       {
 	grad.reserve (4);
-	grad.insert (0) = x[1] * x[2] * x[3];
-	grad.insert (1) = x[0] * x[2] * x[3];
-	grad.insert (2) = x[0] * x[1] * x[3];
-	grad.insert (3) = x[0] * x[1] * x[2];
+	grad.coeffRef (0) = x[1] * x[2] * x[3];
+	grad.coeffRef (1) = x[0] * x[2] * x[3];
+	grad.coeffRef (2) = x[0] * x[1] * x[3];
+	grad.coeffRef (3) = x[0] * x[1] * x[2];
       }
 
       template <typename T>
@@ -174,10 +174,10 @@ namespace roboptim
 	const
       {
 	grad.reserve (4);
-	grad.insert (0) = 2 * x[0];
-	grad.insert (1) = 2 * x[1];
-	grad.insert (2) = 2 * x[2];
-	grad.insert (3) = 2 * x[3];
+	grad.coeffRef (0) = 2 * x[0];
+	grad.coeffRef (1) = 2 * x[1];
+	grad.coeffRef (2) = 2 * x[2];
+	grad.coeffRef (3) = 2 * x[3];
       }
 
       template <typename T>
@@ -198,20 +198,20 @@ namespace roboptim
       (hessian_ref h, const_argument_ref x, size_type) const
       {
 	h.setZero ();
-	h.insert (0, 0) = 2 * x[3];
-	h.insert (0, 1) = x[3];
-	h.insert (0, 2) = x[3];
-	h.insert (0, 3) = 2 * x[0] + x[1] + x[2];
+	h.coeffRef (0, 0) = 2 * x[3];
+	h.coeffRef (0, 1) = x[3];
+	h.coeffRef (0, 2) = x[3];
+	h.coeffRef (0, 3) = 2 * x[0] + x[1] + x[2];
 
-	h.insert (1, 0) = x[3];
-	h.insert (1, 3) = x[0];
+	h.coeffRef (1, 0) = x[3];
+	h.coeffRef (1, 3) = x[0];
 
-	h.insert (2, 0) = x[3];
-	h.insert (2, 3) = x[1];
+	h.coeffRef (2, 0) = x[3];
+	h.coeffRef (2, 3) = x[1];
 
-	h.insert (3, 0) = 2 * x[0] + x[1] + x[2];
-	h.insert (3, 1) = x[0];
-	h.insert (3, 2) = x[0];
+	h.coeffRef (3, 0) = 2 * x[0] + x[1] + x[2];
+	h.coeffRef (3, 1) = x[0];
+	h.coeffRef (3, 2) = x[0];
       }
 
       template <typename T>
@@ -247,21 +247,21 @@ namespace roboptim
       (hessian_ref h, const_argument_ref x, size_type) const
       {
 	h.setZero ();
-	h.insert (0, 1) = x[2] * x[3];
-	h.insert (0, 2) = x[1] * x[3];
-	h.insert (0, 3) = x[1] * x[2];
+	h.coeffRef (0, 1) = x[2] * x[3];
+	h.coeffRef (0, 2) = x[1] * x[3];
+	h.coeffRef (0, 3) = x[1] * x[2];
 
-	h.insert (1, 0) = x[2] * x[3];
-	h.insert (1, 2) = x[0] * x[3];
-	h.insert (1, 3) = x[0] * x[2];
+	h.coeffRef (1, 0) = x[2] * x[3];
+	h.coeffRef (1, 2) = x[0] * x[3];
+	h.coeffRef (1, 3) = x[0] * x[2];
 
-	h.insert (2, 0) = x[1] * x[3];
-	h.insert (2, 1) = x[0] * x[3];
-	h.insert (2, 3) = x[0] * x[1];
+	h.coeffRef (2, 0) = x[1] * x[3];
+	h.coeffRef (2, 1) = x[0] * x[3];
+	h.coeffRef (2, 3) = x[0] * x[1];
 
-	h.insert (3, 0) = x[1] * x[2];
-	h.insert (3, 1) = x[0] * x[2];
-	h.insert (3, 2) = x[0] * x[1];
+	h.coeffRef (3, 0) = x[1] * x[2];
+	h.coeffRef (3, 1) = x[0] * x[2];
+	h.coeffRef (3, 2) = x[0] * x[1];
       }
 
 
@@ -299,10 +299,10 @@ namespace roboptim
       (hessian_ref h, const_argument_ref, size_type) const
       {
 	h.setZero ();
-	h.insert (0, 0) = 2.;
-	h.insert (1, 1) = 2.;
-	h.insert (2, 2) = 2.;
-	h.insert (3, 3) = 2.;
+	h.coeffRef (0, 0) = 2.;
+	h.coeffRef (1, 1) = 2.;
+	h.coeffRef (2, 2) = 2.;
+	h.coeffRef (3, 3) = 2.;
       }
 
       template <typename T>

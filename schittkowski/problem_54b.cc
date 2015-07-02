@@ -141,8 +141,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = 1.;
-	grad.insert (1) = 4e3;
+	grad.coeffRef (0) = 1.;
+	grad.coeffRef (1) = 4e3;
       }
 
       template <typename T>

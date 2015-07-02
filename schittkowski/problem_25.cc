@@ -99,9 +99,9 @@ namespace roboptim
 	  }
 
 
-	grad.insert (0) = dx0;
-	grad.insert (1) = dx1;
-	grad.insert (2) = dx2;
+	grad.coeffRef (0) = dx0;
+	grad.coeffRef (1) = dx1;
+	grad.coeffRef (2) = dx2;
       }
 
       template <typename T>

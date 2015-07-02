@@ -76,13 +76,13 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) =
+	grad.coeffRef (0) =
 	  400. * std::pow (x[0], 3) - 400. * x[0] * x[1] + 2. * x[0] - 2.;
-	grad.insert (1) =
+	grad.coeffRef (1) =
 	  -200. * std::pow (x[0], 2)  + 220.2 * x[1] + 19.8 * x[3] - 40.;
-	grad.insert (2) =
+	grad.coeffRef (2) =
 	  360. * std::pow (x[2], 3)  - 360. * x[2] * x[3] + 2. * x[2] - 2.;
-	grad.insert (3) =
+	grad.coeffRef (3) =
 	  19.8 * x[1] - 180. * std::pow (x[2], 2)  + 200.2 * x[3] - 40.;
       }
 

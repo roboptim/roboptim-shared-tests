@@ -69,10 +69,10 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = 1;
-	grad.insert (1) = 1;
-	grad.insert (2) = 1;
-	grad.insert (3) = 1;
+	grad.coeffRef (0) = 1;
+	grad.coeffRef (1) = 1;
+	grad.coeffRef (2) = 1;
+	grad.coeffRef (3) = 1;
       }
 
       template <typename T>
@@ -125,15 +125,15 @@ namespace roboptim
       G<EigenMatrixSparse>::impl_jacobian
       (jacobian_ref jac, const_argument_ref x) const
       {
-	jac.insert (0,0) = 4.   / (x[0] * x[0]);
-	jac.insert (0,1) = 2.25 / (x[1] * x[1]);
-	jac.insert (0,2) = 1.   / (x[2] * x[2]);
-	jac.insert (0,3) = 0.25 / (x[3] * x[3]);
+	jac.coeffRef (0,0) = 4.   / (x[0] * x[0]);
+	jac.coeffRef (0,1) = 2.25 / (x[1] * x[1]);
+	jac.coeffRef (0,2) = 1.   / (x[2] * x[2]);
+	jac.coeffRef (0,3) = 0.25 / (x[3] * x[3]);
 
-	jac.insert (1,0) = 0.16 / (x[0] * x[0]);
-	jac.insert (1,1) = 0.36 / (x[1] * x[1]);
-	jac.insert (1,2) = 0.64 / (x[2] * x[2]);
-	jac.insert (1,3) = 0.64 / (x[3] * x[3]);
+	jac.coeffRef (1,0) = 0.16 / (x[0] * x[0]);
+	jac.coeffRef (1,1) = 0.36 / (x[1] * x[1]);
+	jac.coeffRef (1,2) = 0.64 / (x[2] * x[2]);
+	jac.coeffRef (1,3) = 0.64 / (x[3] * x[3]);
       }
 
       template <typename T>

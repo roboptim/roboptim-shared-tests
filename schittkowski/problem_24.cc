@@ -73,9 +73,9 @@ namespace roboptim
 	const
       {
 	double alpha = 1. / (27 * std::sqrt (3));
-	grad.insert (0) =
+	grad.coeffRef (0) =
 	  2 * alpha * (x[0] - 3) * std::pow (x[1], 3);
-	grad.insert (1) =
+	grad.coeffRef (1) =
 	  3. * alpha * (std::pow(x[0] - 3, 2) - 9) * std::pow (x[1], 2);
       }
 
@@ -126,8 +126,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = 1. / std::sqrt (3);
-	grad.insert (1) = -1.;
+	grad.coeffRef (0) = 1. / std::sqrt (3);
+	grad.coeffRef (1) = -1.;
       }
 
       template <typename T>
@@ -174,8 +174,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = 1.;
-	grad.insert (1) = std::sqrt (3);
+	grad.coeffRef (0) = 1.;
+	grad.coeffRef (1) = std::sqrt (3);
       }
 
       template <typename T>
@@ -222,8 +222,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = -1.;
-	grad.insert (1) = -std::sqrt (3);
+	grad.coeffRef (0) = -1.;
+	grad.coeffRef (1) = -std::sqrt (3);
       }
 
       template <typename T>

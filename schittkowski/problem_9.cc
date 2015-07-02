@@ -76,10 +76,10 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) =
+	grad.coeffRef (0) =
 	  M_PI * std::cos (M_PI * x[0] / 12) *
 	  std::cos (M_PI  * x[1] / 16) / 12;
-	grad.insert (1) =
+	grad.coeffRef (1) =
 	  -M_PI * std::sin (M_PI * x[0] / 12) *
 	  std::sin (M_PI * x[1] / 16) / 16;
       }
@@ -132,8 +132,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = 4;
-	grad.insert (1) = -3;
+	grad.coeffRef (0) = 4;
+	grad.coeffRef (1) = -3;
       }
 
       template <typename T>

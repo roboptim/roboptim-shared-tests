@@ -78,9 +78,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = -x[1] * x[2];
-	grad.insert (1) = -x[0] * x[2];
-	grad.insert (2) = -x[0] * x[1];
+	grad.coeffRef (0) = -x[1] * x[2];
+	grad.coeffRef (1) = -x[0] * x[2];
+	grad.coeffRef (2) = -x[0] * x[1];
       }
 
       template <typename T>
@@ -128,9 +128,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = -2. * x[0];
-	grad.insert (1) = -4. * x[1];
-	grad.insert (2) = -8. * x[2];
+	grad.coeffRef (0) = -2. * x[0];
+	grad.coeffRef (1) = -4. * x[1];
+	grad.coeffRef (2) = -8. * x[2];
       }
 
       template <typename T>
