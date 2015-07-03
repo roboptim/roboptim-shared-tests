@@ -215,8 +215,8 @@ BOOST_AUTO_TEST_CASE (benchmark_problem17)
   using namespace roboptim;
   using namespace roboptim::benchmark::problem17;
 
-  typedef typename F<functionType_t>::size_type size_type;
-  typedef typename F<functionType_t>::argument_t argument_t;
+  typedef F<functionType_t>::size_type size_type;
+  typedef F<functionType_t>::argument_t argument_t;
 
   size_type n = 1;
   if (argc == 2)
@@ -243,7 +243,8 @@ BOOST_AUTO_TEST_CASE (benchmark_problem17)
 
   for (size_type i = 0; i < n; ++i)
   {
-    problem.argumentBounds ()[2*i] = F<functionType_t>::makeUpperInterval (1.);
+    problem.argumentBounds ()[static_cast<size_t> (2*i)]
+      = F<functionType_t>::makeUpperInterval (1.);
 
     boost::shared_ptr<G<functionType_t> > g =
       boost::make_shared<G<functionType_t> > (n, 2*i);

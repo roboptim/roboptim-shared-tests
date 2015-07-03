@@ -328,7 +328,7 @@ namespace roboptim
 {
   struct ExpectedResult
   {
-    typedef typename solver_t::problem_t::function_t::argument_t argument_t;
+    typedef solver_t::problem_t::function_t::argument_t argument_t;
 
     double f0;
     argument_t x;
