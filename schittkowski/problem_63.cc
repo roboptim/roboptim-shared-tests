@@ -23,17 +23,6 @@ namespace roboptim
   {
     namespace problem63
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 976;
-      const double ExpectedResult::x[] = {3.512118414, 0.2169881741,
-                                          3.552174034};
-      const double ExpectedResult::fx = 961.7151721;
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -161,6 +150,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem63)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 976;
+  expectedResult.x = (ExpectedResult::argument_t (3)
+                      << 3.512118414, 0.2169881741, 3.552174034
+                     ).finished ();
+  expectedResult.fx = 961.7151721;
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -184,7 +180,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem63)
   x << 2, 2, 2;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

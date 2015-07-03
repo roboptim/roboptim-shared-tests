@@ -133,7 +133,7 @@ solver_t;
   RESULT_TYPE& result = boost::get<RESULT_TYPE> (res);			\
   /* Check final value. */						\
   bool correct_fx = true;						\
-  BOOST_SMALL_OR_CLOSE_RES (result.value[0], ExpectedResult::fx, f_tol, correct_fx); \
+  BOOST_SMALL_OR_CLOSE_RES (result.value[0], expectedResult.fx, f_tol, correct_fx); \
   /* Check final bounds on x. */					\
   bool correct_bounds = true;						\
   for (GenericFunction<functionType_t>::size_type i = 0; i < result.x.size (); ++i) {	\
@@ -152,7 +152,7 @@ solver_t;
   if (!(correct_fx && correct_bounds)) {				\
     /* Check final x. */						\
     for (GenericFunction<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
-      BOOST_CHECK_SMALL_OR_CLOSE (result.x[i], ExpectedResult::x[i], x_tol); \
+      BOOST_CHECK_SMALL_OR_CLOSE (result.x[i], expectedResult.x[i], x_tol); \
   }									\
   /* Display the result. */						\
   std::cout << "A solution has been found: " << std::endl		\
@@ -166,7 +166,7 @@ solver_t;
   /* Check final value. */						\
   bool success = false;							\
   bool correct_fx = true;						\
-  BOOST_SMALL_OR_CLOSE_RES (result.value[0], ExpectedResult::fx, f_tol, correct_fx); \
+  BOOST_SMALL_OR_CLOSE_RES (result.value[0], expectedResult.fx, f_tol, correct_fx); \
   /* Check final bounds on x. */					\
   bool correct_bounds = true;						\
   for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i) {	\
@@ -215,7 +215,7 @@ solver_t;
     for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
       {									\
 	bool res = false;						\
-	BOOST_SMALL_OR_CLOSE_RES (result.x[i], ExpectedResult::x[i],	\
+	BOOST_SMALL_OR_CLOSE_RES (result.x[i], expectedResult.x[i],	\
 				  x_tol, res);				\
         success &= res;							\
       }									\
@@ -323,5 +323,17 @@ struct TestSuiteConfiguration
     lt_dlexit ();
   }
 };
+
+namespace roboptim
+{
+  struct ExpectedResult
+  {
+    typedef typename solver_t::problem_t::function_t::argument_t argument_t;
+
+    double f0;
+    argument_t x;
+    double fx;
+  };
+} // end of namespace roboptim
 
 #endif //! ROBOPTIM_SHARED_TESTS_COMMON_HH

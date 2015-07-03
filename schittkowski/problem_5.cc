@@ -23,16 +23,6 @@ namespace roboptim
   {
     namespace problem5
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 1.;
-      const double ExpectedResult::x[] = {-M_PI / 3. + .5, -M_PI / 3. - .5};
-      const double ExpectedResult::fx = -.5 * std::sqrt (3) - (M_PI / 3.);
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -97,6 +87,12 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem5)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 1.;
+  expectedResult.x = (ExpectedResult::argument_t (2)
+                      << -M_PI / 3. + .5, -M_PI / 3. - .5).finished ();
+  expectedResult.fx = -.5 * std::sqrt (3) - (M_PI / 3.);
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -108,7 +104,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem5)
   x << 0., 0.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

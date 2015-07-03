@@ -23,17 +23,6 @@ namespace roboptim
   {
     namespace problem71
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 16.;
-      const double ExpectedResult::x[] = {1., 4.742994, 3.8211503, 1.3794082};
-      const double ExpectedResult::fx = 17.0140173;
-
-
       template <typename T>
       struct F : public GenericTwiceDifferentiableFunction<T>
       {
@@ -347,6 +336,12 @@ BOOST_AUTO_TEST_CASE (problem_71)
   double x_tol = 1e-3;
   double f_tol = 1e-3;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 16.;
+  expectedResult.x = (ExpectedResult::argument_t (4)
+                      << 1., 4.742994, 3.8211503, 1.3794082).finished ();
+  expectedResult.fx = 17.0140173;
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -375,7 +370,7 @@ BOOST_AUTO_TEST_CASE (problem_71)
   x << 1., 5., 5., 1.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);

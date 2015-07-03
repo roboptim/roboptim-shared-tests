@@ -27,19 +27,6 @@ namespace roboptim
   {
     namespace unconstrained
     {
-      struct ExpectedResult
-      {
-        static const double x0[];
-        static const double fx0;
-        static const double x[];
-        static const double fx;
-      };
-
-      const double ExpectedResult::x0[] = {0., 0., 0.};
-      const double ExpectedResult::fx0  = 5.;
-      const double ExpectedResult::x[]  = {3., 5., 7.};
-      const double ExpectedResult::fx   = -244.;
-      
       template <typename T>
       struct F : public GenericNumericQuadraticFunction<T>
       {
@@ -110,6 +97,11 @@ BOOST_AUTO_TEST_CASE (qp_unconstrained)
   double x_tol = 1e-5;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 5.;
+  expectedResult.x = (ExpectedResult::argument_t (3) << 3., 5., 7.).finished ();
+  expectedResult.fx = -244.;
+
   // Build cost function.
   F<functionType_t> f;
 
@@ -118,10 +110,10 @@ BOOST_AUTO_TEST_CASE (qp_unconstrained)
 
   // Load starting point
   F<functionType_t>::argument_t x (3);
-  x << ExpectedResult::x0[0], ExpectedResult::x0[1], ExpectedResult::x0[2];
+  x << 0., 0., 0.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::fx0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
