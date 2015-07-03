@@ -122,6 +122,8 @@ BOOST_AUTO_TEST_CASE (throwTest)
   //reached.
   BOOST_CHECK_THROW (solver_t::result_t res = solver.minimum (),
                      std::runtime_error);
+
+  RELEASE_OPTIMIZATION_LOGGER ();
 }
 
 BOOST_AUTO_TEST_SUITE_END ()

@@ -113,6 +113,12 @@ namespace roboptim
      "/tmp/roboptim-shared-tests/" SOLVER_NAME		\
      "/" FILENAME);
 
+#define RELEASE_OPTIMIZATION_LOGGER()		\
+  if (logger)					\
+    {						\
+      logger.reset ();				\
+    }
+
 // See: http://stackoverflow.com/a/20050381/1043187
 #define BOOST_CHECK_SMALL_OR_CLOSE(EXP, OBS, TOL)	\
   if (std::fabs (EXP) < TOL) {				\
@@ -288,10 +294,7 @@ namespace roboptim
 	return;								\
       }									\
     }									\
-  if (logger)								\
-    {									\
-      logger.reset ();							\
-    }
+  RELEASE_OPTIMIZATION_LOGGER ();
 
 // Process the result for an unconstrained problem
 #define PROCESS_RESULT_UNCONSTRAINED()					\
@@ -339,10 +342,7 @@ namespace roboptim
 	return;								\
       }									\
     }									\
-  if (logger)								\
-    {									\
-      logger.reset ();							\
-    }
+  RELEASE_OPTIMIZATION_LOGGER ();
 
 struct TestSuiteConfiguration
 {
