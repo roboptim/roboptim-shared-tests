@@ -176,7 +176,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
   PC_Dist_On_RotSpace pcDistDesc;
   Remove_Rotation_On_RotSpace remRotDesc;
 
-  roboptim::ManifoldProblemFactory<solver_t::problem_t> problemFactory;
+  roboptim::ManifoldProblemFactory<T> problemFactory;
 
   typename RemoveOneRotation<T>::intervals_t bounds;
   bounds.push_back(roboptim::Function::makeInterval (0., 0.));
@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
 
   problemFactory.addConstraint(remRotDesc, SO3_).setBounds(bounds);
   problemFactory.setObjective(pcDistDesc, SO3_);
-  roboptim::ProblemOnManifold<solver_t::problem_t>* problem = problemFactory.getProblem();
+  roboptim::ProblemOnManifold<T>* problem = problemFactory.getProblem();
 
 #ifndef NDEBUG
   roboptim::SolverFactory<solver_t> factory ("pgsolver_d", *problem);

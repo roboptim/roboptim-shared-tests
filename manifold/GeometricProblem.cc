@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (GeometricProblemTest, T, functionTypes_t)
   double R1 = 0.5;
   double R2 = 1;
 
-  roboptim::ManifoldProblemFactory<solver_t::problem_t> probFactory;
+  roboptim::ManifoldProblemFactory<T> probFactory;
 
   ROBOPTIM_DESC_MANIFOLD(R3, ROBOPTIM_REAL_SPACE(3));
   ROBOPTIM_NAMED_FUNCTION_BINDING(SquaredNorm_On_R3, SquaredNormFunc<T>, R3);
