@@ -125,7 +125,8 @@ MACRO(BUILD_TEST_MANIFOLDS FILE_NAME)
 
   GET_FILENAME_COMPONENT(EXE_NAME ${FILE_NAME} NAME)
 
-  # Add dependency on manifolds
+  # Add dependency on manifolds and roboptim-core-manifolds
+  PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} roboptim-core-manifold)
   PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} manifolds)
   TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} debug manifolds_d optimized manifolds)
 ENDMACRO()
@@ -176,16 +177,6 @@ ENDMACRO()
 MACRO(BUILD_ROBOPTIM_PROBLEMS)
   INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/roboptim/CMakeLists.txt)
 ENDMACRO()
-
-# BUILD_BENCHMARK_PROBLEMS()
-# -------------------------
-#
-# Build benchmark problems.
-#
-MACRO(BUILD_BENCHMARK_PROBLEMS)
-  INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/benchmark/CMakeLists.txt)
-ENDMACRO()
-
 
 # BUILD_MANIFOLD_PROBLEMS()
 # -------------------------

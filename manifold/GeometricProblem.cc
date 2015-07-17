@@ -119,7 +119,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (GeometricProblemTest, T, functionTypes_t)
   SquaredNorm_On_R3 squaredNormDesc;
   BelongsToPlane_On_R3 belongsToPlaneDesc(1, 0.5, -2, 0.6);
 
-  probFactory.setObjective(squaredNormDesc, r3);
+  probFactory.addObjective(1.0, squaredNormDesc, r3);
 
   typename SquaredNormFunc<T>::intervals_t bounds;
   bounds.push_back(roboptim::Function::makeInterval (R1*R1, R2*R2));

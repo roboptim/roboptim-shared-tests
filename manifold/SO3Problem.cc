@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
   bounds.push_back(roboptim::Function::makeInterval (0., 0.));
 
   problemFactory.addConstraint(remRotDesc, SO3_).setBounds(bounds);
-  problemFactory.setObjective(pcDistDesc, SO3_);
+  problemFactory.addObjective(1.0, pcDistDesc, SO3_);
   roboptim::ProblemOnManifold<T>* problem = problemFactory.getProblem();
 
 #ifndef NDEBUG
