@@ -151,20 +151,20 @@ namespace roboptim
       template <>
       void
       G2<EigenMatrixSparse>::impl_gradient
-      (gradient_ref grad, const_argument_ref, size_type)
+      (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.coeffRef (0) = 1.;
-	grad.coeffRef (1) = 1.;
+	grad.coeffRef (0) = x[1];
+	grad.coeffRef (1) = x[0];
       }
 
       template <typename T>
       void
-      G2<T>::impl_gradient (gradient_ref grad, const_argument_ref, size_type)
+      G2<T>::impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad[0] = 1.;
-	grad[1] = 1.;
+	grad[0] = x[1];
+	grad[1] = x[0];
       }
 
     } // end of namespace problem6.
