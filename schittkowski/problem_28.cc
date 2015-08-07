@@ -60,7 +60,7 @@ namespace roboptim
       {
 	grad.coeffRef (0) = 2. * x[0] + 2. * x[1];
 	grad.coeffRef (1) = 2. * x[0] + 4. * x[1] + 2 * x[2];
-	grad.coeffRef (2) = 2 * x[1] + 2. + x[2];
+	grad.coeffRef (2) = 2. * x[1] + 2. * x[2];
       }
 
       template <typename T>
@@ -70,7 +70,7 @@ namespace roboptim
       {
 	grad[0] = 2. * x[0] + 2. * x[1];
 	grad[1] = 2. * x[0] + 4. * x[1] + 2 * x[2];
-	grad[2] = 2 * x[1] + 2. + x[2];
+	grad[2] = 2. * x[1] + 2. * x[2];
       }
 
       template <typename T>
