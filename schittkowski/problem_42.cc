@@ -23,17 +23,6 @@ namespace roboptim
   {
     namespace problem42
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 14.;
-      const double ExpectedResult::x[] = {2., 2., 0.6 * std::sqrt (2),
-                                          0.8 * std::sqrt (2)};
-      const double ExpectedResult::fx = 28. - 10 * std::sqrt (2);
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -72,10 +61,10 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) =  2. * (x[0] - 1);
-	grad.insert (1) =  2. * (x[1] - 2);
-	grad.insert (2) =  2. * (x[2] - 3);
-	grad.insert (3) =  2. * (x[3] - 4);
+	grad.coeffRef (0) =  2. * (x[0] - 1);
+	grad.coeffRef (1) =  2. * (x[1] - 2);
+	grad.coeffRef (2) =  2. * (x[2] - 3);
+	grad.coeffRef (3) =  2. * (x[3] - 4);
       }
 
       template <typename T>
@@ -123,8 +112,8 @@ namespace roboptim
       G<EigenMatrixSparse>::impl_gradient
       (gradient_ref grad, const_argument_ref x, size_type) const
       {
-	grad.insert (2) = 2. * x[2];
-	grad.insert (3) = 2. * x[3];
+	grad.coeffRef (2) = 2. * x[2];
+	grad.coeffRef (3) = 2. * x[3];
       }
 
       template <typename T>
@@ -153,6 +142,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem42)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 14.;
+  expectedResult.x = (ExpectedResult::argument_t (4) <<
+                      2., 2., 0.6 * std::sqrt (2), 0.8 * std::sqrt (2)
+                     ).finished ();
+  expectedResult.fx = 28. - 10 * std::sqrt (2);
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -168,7 +164,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem42)
   x << 1, 1, 1, 1;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

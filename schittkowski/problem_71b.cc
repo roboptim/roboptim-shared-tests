@@ -23,16 +23,6 @@ namespace roboptim
   {
     namespace problem71b
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 16.;
-      const double ExpectedResult::x[] = {1., 4.742994, 3.8211503, 1.3794082};
-      const double ExpectedResult::fx = 17.0140173;
-
 
       template <typename T>
       struct F : public GenericTwiceDifferentiableFunction<T>
@@ -96,10 +86,10 @@ namespace roboptim
 	const
       {
 	grad.setZero ();
-	grad.insert (0) = x[0] * x[3] + x[3] * (x[0] + x[1] + x[2]);
-	grad.insert (1) = x[0] * x[3];
-	grad.insert (2) = x[0] * x[3] + 1;
-	grad.insert (3) = x[0] * (x[0] + x[1] + x[2]);
+	grad.coeffRef (0) = x[0] * x[3] + x[3] * (x[0] + x[1] + x[2]);
+	grad.coeffRef (1) = x[0] * x[3];
+	grad.coeffRef (2) = x[0] * x[3] + 1;
+	grad.coeffRef (3) = x[0] * (x[0] + x[1] + x[2]);
       }
 
       template <typename T>
@@ -125,17 +115,17 @@ namespace roboptim
 	grad.setZero ();
 	if (functionId == 0)
 	  {
-	    grad.insert (0) = x[1] * x[2] * x[3];
-	    grad.insert (1) = x[0] * x[2] * x[3];
-	    grad.insert (2) = x[0] * x[1] * x[3];
-	    grad.insert (3) = x[0] * x[1] * x[2];
+	    grad.coeffRef (0) = x[1] * x[2] * x[3];
+	    grad.coeffRef (1) = x[0] * x[2] * x[3];
+	    grad.coeffRef (2) = x[0] * x[1] * x[3];
+	    grad.coeffRef (3) = x[0] * x[1] * x[2];
 	  }
 	else
 	  {
-	    grad.insert (0) = 2 * x[0];
-	    grad.insert (1) = 2 * x[1];
-	    grad.insert (2) = 2 * x[2];
-	    grad.insert (3) = 2 * x[3];
+	    grad.coeffRef (0) = 2 * x[0];
+	    grad.coeffRef (1) = 2 * x[1];
+	    grad.coeffRef (2) = 2 * x[2];
+	    grad.coeffRef (3) = 2 * x[3];
 	  }
       }
 
@@ -168,20 +158,20 @@ namespace roboptim
       (hessian_ref h, const_argument_ref x, size_type) const
       {
 	h.setZero ();
-	h.insert (0, 0) = 2 * x[3];
-	h.insert (0, 1) = x[3];
-	h.insert (0, 2) = x[3];
-	h.insert (0, 3) = 2 * x[0] + x[1] + x[2];
+	h.coeffRef (0, 0) = 2 * x[3];
+	h.coeffRef (0, 1) = x[3];
+	h.coeffRef (0, 2) = x[3];
+	h.coeffRef (0, 3) = 2 * x[0] + x[1] + x[2];
 
-	h.insert (1, 0) = x[3];
-	h.insert (1, 3) = x[0];
+	h.coeffRef (1, 0) = x[3];
+	h.coeffRef (1, 3) = x[0];
 
-	h.insert (2, 0) = x[3];
-	h.insert (2, 3) = x[1];
+	h.coeffRef (2, 0) = x[3];
+	h.coeffRef (2, 3) = x[1];
 
-	h.insert (3, 0) = 2 * x[0] + x[1] + x[2];
-	h.insert (3, 1) = x[0];
-	h.insert (3, 2) = x[0];
+	h.coeffRef (3, 0) = 2 * x[0] + x[1] + x[2];
+	h.coeffRef (3, 1) = x[0];
+	h.coeffRef (3, 2) = x[0];
       }
 
       template <typename T>
@@ -218,28 +208,28 @@ namespace roboptim
       {
 	if (functionId == 0)
 	  {
-	    h.insert (0, 1) = x[2] * x[3];
-	    h.insert (0, 2) = x[1] * x[3];
-	    h.insert (0, 3) = x[1] * x[2];
+	    h.coeffRef (0, 1) = x[2] * x[3];
+	    h.coeffRef (0, 2) = x[1] * x[3];
+	    h.coeffRef (0, 3) = x[1] * x[2];
 
-	    h.insert (1, 0) = x[2] * x[3];
-	    h.insert (1, 2) = x[0] * x[3];
-	    h.insert (1, 3) = x[0] * x[2];
+	    h.coeffRef (1, 0) = x[2] * x[3];
+	    h.coeffRef (1, 2) = x[0] * x[3];
+	    h.coeffRef (1, 3) = x[0] * x[2];
 
-	    h.insert (2, 0) = x[1] * x[3];
-	    h.insert (2, 1) = x[0] * x[3];
-	    h.insert (2, 3) = x[0] * x[1];
+	    h.coeffRef (2, 0) = x[1] * x[3];
+	    h.coeffRef (2, 1) = x[0] * x[3];
+	    h.coeffRef (2, 3) = x[0] * x[1];
 
-	    h.insert (3, 0) = x[1] * x[2];
-	    h.insert (3, 1) = x[0] * x[2];
-	    h.insert (3, 2) = x[0] * x[1];
+	    h.coeffRef (3, 0) = x[1] * x[2];
+	    h.coeffRef (3, 1) = x[0] * x[2];
+	    h.coeffRef (3, 2) = x[0] * x[1];
 	  }
 	else
 	  {
-	    h.insert (0, 0) = 2.;
-	    h.insert (1, 1) = 2.;
-	    h.insert (2, 2) = 2.;
-	    h.insert (3, 3) = 2.;
+	    h.coeffRef (0, 0) = 2.;
+	    h.coeffRef (1, 1) = 2.;
+	    h.coeffRef (2, 2) = 2.;
+	    h.coeffRef (3, 3) = 2.;
 	  }
       }
 
@@ -296,6 +286,12 @@ BOOST_AUTO_TEST_CASE (problem_71b)
   double x_tol = 1e-3;
   double f_tol = 1e-3;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 16.;
+  expectedResult.x = (ExpectedResult::argument_t (4)
+                      << 1., 4.742994, 3.8211503, 1.3794082).finished ();
+  expectedResult.fx = 17.0140173;
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -327,7 +323,7 @@ BOOST_AUTO_TEST_CASE (problem_71b)
   x << 1., 5., 5., 1.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);

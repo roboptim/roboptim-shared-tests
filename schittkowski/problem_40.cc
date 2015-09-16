@@ -23,19 +23,6 @@ namespace roboptim
   {
     namespace problem40
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = -0.4096;
-      const double ExpectedResult::x[] = {std::pow (2, -1./3.),
-                                          std::pow (2, -0.5),
-                                          std::pow (2, -11./12.),
-                                          std::pow (2, -1./4.)};
-      const double ExpectedResult::fx = -0.25;
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -71,10 +58,10 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = -x[1]*x[2]*x[3];
-	grad.insert (1) = -x[0]*x[2]*x[3];
-	grad.insert (2) = -x[0]*x[1]*x[3];
-	grad.insert (3) = -x[0]*x[1]*x[2];
+	grad.coeffRef (0) = -x[1]*x[2]*x[3];
+	grad.coeffRef (1) = -x[0]*x[2]*x[3];
+	grad.coeffRef (2) = -x[0]*x[1]*x[3];
+	grad.coeffRef (3) = -x[0]*x[1]*x[2];
       }
 
       template <typename T>
@@ -127,15 +114,15 @@ namespace roboptim
       G<EigenMatrixSparse>::impl_jacobian
       (jacobian_ref jac, const_argument_ref x) const
       {
-	jac.insert (0,0) = 3 * std::pow (x[0], 2);
-	jac.insert (0,1) = 2 * x[1];
+	jac.coeffRef (0,0) = 3 * std::pow (x[0], 2);
+	jac.coeffRef (0,1) = 2 * x[1];
 
-	jac.insert (1,0) = 2 * x[0] * x[3];
-	jac.insert (1,2) = -1;
-	jac.insert (1,3) = std::pow (x[0], 2);
+	jac.coeffRef (1,0) = 2 * x[0] * x[3];
+	jac.coeffRef (1,2) = -1;
+	jac.coeffRef (1,3) = std::pow (x[0], 2);
 
-	jac.insert (2,1) = -1;
-	jac.insert (2,3) = 2*x[3];
+	jac.coeffRef (2,1) = -1;
+	jac.coeffRef (2,3) = 2*x[3];
       }
 
       template <typename T>
@@ -171,6 +158,15 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem40)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = -0.4096;
+  expectedResult.x = (ExpectedResult::argument_t (4) <<
+                      std::pow (2, -1./3.),
+                      std::pow (2, -0.5),
+                      std::pow (2, -11./12.),
+                      std::pow (2, -1./4.)).finished ();
+  expectedResult.fx = -0.25;
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -191,7 +187,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem40)
   x << 0.8, 0.8, 0.8, 0.8;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

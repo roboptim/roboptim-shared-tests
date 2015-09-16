@@ -23,16 +23,6 @@ namespace roboptim
   {
     namespace problem39
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = -2.;
-      const double ExpectedResult::x[] = {1., 1., 0., 0.};
-      const double ExpectedResult::fx = -1.;
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -68,10 +58,10 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = -1.;
-	grad.insert (1) = 0.;
-	grad.insert (2) = 0.;
-	grad.insert (3) = 0.;
+	grad.coeffRef (0) = -1.;
+	grad.coeffRef (1) = 0.;
+	grad.coeffRef (2) = 0.;
+	grad.coeffRef (3) = 0.;
       }
 
       template <typename T>
@@ -120,10 +110,10 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = -3. * std::pow (x[0], 2);
-	grad.insert (1) = 1.;
-	grad.insert (2) = -2. * x[2];
-	grad.insert (3) = 0.;
+	grad.coeffRef (0) = -3. * std::pow (x[0], 2);
+	grad.coeffRef (1) = 1.;
+	grad.coeffRef (2) = -2. * x[2];
+	grad.coeffRef (3) = 0.;
       }
 
       template <typename T>
@@ -172,10 +162,10 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = 2 * x[0];
-	grad.insert (1) = -1.;
-	grad.insert (2) = 0.;
-	grad.insert (3) = -1. * 2. * x[3];
+	grad.coeffRef (0) = 2 * x[0];
+	grad.coeffRef (1) = -1.;
+	grad.coeffRef (2) = 0.;
+	grad.coeffRef (3) = -1. * 2. * x[3];
       }
 
       template <typename T>
@@ -204,6 +194,11 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem39)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = -2.;
+  expectedResult.x = (ExpectedResult::argument_t (4) << 1., 1., 0., 0.).finished ();
+  expectedResult.fx = -1.;
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -219,7 +214,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem39)
   x << 2., 2., 2., 2.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

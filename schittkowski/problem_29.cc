@@ -23,26 +23,6 @@ namespace roboptim
   {
     namespace problem29
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-
-	static const double a;
-	static const double b;
-	static const double c;
-
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = -1.;
-
-      const double ExpectedResult::a = 4.;
-      const double ExpectedResult::b = 2. * std::sqrt (2.);
-      const double ExpectedResult::c = 2.;
-
-      const double ExpectedResult::x[] = {a, b, c};
-      const double ExpectedResult::fx = -16. * std::sqrt (2.);
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -78,9 +58,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = -x[1] * x[2];
-	grad.insert (1) = -x[0] * x[2];
-	grad.insert (2) = -x[0] * x[1];
+	grad.coeffRef (0) = -x[1] * x[2];
+	grad.coeffRef (1) = -x[0] * x[2];
+	grad.coeffRef (2) = -x[0] * x[1];
       }
 
       template <typename T>
@@ -128,9 +108,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = -2. * x[0];
-	grad.insert (1) = -4. * x[1];
-	grad.insert (2) = -8. * x[2];
+	grad.coeffRef (0) = -2. * x[0];
+	grad.coeffRef (1) = -4. * x[1];
+	grad.coeffRef (2) = -8. * x[2];
       }
 
       template <typename T>
@@ -158,6 +138,14 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem29)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = -1.;
+  double a = 4.;
+  double b = 2. * std::sqrt (2.);
+  double c = 2.;
+  expectedResult.x = (ExpectedResult::argument_t (3) << a, b, c).finished ();
+  expectedResult.fx = -16. * std::sqrt (2.);
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -170,7 +158,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem29)
   x << 1., 1., 1.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

@@ -23,20 +23,10 @@ namespace roboptim
   {
     namespace problem56
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
       const double a = std::asin (std::sqrt (1./4.2));
       const double b = std::asin (std::sqrt (5./7.2));
       const double c = std::asin (std::sqrt (4./7.));
       const double d = std::asin (std::sqrt (2./7.));
-
-      const double ExpectedResult::f0 = -1.;
-      const double ExpectedResult::x[] = {2.4, 1.2, 1.2, c, d, d, 0.5 * M_PI};
-      const double ExpectedResult::fx = -3.456;
 
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
@@ -73,9 +63,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = -x[1] * x[2];
-	grad.insert (1) = -x[0] * x[2];
-	grad.insert (3) = -x[0] * x[1];
+	grad.coeffRef (0) = -x[1] * x[2];
+	grad.coeffRef (1) = -x[0] * x[2];
+	grad.coeffRef (3) = -x[0] * x[1];
       }
 
       template <typename T>
@@ -134,19 +124,19 @@ namespace roboptim
       G<EigenMatrixSparse>::impl_jacobian
       (jacobian_ref jac, const_argument_ref x) const
       {
-	jac.insert (0,0) = 1;
-	jac.insert (0,3) = -8.4 * std::sin (x[3]) * std::cos (x[3]);
+	jac.coeffRef (0,0) = 1;
+	jac.coeffRef (0,3) = -8.4 * std::sin (x[3]) * std::cos (x[3]);
 
-	jac.insert (1,1) = 1;
-	jac.insert (1,4) = -8.4 * std::sin (x[4]) * std::cos (x[4]);
+	jac.coeffRef (1,1) = 1;
+	jac.coeffRef (1,4) = -8.4 * std::sin (x[4]) * std::cos (x[4]);
 
-	jac.insert (2,2) = 1;
-	jac.insert (2,5) = -8.4 * std::sin (x[5]) * std::cos (x[5]);
+	jac.coeffRef (2,2) = 1;
+	jac.coeffRef (2,5) = -8.4 * std::sin (x[5]) * std::cos (x[5]);
 
-	jac.insert (3,0) = 1;
-	jac.insert (3,1) = 2;
-	jac.insert (3,2) = 2;
-	jac.insert (3,6) = -14.4 * std::sin (x[6]) * std::cos (x[6]);
+	jac.coeffRef (3,0) = 1;
+	jac.coeffRef (3,1) = 2;
+	jac.coeffRef (3,2) = 2;
+	jac.coeffRef (3,6) = -14.4 * std::sin (x[6]) * std::cos (x[6]);
       }
 
       template <typename T>
@@ -186,6 +176,12 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem56)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = -1.;
+  expectedResult.x = (ExpectedResult::argument_t (7)
+                      << 2.4, 1.2, 1.2, c, d, d, 0.5 * M_PI).finished ();
+  expectedResult.fx = -3.456;
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -205,7 +201,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem56)
   x << 1, 1, 1, a, a, a, b;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

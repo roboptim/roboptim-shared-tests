@@ -23,17 +23,6 @@ namespace roboptim
   {
     namespace problem64
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 266035;
-      const double ExpectedResult::x[] = {108.7347175, 85.12613942,
-                                          204.3247078};
-      const double ExpectedResult::fx = 6299.842428;
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -71,9 +60,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) =  5 -  50000. / (x[0] * x[0]);
-	grad.insert (1) = 20 -  72000. / (x[1] * x[1]);
-	grad.insert (2) = 10 - 144000. / (x[2] * x[2]);
+	grad.coeffRef (0) =  5 -  50000. / (x[0] * x[0]);
+	grad.coeffRef (1) = 20 -  72000. / (x[1] * x[1]);
+	grad.coeffRef (2) = 10 - 144000. / (x[2] * x[2]);
       }
 
       template <typename T>
@@ -121,9 +110,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) =   4. / (x[0] * x[0]);
-	grad.insert (1) =  32. / (x[1] * x[1]);
-	grad.insert (2) = 120. / (x[2] * x[2]);
+	grad.coeffRef (0) =   4. / (x[0] * x[0]);
+	grad.coeffRef (1) =  32. / (x[1] * x[1]);
+	grad.coeffRef (2) = 120. / (x[2] * x[2]);
       }
 
       template <typename T>
@@ -151,6 +140,12 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem64)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 266035;
+  expectedResult.x = (ExpectedResult::argument_t (3)
+                      << 108.7347175, 85.12613942, 204.3247078).finished ();
+  expectedResult.fx = 6299.842428;
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -167,7 +162,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem64)
   x << 1., 1., 1.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

@@ -23,16 +23,6 @@ namespace roboptim
   {
     namespace problem20
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 909.;
-      const double ExpectedResult::x[] = {0.5, 5. * std::sqrt (3)};
-      const double ExpectedResult::fx = 81.5 - 25. * std::sqrt (3);
-
       // Same than problem_15
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
@@ -70,10 +60,10 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) =
+	grad.coeffRef (0) =
 	  400. * x[0] * x[0] * x[0]
 	  - 400. * x[0] * x[1] + 2 * x[0] - 2;
-	grad.insert (1) = -200 * x[0] * x[0] + 200 * x[1];
+	grad.coeffRef (1) = -200 * x[0] * x[0] + 200 * x[1];
       }
 
       template <typename T>
@@ -122,8 +112,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = 1.;
-	grad.insert (1) = 2 * x[1];
+	grad.coeffRef (0) = 1.;
+	grad.coeffRef (1) = 2 * x[1];
       }
 
       template <typename T>
@@ -170,8 +160,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = 2 * x[0];
-	grad.insert (1) = 1.;
+	grad.coeffRef (0) = 2 * x[0];
+	grad.coeffRef (1) = 1.;
       }
 
       template <typename T>
@@ -219,8 +209,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = 2. * x[0];
-	grad.insert (1) = 2. * x[1];
+	grad.coeffRef (0) = 2. * x[0];
+	grad.coeffRef (1) = 2. * x[1];
       }
 
       template <typename T>
@@ -247,6 +237,11 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem20)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 909.;
+  expectedResult.x = (ExpectedResult::argument_t (2) << 0.5, 5. * std::sqrt (3)).finished ();
+  expectedResult.fx = 81.5 - 25. * std::sqrt (3);
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -267,7 +262,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem20)
   x << -2., 1.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

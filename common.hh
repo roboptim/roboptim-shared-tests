@@ -20,6 +20,9 @@
 # include <cmath>
 # include <iostream>
 
+# include <boost/shared_ptr.hpp>
+# include <boost/ref.hpp>
+# include <boost/make_shared.hpp>
 # include <boost/mpl/vector.hpp>
 # include <boost/mpl/push_back.hpp>
 # include <boost/make_shared.hpp>
@@ -97,11 +100,24 @@ typedef constraints2_t constraints_t;
 typedef ::roboptim::Solver<COST_FUNCTION_TYPE<functionType_t>::traits_t>
 solver_t;
 
+typedef ::roboptim::OptimizationLogger<solver_t> logger_t;
+
+namespace roboptim
+{
+  boost::shared_ptr<logger_t> logger;
+} // end of namespace roboptim
+
 #define SET_OPTIMIZATION_LOGGER(SOLVER,FILENAME)	\
-  OptimizationLogger<solver_t> logger			\
-  (SOLVER,						\
-   "/tmp/roboptim-shared-tests/" SOLVER_NAME		\
-   "/" FILENAME);
+  logger = boost::make_shared<logger_t>			\
+    (boost::ref<solver_t> (SOLVER),			\
+     "/tmp/roboptim-shared-tests/" SOLVER_NAME		\
+     "/" FILENAME);
+
+#define RELEASE_OPTIMIZATION_LOGGER()		\
+  if (logger)					\
+    {						\
+      logger.reset ();				\
+    }
 
 // See: http://stackoverflow.com/a/20050381/1043187
 #define BOOST_CHECK_SMALL_OR_CLOSE(EXP, OBS, TOL)	\
@@ -133,10 +149,10 @@ solver_t;
   RESULT_TYPE& result = boost::get<RESULT_TYPE> (res);			\
   /* Check final value. */						\
   bool correct_fx = true;						\
-  BOOST_SMALL_OR_CLOSE_RES (result.value[0], ExpectedResult::fx, f_tol, correct_fx); \
+  BOOST_SMALL_OR_CLOSE_RES (result.value[0], expectedResult.fx, f_tol, correct_fx); \
   /* Check final bounds on x. */					\
   bool correct_bounds = true;						\
-  for (GenericFunction<functionType_t>::size_type i = 0; i < result.x.size (); ++i) {	\
+  for (GenericFunction<functionType_t>::size_type i = 0; i < result.x.size (); ++i) { \
     bool res = true;							\
     std::size_t ii = static_cast<std::size_t> (i);			\
     /* Check lower bound. */						\
@@ -151,8 +167,8 @@ solver_t;
   /* Only check x is we have not found an optimal result. */		\
   if (!(correct_fx && correct_bounds)) {				\
     /* Check final x. */						\
-    for (GenericFunction<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
-      BOOST_CHECK_SMALL_OR_CLOSE (result.x[i], ExpectedResult::x[i], x_tol); \
+    for (GenericFunction<functionType_t>::size_type i = 0; i < result.x.size (); ++i) \
+      BOOST_CHECK_SMALL_OR_CLOSE (result.x[i], expectedResult.x[i], x_tol); \
   }									\
   /* Display the result. */						\
   std::cout << "A solution has been found: " << std::endl		\
@@ -166,7 +182,7 @@ solver_t;
   /* Check final value. */						\
   bool success = false;							\
   bool correct_fx = true;						\
-  BOOST_SMALL_OR_CLOSE_RES (result.value[0], ExpectedResult::fx, f_tol, correct_fx); \
+  BOOST_SMALL_OR_CLOSE_RES (result.value[0], expectedResult.fx, f_tol, correct_fx); \
   /* Check final bounds on x. */					\
   bool correct_bounds = true;						\
   for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i) {	\
@@ -215,16 +231,19 @@ solver_t;
     for (F<functionType_t>::size_type i = 0; i < result.x.size (); ++i)	\
       {									\
 	bool res = false;						\
-	BOOST_SMALL_OR_CLOSE_RES (result.x[i], ExpectedResult::x[i],	\
+	BOOST_SMALL_OR_CLOSE_RES (result.x[i], expectedResult.x[i],	\
 				  x_tol, res);				\
         success &= res;							\
       }									\
   }									\
   else success = true;							\
-  if (success)								\
-    logger.append (log_result_true);					\
-  else									\
-    logger.append (log_result_false);					\
+  if (logger)								\
+    {									\
+      if (success)							\
+	logger->append (log_result_true);				\
+      else								\
+	logger->append (log_result_false);				\
+    }									\
   /* Display the result. */						\
   std::cout << "A solution has been found: " << std::endl		\
   << result << std::endl;
@@ -253,7 +272,11 @@ solver_t;
 		  << "No solution was found."				\
 		  << std::endl;						\
 	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
-	logger.append (log_result_false);				\
+	if (logger)							\
+	  {								\
+	    logger->append (log_result_false);				\
+	    logger.reset ();						\
+	  }								\
 	return;								\
       }									\
     case solver_t::SOLVER_ERROR:					\
@@ -263,10 +286,15 @@ solver_t;
 		  << boost::get<SolverError> (res).what ()		\
 		  << std::endl;						\
 	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
-	logger.append (log_result_false);				\
+	if (logger)							\
+	  {								\
+	    logger->append (log_result_false);				\
+	    logger.reset ();						\
+	  }								\
 	return;								\
       }									\
-    }
+    }									\
+  RELEASE_OPTIMIZATION_LOGGER ();
 
 // Process the result for an unconstrained problem
 #define PROCESS_RESULT_UNCONSTRAINED()					\
@@ -292,7 +320,11 @@ solver_t;
 		  << "No solution was found."				\
 		  << std::endl;						\
 	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
-	logger.append (log_result_false);				\
+	if (logger)							\
+	  {								\
+	    logger->append (log_result_false);				\
+	    logger.reset ();						\
+	  }								\
 	return;								\
       }									\
     case solver_t::SOLVER_ERROR:					\
@@ -302,10 +334,16 @@ solver_t;
 		  << boost::get<SolverError> (res).what ()		\
 		  << std::endl;						\
 	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
-	logger.append (log_result_false);				\
+	if (logger)							\
+	  {								\
+	    logger->append (log_result_false);				\
+	    logger.reset ();						\
+	  }								\
 	return;								\
       }									\
-    }
+    }									\
+  RELEASE_OPTIMIZATION_LOGGER ();
+
 struct TestSuiteConfiguration
 {
   TestSuiteConfiguration ()
@@ -323,5 +361,17 @@ struct TestSuiteConfiguration
     lt_dlexit ();
   }
 };
+
+namespace roboptim
+{
+  struct ExpectedResult
+  {
+    typedef solver_t::problem_t::function_t::argument_t argument_t;
+
+    double f0;
+    argument_t x;
+    double fx;
+  };
+} // end of namespace roboptim
 
 #endif //! ROBOPTIM_SHARED_TESTS_COMMON_HH

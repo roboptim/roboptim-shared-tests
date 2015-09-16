@@ -23,16 +23,6 @@ namespace roboptim
   {
     namespace problem41
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = -6.;
-      const double ExpectedResult::x[] = {2./3., 1./3., 1./3., 2.};
-      const double ExpectedResult::fx = 52./27.;
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -68,9 +58,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) =  -x[1]*x[2];
-	grad.insert (1) =  -x[0]*x[2];
-	grad.insert (2) =  -x[0]*x[1];
+	grad.coeffRef (0) =  -x[1]*x[2];
+	grad.coeffRef (1) =  -x[0]*x[2];
+	grad.coeffRef (2) =  -x[0]*x[1];
       }
 
       template <typename T>
@@ -117,10 +107,10 @@ namespace roboptim
       G<EigenMatrixSparse>::impl_gradient
       (gradient_ref grad, const_argument_ref, size_type) const
       {
-	grad.insert (0) = 1;
-	grad.insert (1) = 2;
-	grad.insert (2) = 2;
-	grad.insert (3) = -1;
+	grad.coeffRef (0) = 1;
+	grad.coeffRef (1) = 2;
+	grad.coeffRef (2) = 2;
+	grad.coeffRef (3) = -1;
       }
 
       template <typename T>
@@ -151,6 +141,11 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem41)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = -6.;
+  expectedResult.x = (ExpectedResult::argument_t (4) << 2./3., 1./3., 1./3., 2.).finished ();
+  expectedResult.fx = 52./27.;
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -169,7 +164,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem41)
   x << 2, 2, 2, 2;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;

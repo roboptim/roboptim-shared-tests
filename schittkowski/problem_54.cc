@@ -25,23 +25,6 @@ namespace roboptim
   {
     namespace problem54
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = -0.7651;
-      const double ExpectedResult::x[] = {
-	91600. / 7.,
-	79. / 70.,
-	2E6,
-	10.,
-	1E-3,
-	1E8
-      };
-      const double ExpectedResult::fx = -std::exp (-27./280.);
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -124,8 +107,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = 1.;
-	grad.insert (1) = 4.E3;
+	grad.coeffRef (0) = 1.;
+	grad.coeffRef (1) = 4.E3;
       }
 
       template <typename T>
@@ -156,6 +139,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem54)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = -0.7651;
+  expectedResult.x = (ExpectedResult::argument_t (6)
+                      << 91600. / 7., 79. / 70., 2E6, 10., 1E-3, 1E8
+                     ).finished ();
+  expectedResult.fx = -std::exp (-27./280.);
+
   // Build problem.
   F<functionType_t> f;
   solver_t::problem_t problem (f);
@@ -175,7 +165,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem54)
   x << 6.E3, 1.5, 4E6, 2., 3E-3, 5E7;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
 
   std::cout << f.inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
