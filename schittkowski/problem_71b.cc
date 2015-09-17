@@ -293,7 +293,7 @@ BOOST_AUTO_TEST_CASE (problem_71b)
   expectedResult.fx = 17.0140173;
 
   // Build problem.
-  F<functionType_t> f;
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> ());
   solver_t::problem_t problem (f);
 
   // Set bound for all variables.
@@ -323,7 +323,7 @@ BOOST_AUTO_TEST_CASE (problem_71b)
   x << 1., 5., 5., 1.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);

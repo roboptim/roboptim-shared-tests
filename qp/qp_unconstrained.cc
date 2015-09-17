@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE (qp_unconstrained)
   expectedResult.fx = -244.;
 
   // Build cost function.
-  F<functionType_t> f;
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> ());
 
   // Build problem.
   solver_t::problem_t problem (f);
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE (qp_unconstrained)
   x << 0., 0., 0.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);

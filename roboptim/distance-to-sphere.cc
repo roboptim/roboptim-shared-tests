@@ -150,8 +150,9 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   expectedResult.fx = 1.0;
 
   // Build problem.
-  boost::shared_ptr <F<functionType_t> > f (new F<functionType_t> (expectedResult));
-  GenericSumOfC1Squares<functionType_t> soq (f, "");
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> (expectedResult));
+  boost::shared_ptr<GenericSumOfC1Squares<functionType_t> >
+    soq (new GenericSumOfC1Squares<functionType_t> (f, ""));
 
   solver_t::problem_t problem (soq);
 
@@ -173,7 +174,7 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   // Bounds on phi \in [-Pi, Pi]
   problem.argumentBounds ()[1] = Function::makeInterval (-M_PI, M_PI);
 
-  BOOST_CHECK_SMALL_OR_CLOSE (soq (x)[0], expectedResult.f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*soq) (x)[0], expectedResult.f0, f0_tol);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);

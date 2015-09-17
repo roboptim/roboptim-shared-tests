@@ -149,7 +149,7 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem65)
   expectedResult.fx = 0.9535288567;
 
   // Build problem.
-  F<functionType_t> f;
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> ());
   solver_t::problem_t problem (f);
 
   problem.argumentBounds ()[0] = F<functionType_t>::makeInterval (-4.5, 4.5);
@@ -161,13 +161,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem65)
 
   problem.addConstraint (g, G<functionType_t>::makeLowerInterval (0.));
 
-  F<functionType_t>::argument_t x (f.inputSize ());
+  F<functionType_t>::argument_t x (f->inputSize ());
   x << -5, 5, 0;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Initialize solver.
@@ -179,13 +179,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem65)
   // Set optional log file for debugging
   SET_LOG_FILE(solver);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Compute the minimum and retrieve the result.
   solver_t::result_t res = solver.minimum ();
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Display solver information.

@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE (throwTest)
   expectedResult.fx   = 0.;
 
   // Build problem.
-  ThrowF<functionType_t> f;
+  boost::shared_ptr<ThrowF<functionType_t> > f (new ThrowF<functionType_t> ());
 
   solver_t::problem_t problem (f);
 
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE (throwTest)
   // Bounds on x₀
   problem.argumentBounds ()[0] = Function::makeInterval (-1., 1.);
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], expectedResult.f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
