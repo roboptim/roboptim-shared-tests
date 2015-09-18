@@ -178,6 +178,15 @@ MACRO(BUILD_ROBOPTIM_PROBLEMS)
   INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/roboptim/CMakeLists.txt)
 ENDMACRO()
 
+# BUILD_BENCHMARK_PROBLEMS()
+# -------------------------
+#
+# Build benchmark problems.
+#
+MACRO(BUILD_BENCHMARK_PROBLEMS)
+  INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/benchmark/CMakeLists.txt)
+ENDMACRO()
+
 # BUILD_MANIFOLD_PROBLEMS()
 # -------------------------
 #
