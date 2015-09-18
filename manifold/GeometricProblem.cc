@@ -130,11 +130,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (GeometricProblemTest, T, functionTypes_t)
   probFactory.addConstraint(belongsToPlaneDesc, r3).setBounds(bounds);
 
   std::cout << *(probFactory.getProblem()) << std::endl;
-#ifndef NDEBUG
-  roboptim::SolverFactory<solver_t> factory ("pgsolver_d", *(probFactory.getProblem()));
-#else
-  roboptim::SolverFactory<solver_t> factory ("pgsolver", *(probFactory.getProblem()));
-#endif
+  roboptim::SolverFactory<solver_t> factory (SOLVER_NAME, *(probFactory.getProblem()));
   solver_t& solver = factory ();
 
   // Solve

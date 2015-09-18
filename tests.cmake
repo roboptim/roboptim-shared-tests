@@ -96,14 +96,9 @@ MACRO(BUILD_TEST FILE_NAME)
     ${RUNTIME_OUTPUT_DIRECTORY}/${EXE_NAME}${PROGRAM_SUFFIX})
 
   PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} roboptim-core)
-
-  PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} manifolds)
-  PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} PGSolver)
   
   # Link against Boost.
   TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} ${Boost_LIBRARIES})
-  TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} debug manifolds_d optimized manifolds)
-  TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} debug PGSolver_d optimized PGSolver)
 
   # Make sure the plugins will be found.
   SET_PROPERTY(
@@ -112,6 +107,27 @@ MACRO(BUILD_TEST FILE_NAME)
   SET_PROPERTY(
     TEST ${EXE_NAME}${PROGRAM_SUFFIX} PROPERTY ENVIRONMENT
     "LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/src:$ENV{LD_LIBRARY_PATH}")
+ENDMACRO()
+
+
+# BUILD_TEST_MANIFOLDS(FILE_NAME)
+# ---------------------
+#
+# Define a test named `${NAME}${PROGRAM_SUFFIX}' where `${PROGRAM_SUFFIX}' is
+# an environment variable (e.g. `-sparse'), then link on manifolds.
+#
+# This macro will create a binary from `${NAME}.cc', link it
+# against Boost, manifolds, and add it to the test suite as
+# `${NAME}${PROGRAM_SUFFIX}'.
+#
+MACRO(BUILD_TEST_MANIFOLDS FILE_NAME)
+  BUILD_TEST(${FILE_NAME})
+
+  GET_FILENAME_COMPONENT(EXE_NAME ${FILE_NAME} NAME)
+
+  # Add dependency on manifolds
+  PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} manifolds)
+  TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} debug manifolds_d optimized manifolds)
 ENDMACRO()
 
 # EXPECT_TEST_FAIL(FILE_NAME)
