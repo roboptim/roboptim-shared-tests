@@ -24,18 +24,6 @@ namespace roboptim
 {
   namespace throwTest
   {
-    struct ExpectedResult
-    {
-      static const double x0[];
-      static const double fx0;
-      static const double x[];
-      static const double fx;
-    };
-    const double ExpectedResult::x0[] = {1.};
-    const double ExpectedResult::fx0  = 1.;
-    const double ExpectedResult::x[]  = {0.};
-    const double ExpectedResult::fx   = 0.;
-
     /// Function that throws.
     template <typename T>
     struct ThrowF : public GenericDifferentiableFunction<T>
@@ -100,20 +88,25 @@ BOOST_AUTO_TEST_CASE (throwTest)
   // Tolerances for Boost checks.
   double f0_tol = 1e-6;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0  = 1.;
+  expectedResult.x = (ExpectedResult::argument_t (1) << 0.).finished ();
+  expectedResult.fx   = 0.;
+
   // Build problem.
-  ThrowF<functionType_t> f;
+  boost::shared_ptr<ThrowF<functionType_t> > f (new ThrowF<functionType_t> ());
 
   solver_t::problem_t problem (f);
 
   // Load starting point
   ThrowF<functionType_t>::argument_t x (1);
-  x << ExpectedResult::x0[0];
+  x << 1.;
   problem.startingPoint () = x;
 
   // Bounds on x₀
   problem.argumentBounds ()[0] = Function::makeInterval (-1., 1.);
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::fx0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);
@@ -129,6 +122,8 @@ BOOST_AUTO_TEST_CASE (throwTest)
   //reached.
   BOOST_CHECK_THROW (solver_t::result_t res = solver.minimum (),
                      std::runtime_error);
+
+  RELEASE_OPTIMIZATION_LOGGER ();
 }
 
 BOOST_AUTO_TEST_SUITE_END ()

@@ -23,16 +23,6 @@ namespace roboptim
   {
     namespace problem4
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 3.323568;
-      const double ExpectedResult::x[] = {1., 0.};
-      const double ExpectedResult::fx = 8. / 3.;
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -68,8 +58,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = std::pow (x[0] + 1, 3);
-	grad.insert (1) = 1;
+	grad.coeffRef (0) = std::pow (x[0] + 1, 3);
+	grad.coeffRef (1) = 1;
       }
 
       template <typename T>
@@ -96,8 +86,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem4)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 3.323568;
+  expectedResult.x = (ExpectedResult::argument_t (2) << 1., 0.).finished ();
+  expectedResult.fx = 8. / 3.;
+
   // Build problem.
-  F<functionType_t> f;
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> ());
   solver_t::problem_t problem (f);
 
   problem.argumentBounds ()[0] = F<functionType_t>::makeLowerInterval (1.);
@@ -107,9 +102,9 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem4)
   x << 1.125, 0.125;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Initialize solver.
@@ -121,13 +116,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem4)
   // Set optional log file for debugging
   SET_LOG_FILE(solver);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Compute the minimum and retrieve the result.
   solver_t::result_t res = solver.minimum ();
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Display solver information.

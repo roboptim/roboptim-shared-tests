@@ -23,16 +23,6 @@ namespace roboptim
   {
     namespace problem5
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 1.;
-      const double ExpectedResult::x[] = {-M_PI / 3. + .5, -M_PI / 3. - .5};
-      const double ExpectedResult::fx = -.5 * std::sqrt (3) - (M_PI / 3.);
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -69,8 +59,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = 2 * x[0] - 2 * x[1] + std::cos (x[0] + x[1]) - 1.5;
-	grad.insert (1) = -2 * x[0] + 2 * x[1] + std::cos (x[0] + x[1]) + 2.5;
+	grad.coeffRef (0) = 2 * x[0] - 2 * x[1] + std::cos (x[0] + x[1]) - 1.5;
+	grad.coeffRef (1) = -2 * x[0] + 2 * x[1] + std::cos (x[0] + x[1]) + 2.5;
       }
 
       template <typename T>
@@ -97,8 +87,14 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem5)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 1.;
+  expectedResult.x = (ExpectedResult::argument_t (2)
+                      << -M_PI / 3. + .5, -M_PI / 3. - .5).finished ();
+  expectedResult.fx = -.5 * std::sqrt (3) - (M_PI / 3.);
+
   // Build problem.
-  F<functionType_t> f;
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> ());
   solver_t::problem_t problem (f);
 
   problem.argumentBounds ()[0] = F<functionType_t>::makeInterval (-1.5, 4.);
@@ -108,9 +104,9 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem5)
   x << 0., 0.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Initialize solver.
@@ -122,13 +118,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem5)
   // Set optional log file for debugging
   SET_LOG_FILE(solver);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Compute the minimum and retrieve the result.
   solver_t::result_t res = solver.minimum ();
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Display solver information.

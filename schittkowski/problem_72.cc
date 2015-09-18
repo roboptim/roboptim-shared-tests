@@ -23,17 +23,6 @@ namespace roboptim
   {
     namespace problem72
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 5;
-      const double ExpectedResult::x[] = {193.4071, 179.5475, 185.0186,
-                                          168.7062};
-      const double ExpectedResult::fx = 727.67937;
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -69,10 +58,10 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = 1;
-	grad.insert (1) = 1;
-	grad.insert (2) = 1;
-	grad.insert (3) = 1;
+	grad.coeffRef (0) = 1;
+	grad.coeffRef (1) = 1;
+	grad.coeffRef (2) = 1;
+	grad.coeffRef (3) = 1;
       }
 
       template <typename T>
@@ -125,15 +114,15 @@ namespace roboptim
       G<EigenMatrixSparse>::impl_jacobian
       (jacobian_ref jac, const_argument_ref x) const
       {
-	jac.insert (0,0) = 4.   / (x[0] * x[0]);
-	jac.insert (0,1) = 2.25 / (x[1] * x[1]);
-	jac.insert (0,2) = 1.   / (x[2] * x[2]);
-	jac.insert (0,3) = 0.25 / (x[3] * x[3]);
+	jac.coeffRef (0,0) = 4.   / (x[0] * x[0]);
+	jac.coeffRef (0,1) = 2.25 / (x[1] * x[1]);
+	jac.coeffRef (0,2) = 1.   / (x[2] * x[2]);
+	jac.coeffRef (0,3) = 0.25 / (x[3] * x[3]);
 
-	jac.insert (1,0) = 0.16 / (x[0] * x[0]);
-	jac.insert (1,1) = 0.36 / (x[1] * x[1]);
-	jac.insert (1,2) = 0.64 / (x[2] * x[2]);
-	jac.insert (1,3) = 0.64 / (x[3] * x[3]);
+	jac.coeffRef (1,0) = 0.16 / (x[0] * x[0]);
+	jac.coeffRef (1,1) = 0.36 / (x[1] * x[1]);
+	jac.coeffRef (1,2) = 0.64 / (x[2] * x[2]);
+	jac.coeffRef (1,3) = 0.64 / (x[3] * x[3]);
       }
 
       template <typename T>
@@ -167,11 +156,18 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem72)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 5;
+  expectedResult.x = (ExpectedResult::argument_t (4)
+                      << 193.4071, 179.5475, 185.0186, 168.7062
+                     ).finished ();
+  expectedResult.fx = 727.67937;
+
   // Build problem.
-  F<functionType_t> f;
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> ());
   solver_t::problem_t problem (f);
 
-  for (F<functionType_t>::size_type i = 0; i < f.inputSize (); ++i)
+  for (F<functionType_t>::size_type i = 0; i < f->inputSize (); ++i)
     problem.argumentBounds ()[static_cast<std::size_t> (i)] =
       F<functionType_t>::makeInterval
       (1e-3, (4. - static_cast<double> (i)) * 1e5);
@@ -187,13 +183,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem72)
 
   problem.addConstraint (g, intervals, scaling);
 
-  F<functionType_t>::argument_t x (f.inputSize ());
+  F<functionType_t>::argument_t x (f->inputSize ());
   x << 1, 1, 1, 1;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Initialize solver.
@@ -205,13 +201,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem72)
   // Set optional log file for debugging
   SET_LOG_FILE(solver);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Compute the minimum and retrieve the result.
   solver_t::result_t res = solver.minimum ();
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Display solver information.

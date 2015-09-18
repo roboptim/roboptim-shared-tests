@@ -24,18 +24,6 @@ namespace roboptim
 {
   namespace distanceToSphere
   {
-    struct ExpectedResult
-    {
-      static const double x0[];
-      static const double fx0;
-      static const double x[];
-      static const double fx;
-    };
-    const double ExpectedResult::x0[] = {0., 0.};
-    const double ExpectedResult::fx0  = 4.8974713057829096;
-    const double ExpectedResult::x[]  = {-1.5, -1.2};
-    const double ExpectedResult::fx   = 1.0;
-
     /// Distance between a point on unit sphere and another point in R^3
     template <typename T>
     struct F : public GenericDifferentiableFunction<T>
@@ -43,13 +31,12 @@ namespace roboptim
       ROBOPTIM_DIFFERENTIABLE_FUNCTION_FWD_TYPEDEFS_
       (GenericDifferentiableFunction<T>);
 
-      explicit F () : GenericDifferentiableFunction<T>
+      explicit F (const ExpectedResult& target) : GenericDifferentiableFunction<T>
 		      (2, 3,
 		       "vector between unit sphere and point (x,y,z)"),
 		      point_ (3)
       {
-	sphericalCoordinates (point_, ExpectedResult::x[0],
-                              ExpectedResult::x[1]);
+	sphericalCoordinates (point_, target.x[0], target.x[1]);
 	point_ *= 2.;
       }
 
@@ -95,16 +82,16 @@ namespace roboptim
       switch (functionId)
         {
         case 0:
-          grad.insert (0) = -sin(theta) * cos(phi);
-          grad.insert (1) = -cos(theta) * sin(phi);
+          grad.coeffRef (0) = -sin(theta) * cos(phi);
+          grad.coeffRef (1) = -cos(theta) * sin(phi);
           break;
         case 1:
-          grad.insert (0) = cos(theta) * cos(phi);
-          grad.insert (1) = -sin(theta) * sin(phi);
+          grad.coeffRef (0) = cos(theta) * cos(phi);
+          grad.coeffRef (1) = -sin(theta) * sin(phi);
           break;
         case 2:
-          grad.insert (0) = 0.;
-          grad.insert (1) = cos(phi);
+          grad.coeffRef (0) = 0.;
+          grad.coeffRef (1) = cos(phi);
           break;
         default:
           abort();
@@ -157,15 +144,21 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   double x_tol = 1e-5;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 4.8974713057829096;
+  expectedResult.x = (ExpectedResult::argument_t (2) << -1.5, -1.2).finished ();
+  expectedResult.fx = 1.0;
+
   // Build problem.
-  boost::shared_ptr <F<functionType_t> > f (new F<functionType_t> ());
-  GenericSumOfC1Squares<functionType_t> soq (f, "");
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> (expectedResult));
+  boost::shared_ptr<GenericSumOfC1Squares<functionType_t> >
+    soq (new GenericSumOfC1Squares<functionType_t> (f, ""));
 
   solver_t::problem_t problem (soq);
 
   // Load starting point
   F<functionType_t>::argument_t x (2);
-  x << ExpectedResult::x0[0], ExpectedResult::x0[1];
+  x << 0., 0.;
   problem.startingPoint () = x;
 
   // Set arguments names (optional).
@@ -181,7 +174,7 @@ BOOST_AUTO_TEST_CASE (distanceToSphere_problem1)
   // Bounds on phi \in [-Pi, Pi]
   problem.argumentBounds ()[1] = Function::makeInterval (-M_PI, M_PI);
 
-  BOOST_CHECK_SMALL_OR_CLOSE (soq (x)[0], ExpectedResult::fx0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*soq) (x)[0], expectedResult.f0, f0_tol);
 
   // Initialize solver.
   SolverFactory<solver_t> factory (SOLVER_NAME, problem);

@@ -23,17 +23,6 @@ namespace roboptim
   {
     namespace problem26
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = -1000.;
-      const double ExpectedResult::x[] = {20., 11., 15.};
-
-      const double ExpectedResult::fx = -3300.;
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -69,9 +58,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = -1. * x[1] * x[2];
-	grad.insert (1) = -1. * x[0] * x[2];
-	grad.insert (2) = -1. * x[0] * x[1];
+	grad.coeffRef (0) = -1. * x[1] * x[2];
+	grad.coeffRef (1) = -1. * x[0] * x[2];
+	grad.coeffRef (2) = -1. * x[0] * x[1];
       }
 
       template <typename T>
@@ -119,9 +108,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = -1.;
-	grad.insert (1) = -2.;
-	grad.insert (2) = -2.;
+	grad.coeffRef (0) = -1.;
+	grad.coeffRef (1) = -2.;
+	grad.coeffRef (2) = -2.;
       }
 
       template <typename T>
@@ -149,8 +138,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem26)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = -1000.;
+  expectedResult.x = (ExpectedResult::argument_t (3) << 20., 11., 15.).finished ();
+  expectedResult.fx = -3300.;
+
   // Build problem.
-  F<functionType_t> f;
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> ());
   solver_t::problem_t problem (f);
 
   problem.argumentBounds ()[0] = F<functionType_t>::makeInterval (0., 20.);
@@ -165,9 +159,9 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem26)
   x << 10., 10., 10.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Initialize solver.
@@ -179,13 +173,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem26)
   // Set optional log file for debugging
   SET_LOG_FILE(solver);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Compute the minimum and retrieve the result.
   solver_t::result_t res = solver.minimum ();
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Display solver information.

@@ -23,16 +23,6 @@ namespace roboptim
   {
     namespace problem23
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 10.;
-      const double ExpectedResult::x[] = {1., 1.};
-      const double ExpectedResult::fx = 2.;
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -68,8 +58,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = 2. * x[0];
-	grad.insert (1) = 2. * x[1];
+	grad.coeffRef (0) = 2. * x[0];
+	grad.coeffRef (1) = 2. * x[1];
       }
 
       template <typename T>
@@ -116,8 +106,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref, size_type)
 	const
       {
-	grad.insert (0) = 1;
-	grad.insert (1) = 1;
+	grad.coeffRef (0) = 1;
+	grad.coeffRef (1) = 1;
       }
 
       template <typename T>
@@ -165,8 +155,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = 2. * x[0];
-	grad.insert (1) = 2. * x[1];
+	grad.coeffRef (0) = 2. * x[0];
+	grad.coeffRef (1) = 2. * x[1];
       }
 
       template <typename T>
@@ -214,8 +204,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = 9. * 2. * x[0];
-	grad.insert (1) = 2. * x[1];
+	grad.coeffRef (0) = 9. * 2. * x[0];
+	grad.coeffRef (1) = 2. * x[1];
       }
 
       template <typename T>
@@ -262,8 +252,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = 2. * x[0];
-	grad.insert (1) = -1.;
+	grad.coeffRef (0) = 2. * x[0];
+	grad.coeffRef (1) = -1.;
       }
 
       template <typename T>
@@ -310,8 +300,8 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) = -1.;
-	grad.insert (1) = 2. * x[1];
+	grad.coeffRef (0) = -1.;
+	grad.coeffRef (1) = 2. * x[1];
       }
 
       template <typename T>
@@ -339,8 +329,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem23)
   double x_tol = 1e-4;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 10.;
+  expectedResult.x = (ExpectedResult::argument_t (2) << 1., 1.).finished ();
+  expectedResult.fx = 2.;
+
   // Build problem.
-  F<functionType_t> f;
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> ());
   solver_t::problem_t problem (f);
 
   problem.argumentBounds ()[0] = F<functionType_t>::makeInterval (-50., 50.);
@@ -366,9 +361,9 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem23)
   x << 3, 1;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Initialize solver.
@@ -380,13 +375,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem23)
   // Set optional log file for debugging
   SET_LOG_FILE(solver);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Compute the minimum and retrieve the result.
   solver_t::result_t res = solver.minimum ();
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Display solver information.

@@ -23,20 +23,6 @@ namespace roboptim
   {
     namespace problem2
     {
-      struct ExpectedResult
-      {
-	static const double f0;
-	static const double x[];
-	static const double fx;
-      };
-      const double ExpectedResult::f0 = 909.;
-
-      // a = (598/1200)^{1/2}
-      // b = 400 * a^3
-      // x[] = (2 * a * cos (1/3 * arccos(1/b)), 1.5)
-      const double ExpectedResult::x[] = {1.224370748736354, 1.5};
-      const double ExpectedResult::fx = 0.0504261879;
-
       template <typename T>
       class F : public GenericDifferentiableFunction<T>
       {
@@ -73,9 +59,9 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.insert (0) =
+	grad.coeffRef (0) =
 	  -400 * x[0] * (x[1] - std::pow (x[0], 2)) - 2 * (1 - x[0]);
-	grad.insert (1) = 200 * (x[1] - std::pow (x[0], 2));
+	grad.coeffRef (1) = 200 * (x[1] - std::pow (x[0], 2));
       }
 
       template <typename T>
@@ -102,8 +88,17 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem2)
   double x_tol = 1e-5;
   double f_tol = 1e-4;
 
+  ExpectedResult expectedResult;
+  expectedResult.f0 = 909.;
+  // a = (598/1200)^{1/2}
+  // b = 400 * a^3
+  // x[] = (2 * a * cos (1/3 * arccos(1/b)), 1.5)
+  expectedResult.x = (ExpectedResult::argument_t (2)
+                      << 1.224370748736354, 1.5).finished ();
+  expectedResult.fx = 0.0504261879;
+
   // Build problem.
-  F<functionType_t> f;
+  boost::shared_ptr<F<functionType_t> > f (new F<functionType_t> ());
   solver_t::problem_t problem (f);
 
   // In problem2, this bound changes.
@@ -113,9 +108,9 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem2)
   x << -2., 1.;
   problem.startingPoint () = x;
 
-  BOOST_CHECK_SMALL_OR_CLOSE (f (x)[0], ExpectedResult::f0, f0_tol);
+  BOOST_CHECK_SMALL_OR_CLOSE ((*f) (x)[0], expectedResult.f0, f0_tol);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Initialize solver.
@@ -127,13 +122,13 @@ BOOST_AUTO_TEST_CASE (schittkowski_problem2)
   // Set optional log file for debugging
   SET_LOG_FILE(solver);
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Compute the minimum and retrieve the result.
   solver_t::result_t res = solver.minimum ();
 
-  std::cout << f.inputSize () << std::endl;
+  std::cout << f->inputSize () << std::endl;
   std::cout << problem.function ().inputSize () << std::endl;
 
   // Display solver information.

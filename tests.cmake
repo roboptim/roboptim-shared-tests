@@ -96,7 +96,7 @@ MACRO(BUILD_TEST FILE_NAME)
     ${RUNTIME_OUTPUT_DIRECTORY}/${EXE_NAME}${PROGRAM_SUFFIX})
 
   PKG_CONFIG_USE_DEPENDENCY(${EXE_NAME}${PROGRAM_SUFFIX} roboptim-core)
-  
+
   # Link against Boost.
   TARGET_LINK_LIBRARIES(${EXE_NAME}${PROGRAM_SUFFIX} ${Boost_LIBRARIES})
 
@@ -176,6 +176,16 @@ ENDMACRO()
 MACRO(BUILD_ROBOPTIM_PROBLEMS)
   INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/roboptim/CMakeLists.txt)
 ENDMACRO()
+
+# BUILD_BENCHMARK_PROBLEMS()
+# -------------------------
+#
+# Build benchmark problems.
+#
+MACRO(BUILD_BENCHMARK_PROBLEMS)
+  INCLUDE(${CMAKE_CURRENT_SOURCE_DIR}/shared-tests/benchmark/CMakeLists.txt)
+ENDMACRO()
+
 
 # BUILD_MANIFOLD_PROBLEMS()
 # -------------------------
