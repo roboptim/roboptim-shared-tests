@@ -240,9 +240,10 @@ namespace roboptim
   if (logger)								\
     {									\
       if (success)							\
-	logger->append (log_result_true);				\
+	(*logger) << log_result_true;					\
       else								\
-	logger->append (log_result_false);				\
+	(*logger) << log_result_false;					\
+      (*logger) << solver;						\
     }									\
   /* Display the result. */						\
   std::cout << "A solution has been found: " << std::endl		\
@@ -274,7 +275,8 @@ namespace roboptim
 	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
 	if (logger)							\
 	  {								\
-	    logger->append (log_result_false);				\
+	    (*logger) << log_result_false				\
+	              << solver;					\
 	    logger.reset ();						\
 	  }								\
 	return;								\
@@ -288,7 +290,8 @@ namespace roboptim
 	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
 	if (logger)							\
 	  {								\
-	    logger->append (log_result_false);				\
+	    (*logger) << log_result_false				\
+	              << solver;					\
 	    logger.reset ();						\
 	  }								\
 	return;								\
@@ -322,7 +325,8 @@ namespace roboptim
 	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
 	if (logger)							\
 	  {								\
-	    logger->append (log_result_false);				\
+	    (*logger) << log_result_false				\
+	              << solver;					\
 	    logger.reset ();						\
 	  }								\
 	return;								\
@@ -336,7 +340,8 @@ namespace roboptim
 	BOOST_CHECK_EQUAL (res.which (), solver_t::SOLVER_VALUE);	\
 	if (logger)							\
 	  {								\
-	    logger->append (log_result_false);				\
+	    (*logger) << log_result_false				\
+	              << solver;					\
 	    logger.reset ();						\
 	  }								\
 	return;								\
