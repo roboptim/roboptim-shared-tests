@@ -184,7 +184,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
 
   problemFactory.addConstraint(remRotDesc, SO3_).setBounds(bounds);
   problemFactory.addObjective(1.0, pcDistDesc, SO3_);
-  roboptim::ProblemOnManifold<T>* problem = problemFactory.getProblem();
+  std::unique_ptr<roboptim::ProblemOnManifold<T>> problem(problemFactory.getProblem());
 
 #ifndef NDEBUG
   roboptim::SolverFactory<solver_t> factory ("pgsolver_d", *problem);
