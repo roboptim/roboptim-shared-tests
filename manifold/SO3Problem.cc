@@ -174,8 +174,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (SO3ProblemTest, T, functionTypes_t)
   ROBOPTIM_DESC_MANIFOLD(RotSpace, roboptim::SO3);
   ROBOPTIM_NAMED_FUNCTION_BINDING(PC_Dist_On_RotSpace, PointCloudDistFunc<T>, RotSpace);
   ROBOPTIM_NAMED_FUNCTION_BINDING(Remove_Rotation_On_RotSpace, RemoveOneRotation<T>, RotSpace);
-  PC_Dist_On_RotSpace pcDistDesc;
-  Remove_Rotation_On_RotSpace remRotDesc;
+  std::shared_ptr<PC_Dist_On_RotSpace> pcDistDesc = std::make_shared<PC_Dist_On_RotSpace>();
+  std::shared_ptr<Remove_Rotation_On_RotSpace> remRotDesc = std::make_shared<Remove_Rotation_On_RotSpace>();
 
   roboptim::ManifoldProblemFactory<T> problemFactory;
 
