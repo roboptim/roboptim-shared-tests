@@ -134,8 +134,7 @@ namespace roboptim
     RES = boost::test_tools::check_is_small (OBS, TOL);		\
   } else {							\
     BOOST_CHECK_CLOSE(EXP, OBS, TOL);				\
-    RES = boost::test_tools::check_is_close			\
-      (EXP, OBS, boost::test_tools::percent_tolerance (TOL));	\
+    RES = (std::fabs (EXP - OBS) < TOL);	\
   }
 
 // Run BOOST_CHECK and get result
