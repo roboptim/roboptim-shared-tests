@@ -119,6 +119,9 @@ namespace roboptim
       logger.reset ();				\
     }
 
+// Note: tolerances here are in percent, since this is what
+// Boost is expecting.
+
 // See: http://stackoverflow.com/a/20050381/1043187
 #define BOOST_CHECK_SMALL_OR_CLOSE(EXP, OBS, TOL)	\
   if (std::fabs (EXP) < TOL) {				\
@@ -134,7 +137,8 @@ namespace roboptim
     RES = boost::test_tools::check_is_small (OBS, TOL);		\
   } else {							\
     BOOST_CHECK_CLOSE(EXP, OBS, TOL);				\
-    RES = (std::fabs (EXP - OBS) < TOL);	\
+    RES = (std::fabs (EXP - OBS) < TOL/100. * std::fabs (EXP) \
+        && std::fabs (EXP - OBS) < TOL/100. * std::fabs (OBS));	\
   }
 
 // Run BOOST_CHECK and get result
