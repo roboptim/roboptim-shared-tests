@@ -15,11 +15,14 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with roboptim.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include "manifold/manifold_common.hh"
-#include "common.hh"
+#include <memory>
 
 #include <boost/test/unit_test.hpp>
+
+#include <roboptim/core/linear-function.hh>
+#include <roboptim/core/differentiable-function.hh>
+#include <roboptim/core/manifold-map/decorator/manifold-problem-factory.hh>
+#include <roboptim/core/manifold-map/decorator/problem-on-manifold.hh>
 
 #include <manifolds/SO3.h>
 #include <manifolds/RealSpace.h>
@@ -29,10 +32,9 @@
 #include <manifolds/Point.h>
 #include <manifolds/utils.h>
 
-#include <roboptim/core/linear-function.hh>
-#include <roboptim/core/differentiable-function.hh>
-#include <roboptim/core/manifold-map/decorator/manifold-problem-factory.hh>
-#include <roboptim/core/manifold-map/decorator/problem-on-manifold.hh>
+#include "manifold/manifold_common.hh"
+#include "common.hh"
+
 
 typedef boost::mpl::list< ::roboptim::EigenMatrixDense/*,
 			  ::roboptim::EigenMatrixSparse*/> functionTypes_t;
@@ -116,8 +118,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE (GeometricProblemTest, T, functionTypes_t)
 
   mnf::RealSpace r3(3);
 
-  SquaredNorm_On_R3 squaredNormDesc;
-  BelongsToPlane_On_R3 belongsToPlaneDesc(1, 0.5, -2, 0.6);
+  std::shared_ptr<SquaredNorm_On_R3> squaredNormDesc = std::make_shared<SquaredNorm_On_R3>();
+  std::shared_ptr<BelongsToPlane_On_R3> belongsToPlaneDesc = std::make_shared<BelongsToPlane_On_R3>(1, 0.5, -2, 0.6);
 
   probFactory.addObjective(1.0, squaredNormDesc, r3);
 
