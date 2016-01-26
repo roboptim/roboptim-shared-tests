@@ -20,7 +20,6 @@
 # include <cmath>
 # include <iostream>
 
-# include <boost/shared_ptr.hpp>
 # include <boost/ref.hpp>
 # include <boost/make_shared.hpp>
 # include <boost/mpl/vector.hpp>
@@ -31,8 +30,6 @@
 # include <boost/test/unit_test.hpp>
 # include <boost/test/floating_point_comparison.hpp>
 
-# include <log4cxx/xml/domconfigurator.h>
-
 # include <roboptim/core/twice-differentiable-function.hh>
 # include <roboptim/core/io.hh>
 # include <roboptim/core/numeric-linear-function.hh>
@@ -40,6 +37,8 @@
 # include <roboptim/core/optimization-logger.hh>
 # include <roboptim/core/solver.hh>
 # include <roboptim/core/solver-factory.hh>
+
+# include "fixture.hh"
 
 # ifndef SOLVER_NAME
 #  error "please define solver name"
@@ -351,24 +350,6 @@ namespace roboptim
       }									\
     }									\
   RELEASE_OPTIMIZATION_LOGGER ();
-
-struct TestSuiteConfiguration
-{
-  TestSuiteConfiguration ()
-  {
-    std::string log4cxxConfigurationFile = TESTS_DATA_DIR;
-    log4cxxConfigurationFile += "/log4cxx.xml";
-    log4cxx::xml::DOMConfigurator::configure (log4cxxConfigurationFile);
-
-    lt_dlinit();
-    BOOST_REQUIRE_EQUAL (lt_dlsetsearchpath (PLUGIN_PATH), 0);
-  }
-
-  ~TestSuiteConfiguration ()
-  {
-    lt_dlexit ();
-  }
-};
 
 namespace roboptim
 {
