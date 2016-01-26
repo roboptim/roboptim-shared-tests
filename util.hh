@@ -22,6 +22,8 @@
 # include <boost/archive/text_oarchive.hpp>
 # include <boost/archive/text_iarchive.hpp>
 
+# include <roboptim/core/util.hh>
+
 # include "serialize.hh"
 
 typedef boost::filesystem::path path_t;
@@ -40,6 +42,11 @@ namespace
 
     std::ifstream ifs (full_path.c_str ());
     inputArchive_t ia (ifs);
+
+# if (defined ROBOPTIM_HAS_FENV_H && defined ENABLE_SIGFPE)
+      // Disable SIGFPE (implementation relies on subnormal numbers)
+      roboptim::detail::DisableFPE d;
+# endif //! (defined ROBOPTIM_HAS_FENV_H && defined ENABLE_SIGFPE)
 
     ia >> m;
 
