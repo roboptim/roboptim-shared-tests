@@ -86,9 +86,6 @@ namespace roboptim
 	impl_compute (result_ref result, const_argument_ref x) const;
 	void
 	impl_gradient (gradient_ref, const_argument_ref, size_type)
-	  const {}
-	void
-	impl_jacobian (jacobian_ref jac, const_argument_ref x)
 	  const;
       };
 
@@ -109,30 +106,44 @@ namespace roboptim
 
       template <>
       void
-      G<EigenMatrixSparse>::impl_jacobian
-      (jacobian_ref jac, const_argument_ref x) const
+      G<EigenMatrixSparse>::impl_gradient
+      (gradient_ref grad, const_argument_ref x, size_type functionId) const
       {
-	jac.coeffRef (0,0) = 8;
-	jac.coeffRef (0,1) = 14;
-	jac.coeffRef (0,2) = 7;
+        switch (functionId)
+          {
+	  case 0:
+	    grad.coeffRef (0) = 8;
+	    grad.coeffRef (1) = 14;
+	    grad.coeffRef (2) = 7;
+	    break;
 
-	jac.coeffRef (1,0) = 2 * x[0];
-	jac.coeffRef (1,1) = 2 * x[1];
-	jac.coeffRef (1,2) = 2 * x[2];
+	  case 1:
+	    grad.coeffRef (0) = 2 * x[0];
+	    grad.coeffRef (1) = 2 * x[1];
+	    grad.coeffRef (2) = 2 * x[2];
+	    break;
+	  }
       }
 
       template <typename T>
       void
-      G<T>::impl_jacobian
-      (jacobian_ref jac, const_argument_ref x) const
+      G<T>::impl_gradient
+      (gradient_ref grad, const_argument_ref x, size_type functionId) const
       {
-	jac (0,0) = 8;
-	jac (0,1) = 14;
-	jac (0,2) = 7;
+        switch (functionId)
+          {
+	  case 0:
+	    grad (0) = 8;
+	    grad (1) = 14;
+	    grad (2) = 7;
+	    break;
 
-	jac (1,0) = 2 * x[0];
-	jac (1,1) = 2 * x[1];
-	jac (1,2) = 2 * x[2];
+	  case 1:
+	    grad (0) = 2 * x[0];
+	    grad (1) = 2 * x[1];
+	    grad (2) = 2 * x[2];
+	    break;
+	  }
       }
     } // end of namespace problem63.
   } // end of namespace schittkowski.

@@ -92,9 +92,6 @@ namespace roboptim
 	impl_compute (result_ref result, const_argument_ref x) const;
 	void
 	impl_gradient (gradient_ref, const_argument_ref, size_type)
-	  const {}
-	void
-	impl_jacobian (jacobian_ref jac, const_argument_ref x)
 	  const;
       };
 
@@ -121,44 +118,66 @@ namespace roboptim
 
       template <>
       void
-      G<EigenMatrixSparse>::impl_jacobian
-      (jacobian_ref jac, const_argument_ref x) const
+      G<EigenMatrixSparse>::impl_gradient
+      (gradient_ref grad, const_argument_ref x, size_type functionId) const
       {
-	jac.coeffRef (0,0) = 1;
-	jac.coeffRef (0,3) = -8.4 * std::sin (x[3]) * std::cos (x[3]);
+        switch (functionId)
+          {
+	  case 0:
+	    grad.coeffRef (0) = 1;
+	    grad.coeffRef (3) = -8.4 * std::sin (x[3]) * std::cos (x[3]);
+	    break;
 
-	jac.coeffRef (1,1) = 1;
-	jac.coeffRef (1,4) = -8.4 * std::sin (x[4]) * std::cos (x[4]);
+	  case 1:
+	    grad.coeffRef (1) = 1;
+	    grad.coeffRef (4) = -8.4 * std::sin (x[4]) * std::cos (x[4]);
+	    break;
 
-	jac.coeffRef (2,2) = 1;
-	jac.coeffRef (2,5) = -8.4 * std::sin (x[5]) * std::cos (x[5]);
+	  case 2:
+	    grad.coeffRef (2) = 1;
+	    grad.coeffRef (5) = -8.4 * std::sin (x[5]) * std::cos (x[5]);
+	    break;
 
-	jac.coeffRef (3,0) = 1;
-	jac.coeffRef (3,1) = 2;
-	jac.coeffRef (3,2) = 2;
-	jac.coeffRef (3,6) = -14.4 * std::sin (x[6]) * std::cos (x[6]);
+	  case 3:
+	    grad.coeffRef (0) = 1;
+	    grad.coeffRef (1) = 2;
+	    grad.coeffRef (2) = 2;
+	    grad.coeffRef (6) = -14.4 * std::sin (x[6]) * std::cos (x[6]);
+	    break;
+	  }
       }
 
       template <typename T>
       void
-      G<T>::impl_jacobian
-      (jacobian_ref jac, const_argument_ref x) const
+      G<T>::impl_gradient
+      (gradient_ref grad, const_argument_ref x, size_type functionId) const
       {
-	jac.setZero ();
+	grad.setZero ();
 
-	jac (0,0) = 1;
-	jac (0,3) = -8.4 * std::sin (x[3]) * std::cos (x[3]);
+        switch (functionId)
+          {
+	  case 0:
+	    grad (0) = 1;
+	    grad (3) = -8.4 * std::sin (x[3]) * std::cos (x[3]);
+	    break;
 
-	jac (1,1) = 1;
-	jac (1,4) = -8.4 * std::sin (x[4]) * std::cos (x[4]);
+	  case 1:
+	    grad (1) = 1;
+	    grad (4) = -8.4 * std::sin (x[4]) * std::cos (x[4]);
+	    break;
 
-	jac (2,2) = 1;
-	jac (2,5) = -8.4 * std::sin (x[5]) * std::cos (x[5]);
+	  case 2:
+	    grad (2) = 1;
+	    grad (5) = -8.4 * std::sin (x[5]) * std::cos (x[5]);
+	    break;
 
-	jac (3,0) = 1;
-	jac (3,1) = 2;
-	jac (3,2) = 2;
-	jac (3,6) = -14.4 * std::sin (x[6]) * std::cos (x[6]);
+	  case 3:
+	    grad (0) = 1;
+	    grad (1) = 2;
+	    grad (2) = 2;
+	    grad (6) = -14.4 * std::sin (x[6]) * std::cos (x[6]);
+	    break;
+	  }
       }
     } // end of namespace problem56.
   } // end of namespace schittkowski.

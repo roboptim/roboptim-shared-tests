@@ -34,7 +34,7 @@ namespace roboptim
 	void
 	impl_compute (result_ref result, const_argument_ref x) const;
 	void
-	impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
+	impl_gradient (gradient_ref grad, const_argument_ref x, size_type functionId)
 	  const;
       };
 
@@ -89,9 +89,6 @@ namespace roboptim
 	impl_compute (result_ref result, const_argument_ref x) const;
 	void
 	impl_gradient (gradient_ref, const_argument_ref, size_type)
-	  const {}
-	void
-	impl_jacobian (jacobian_ref jac, const_argument_ref x)
 	  const;
       };
 
@@ -113,40 +110,58 @@ namespace roboptim
 
       template <>
       void
-      G<EigenMatrixSparse>::impl_jacobian
-      (jacobian_ref jac, const_argument_ref) const
+      G<EigenMatrixSparse>::impl_gradient
+      (gradient_ref grad, const_argument_ref, size_type functionId) const
       {
-	jac.coeffRef (0,0) = -1;
-	jac.coeffRef (0,1) = -2;
-	jac.coeffRef (0,2) = -1;
-	jac.coeffRef (0,3) = -1;
+        switch (functionId)
+          {
+	  case 0:
+	    grad.coeffRef (0) = -1;
+	    grad.coeffRef (1) = -2;
+	    grad.coeffRef (2) = -1;
+	    grad.coeffRef (3) = -1;
+	    break;
 
-	jac.coeffRef (1,0) = -3;
-	jac.coeffRef (1,1) = -1;
-	jac.coeffRef (1,2) = -2;
-	jac.coeffRef (1,3) =  1;
+	  case 1:
+	    grad.coeffRef (0) = -3;
+	    grad.coeffRef (1) = -1;
+	    grad.coeffRef (2) = -2;
+	    grad.coeffRef (3) =  1;
+	    break;
 
-	jac.coeffRef (2,1) =  1;
-	jac.coeffRef (2,2) =  4;
+	  case 2:
+	    grad.coeffRef (1) =  1;
+	    grad.coeffRef (2) =  4;
+	    break;
+	  }
       }
 
       template <typename T>
       void
-      G<T>::impl_jacobian
-      (jacobian_ref jac, const_argument_ref) const
+      G<T>::impl_gradient
+      (gradient_ref grad, const_argument_ref, size_type functionId) const
       {
-	jac (0,0) = -1;
-	jac (0,1) = -2;
-	jac (0,2) = -1;
-	jac (0,3) = -1;
+        switch (functionId)
+          {
+	  case 0:
+	    grad (0) = -1;
+	    grad (1) = -2;
+	    grad (2) = -1;
+	    grad (3) = -1;
+	    break;
 
-	jac (1,0) = -3;
-	jac (1,1) = -1;
-	jac (1,2) = -2;
-	jac (1,3) =  1;
+	  case 1:
+	    grad (0) = -3;
+	    grad (1) = -1;
+	    grad (2) = -2;
+	    grad (3) =  1;
+	    break;
 
-	jac (2,1) =  1;
-	jac (2,2) =  4;
+	  case 2:
+	    grad (1) =  1;
+	    grad (2) =  4;
+	    break;
+	  }
       }
     } // end of namespace problem76.
   } // end of namespace schittkowski.
