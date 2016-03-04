@@ -110,7 +110,7 @@ namespace roboptim
       (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad.coeffRef (0) = 3. * x[0] * x[0];
+	grad.coeffRef (0) = -3. * x[0] * x[0];
 	grad.coeffRef (1) = 6.;
 	grad.coeffRef (2) = 4.;
       }
@@ -120,7 +120,7 @@ namespace roboptim
       G<T>::impl_gradient (gradient_ref grad, const_argument_ref x, size_type)
 	const
       {
-	grad[0] = 3. * x[0] * x[0];
+	grad[0] = -3. * x[0] * x[0];
 	grad[1] = 6.;
 	grad[2] = 4.;
       }
