@@ -56,10 +56,6 @@
 #  error "please define TESTS_DATA_DIR"
 # endif //! PROBLEM_TYPE
 
-# ifndef COST_FUNCTION_TYPE
-#  error "please define COST_FUNCTION_TYPE"
-# endif //! PROBLEM_TYPE
-
 # ifdef LOG_FILENAME
 #  define SET_LOG_FILE(solver)						\
   solver.parameters()["ipopt.output_file"].value = std::string(LOG_FILENAME); \
@@ -72,33 +68,8 @@
 
 typedef FUNCTION_TYPE functionType_t;
 
-// Build extensible constraint type.
-typedef boost::mpl::vector< > constraints0_t;
-
-# ifdef CONSTRAINT_TYPE_1
-typedef boost::mpl::push_back<
-  constraints0_t,
-  CONSTRAINT_TYPE_1<functionType_t> >::type
-constraints1_t;
-# else
-typedef constraints0_t constraints1_t;
-# endif // CONSTRAINT_TYPE_1
-
-# ifdef CONSTRAINT_TYPE_2
-typedef boost::mpl::push_back<
-  constraints1_t,
-  CONSTRAINT_TYPE_2<functionType_t> >::type
-constraints2_t;
-# else
-typedef constraints1_t constraints2_t;
-# endif // CONSTRAINT_TYPE_2
-
-typedef constraints2_t constraints_t;
-
-
 // Define solver type.
-typedef ::roboptim::Solver<COST_FUNCTION_TYPE<functionType_t>::traits_t>
-solver_t;
+typedef ::roboptim::Solver<functionType_t> solver_t;
 
 typedef ::roboptim::OptimizationLogger<solver_t> logger_t;
 
