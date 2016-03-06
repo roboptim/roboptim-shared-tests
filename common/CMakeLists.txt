@@ -14,7 +14,7 @@
 # along with roboptim-core.  If not, see <http://www.gnu.org/licenses/>.
 
 IF(NOT DEFINED COMMON_TESTS)
-  SET(COMMON_TESTS throw)
+  SET(COMMON_TESTS throw starting-point)
 ENDIF()
 
 FOREACH(TEST ${COMMON_TESTS})
