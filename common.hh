@@ -17,6 +17,9 @@
 
 #ifndef ROBOPTIM_SHARED_TESTS_COMMON_HH
 # define ROBOPTIM_SHARED_TESTS_COMMON_HH
+# ifdef WIN32
+#  define _USE_MATH_DEFINES
+# endif //WIN32
 # include <cmath>
 # include <iostream>
 
