@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE (starting_point)
   solver_t::problem_t problem (f);
 
   // Bounds on x
-  for (int i = 0; i < 3; ++i)
+  for (size_t i = 0; i < 3; ++i)
     problem.argumentBounds ()[i] = Function::makeInterval (-2., 10.);
 
   Result resWithout (problem.function ().inputSize (),
