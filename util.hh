@@ -22,9 +22,54 @@
 # include <boost/archive/text_oarchive.hpp>
 # include <boost/archive/text_iarchive.hpp>
 
+# include <roboptim/core/util.hh>
+
 # include "serialize.hh"
 
 typedef boost::filesystem::path path_t;
+
+namespace
+{
+  template <typename M, typename A>
+  inline M genericReadMatrix (const path_t& file)
+  {
+    typedef M matrix_t;
+    typedef A inputArchive_t;
+
+    matrix_t m;
+
+    path_t full_path = path_t (TESTS_DATA_DIR) / file;
+
+    std::ifstream ifs (full_path.c_str ());
+    inputArchive_t ia (ifs);
+
+# if (defined ROBOPTIM_HAS_FENV_H && defined ENABLE_SIGFPE)
+      // Disable SIGFPE (implementation relies on subnormal numbers)
+      roboptim::detail::DisableFPE d;
+# endif //! (defined ROBOPTIM_HAS_FENV_H && defined ENABLE_SIGFPE)
+
+    ia >> m;
+
+    return m;
+  }
+
+  template <typename M, typename A>
+  inline void genericWriteMatrix (const path_t& file, const M& m)
+  {
+    typedef A ouputArchive_t;
+
+    path_t full_path = path_t (TESTS_DATA_DIR) / file;
+
+    std::ofstream ofs (full_path.c_str ());
+    ouputArchive_t oa (ofs);
+
+    oa << m;
+  }
+} // end of unnamed namespace
+
+/// ** NOTE **
+/// We use text archives since binary archives are not portable according to
+/// the Boost documentation.
 
 /// \brief Load matrix from a data file.
 ///
@@ -39,18 +84,7 @@ typedef boost::filesystem::path path_t;
 template <typename M>
 M readMatrix (const path_t& file)
 {
-  typedef M matrix_t;
-
-  matrix_t m;
-
-  path_t full_path = path_t (TESTS_DATA_DIR) / file;
-
-  std::ifstream ifs (full_path.c_str ());
-  boost::archive::text_iarchive ia (ifs);
-
-  ia >> m;
-
-  return m;
+  return genericReadMatrix<M, boost::archive::text_iarchive> (file);
 }
 
 /// \brief Write matrix to a data file.
@@ -64,12 +98,7 @@ M readMatrix (const path_t& file)
 template <typename M>
 void writeMatrix (const path_t& file, const M& m)
 {
-  path_t full_path = path_t (TESTS_DATA_DIR) / file;
-
-  std::ofstream ofs (full_path.c_str ());
-  boost::archive::text_oarchive oa (ofs);
-
-  oa << m;
+  genericWriteMatrix<M, boost::archive::text_oarchive> (file, m);
 }
 
 # endif //! ROBOPTIM_SHARED_TESTS_UTIL_HH

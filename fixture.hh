@@ -30,6 +30,10 @@
 
 # include <log4cxx/xml/domconfigurator.h>
 
+# ifdef __linux__
+#  include <fenv.h>
+# endif // __linux__
+
 # include <roboptim/core/numeric-linear-function.hh>
 # include <roboptim/core/twice-differentiable-function.hh>
 # include <roboptim/core/io.hh>
@@ -46,6 +50,11 @@ struct TestSuiteConfiguration
 
     lt_dlinit();
     BOOST_REQUIRE_EQUAL (lt_dlsetsearchpath (PLUGIN_PATH), 0);
+
+#if (defined __linux__ && defined ENABLE_SIGFPE)
+    // Enable floating-point exceptions (except FE_INEXACT)
+    feenableexcept(FE_ALL_EXCEPT & ~FE_INEXACT);
+#endif // (defined __linux__ && defined ENABLE_SIGFPE)
   }
 
   ~TestSuiteConfiguration ()

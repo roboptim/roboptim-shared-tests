@@ -14,7 +14,7 @@
 # along with roboptim-core.  If not, see <http://www.gnu.org/licenses/>.
 
 IF(NOT DEFINED ROBOPTIM_PROBLEMS)
-  SET(ROBOPTIM_PROBLEMS distance-to-sphere)
+  SET(ROBOPTIM_PROBLEMS distance-to-sphere simple-square)
 ENDIF()
 
 FOREACH(PROBLEM ${ROBOPTIM_PROBLEMS})
