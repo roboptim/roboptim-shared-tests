@@ -238,11 +238,6 @@ namespace roboptim
 	CHECK_RESULT (Result);						\
 	break;								\
       }									\
-    case solver_t::SOLVER_VALUE_WARNINGS:				\
-      {									\
-	CHECK_RESULT (ResultWithWarnings);				\
-	break;								\
-      }									\
     case solver_t::SOLVER_NO_SOLUTION:					\
       {									\
 	std::cout << "A solution should have been found. Failing..."	\
@@ -286,11 +281,6 @@ namespace roboptim
     case solver_t::SOLVER_VALUE:					\
       {									\
 	CHECK_RESULT_UNCONSTRAINED (Result);				\
-	break;								\
-      }									\
-    case solver_t::SOLVER_VALUE_WARNINGS:				\
-      {									\
-	CHECK_RESULT_UNCONSTRAINED (ResultWithWarnings);		\
 	break;								\
       }									\
     case solver_t::SOLVER_NO_SOLUTION:					\
