@@ -28,8 +28,6 @@
 # include <boost/test/test_case_template.hpp>
 # include <boost/test/unit_test.hpp>
 
-# include <log4cxx/xml/domconfigurator.h>
-
 # ifdef __linux__
 #  include <fenv.h>
 # endif // __linux__
@@ -44,10 +42,6 @@ struct TestSuiteConfiguration
 {
   TestSuiteConfiguration ()
   {
-    std::string log4cxxConfigurationFile = TESTS_DATA_DIR;
-    log4cxxConfigurationFile += "/log4cxx.xml";
-    log4cxx::xml::DOMConfigurator::configure (log4cxxConfigurationFile);
-
     lt_dlinit();
     BOOST_REQUIRE_EQUAL (lt_dlsetsearchpath (PLUGIN_PATH), 0);
 
